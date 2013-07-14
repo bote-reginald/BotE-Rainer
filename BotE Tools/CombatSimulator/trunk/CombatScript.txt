@@ -1,0 +1,21 @@
+//////////////////////////////////
+// EXAMPLE OF AN SCRIPT FILE!!! //
+//////////////////////////////////
+
+§REPEAT§
+0
+§SLOWING§
+30
+§RACE§
+MAJOR1
+§SHIPS§
+Matilda
+Matilda
+Farscape
+§RACE§
+MAJOR5
+§SHIPS§
+Fjodor
+Fjodor
+Juri
+Juri

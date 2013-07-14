@@ -1,0 +1,16 @@
+Kurze Anleitung von mir für das CombatScript:
+
+nach §REPEAT§ folgt eine Zahl, die angibt wie oft der Kampf wiederholt werden soll.
+Wenn der Kampf wiederholt wird gibt es keine grafische Anzeige. Das Ergebnis des Kampfes wird in die Datei "Stats.log" geschrieben. Soll der Kampf nicht wiederholt werden, so muss dort eine "0" stehen. Genauere Daten zu diesem Kampf findet man dann in der Datei "Combat.log".
+
+nach §SLOWING§ folgt eine Zahl, um die der Kampf verlangsamt wird.
+
+nach §RACE§ folgt die Rassen-ID. und zwar:
+MAJOR1 - Terraner
+MAJOR2 - Hanuhr
+MAJOR3 - Khayrin
+MAJOR4 - Rotharianer
+MAJOR5 - Cartarer
+MAJOR6 - Omega-Allianz
+
+nach §SHIPS§ folgen in jeder neuen Zeile die Namen der Schiffsklassen, welche für diese Rasse im Kampf kämpfen sollen.
