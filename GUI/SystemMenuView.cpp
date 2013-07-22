@@ -126,6 +126,9 @@ void CSystemMenuView::OnDraw(CDC* dc)
 		DrawBuildingsOverviewMenue(&g);
 	else if (m_bySubMenu == 4)
 		DrawSystemTradeMenue(&g);
+	else if (m_bySubMenu == 5)
+		DrawSystemDefenceMenue(&g);
+
 	DrawButtonsUnderSystemView(&g);
 
 	g.ReleaseHDC(pDC->GetSafeHdc());
@@ -168,6 +171,8 @@ void CSystemMenuView::OnInitialUpdate()
 	m_bClickedOnBuildingInfoButton = TRUE;
 	m_bClickedOnBuildingDescriptionButton = FALSE;
 	m_iWhichSubMenu = 0;
+
+	ShipdesignButton.SetRect(550,70,120,30);
 
 	// Die Koodinaten der Rechtecke für die ganzen Buttons
 	CRect r;
@@ -431,6 +436,8 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 					graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\Deritium.bop");
 				else if (pInfo->GetCredits() > 0 || pInfo->GetCreditsBoni() > 0)
 					graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\creditsSmall.bop");
+				else if (pInfo->GetBarrack())
+					graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\troopSmall.bop");
 				if (graphic)
 					g->DrawImage(graphic, 355, y-21, 20, 16);
 			}
@@ -440,6 +447,17 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 		if (m_vBuildlist[i] < 0)
 		{
 			s = CLoc::GetString("UPGRADING", FALSE, pDoc->GetBuildingName(abs(m_vBuildlist[i])));
+
+			// Nachricht über Upgrade erstellen
+			// CString news = CLoc::GetString("UPGRADING", FALSE);
+			// CEmpireNews message;
+			// message.CreateNews(news, EMPIRE_NEWS_TYPE::TUTORIAL, "");
+			// pEmpire->AddMsg(message);
+			// if (pMajor->IsHumanPlayer())
+			// {
+			// 	const network::RACE client = pRaceCtrl->GetMappedClientID(pMajor->GetRaceID());
+			// 	m_pDoc->m_iSelectedView[client] = EMPIRE_VIEW;
+			// }
 		}
 		// handelt es sich um ein Gebäude?
 		else if (m_vBuildlist[i] < 10000)
@@ -663,6 +681,16 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 		// Wenn was in der Bauliste steht
 		if (nFirstAssemblyListEntry != 0)
 		{
+				// Nachricht erstellen
+				//CString news = CLoc::GetString("REBELLION_IN_SYSTEM", FALSE, sectorname);
+				//CEmpireNews message;
+				//message.CreateNews(news, EMPIRE_NEWS_TYPE::SOMETHING, "", co);
+				//pEmpire->AddMsg(message);
+				//if (pMajor->IsHumanPlayer())
+				//{
+				//	const network::RACE client = pRaceCtrl->GetMappedClientID(pMajor->GetRaceID());
+				//	m_pDoc->m_iSelectedView[client] = EMPIRE_VIEW;
+				//}
 			CRect infoRect;
 			int RunningNumber = 0;
 			if (nFirstAssemblyListEntry < 0)
@@ -1373,11 +1401,12 @@ void CSystemMenuView::DrawBuildingsOverviewMenue(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormat, &fontBrush);
 }
 
+
+void CSystemMenuView::DrawEnergyMenue(Gdiplus::Graphics *g)
+{
 /////////////////////////////////////////////////////////////////////////////////////////
 // Hier die Funktion zum Zeichnen der Energiezuweisungsansicht
 /////////////////////////////////////////////////////////////////////////////////////////
-void CSystemMenuView::DrawEnergyMenue(Gdiplus::Graphics *g)
-{
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -1418,7 +1447,7 @@ void CSystemMenuView::DrawEnergyMenue(Gdiplus::Graphics *g)
 		const CBuildingInfo *buildingInfo = &pDoc->BuildingInfo.GetAt(pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(i).GetRunningNumber() - 1);
 
 		// wenn das Gebäude Energie benötigt
-		if (buildingInfo->GetNeededEnergy() > 0)
+		if (buildingInfo->GetNeededEnergy() > 0 && !buildingInfo->GetHitPoints() == 0 || !buildingInfo->GetShieldPower() == 0 || !buildingInfo->GetShipDefend() == 0 || !buildingInfo->GetGroundDefend() == 0)
 		{
 			ENERGYSTRUCT es;
 			es.index = i;
@@ -1774,14 +1803,193 @@ void CSystemMenuView::DrawSystemTradeMenue(Graphics* g)
 	// Name des Systems oben in der Mitte zeichnen
 	s.Format("%s %s",CLoc::GetString("TRADEOVERVIEW_IN"),pDoc->GetSector(p.x,p.y).GetName());
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormat, &fontBrush);
+
+		// draw buttons to switch in other systems
+	//for (int i = 0; i < m_SystemTradeButtons.GetSize(); i++)
+		m_SystemTradeButtons[1]->DrawButton(*g, pDoc->GetGraphicPool(), Gdiplus::Font(NULL), fontBrush);
 }
 
 
+void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
+{
+/////////////////////////////////////////////////////////////////////////////////////////
+// draw SystemDefenceMenue
+/////////////////////////////////////////////////////////////////////////////////////////
+	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+	if (!pMajor)
+		return;
+
+	CPoint p = pDoc->GetKO();;
+	CString s;
+
+	CString fontName = "";
+	Gdiplus::REAL fontSize = 0.0;
+
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
+	// Schriftfarbe wählen
+	Gdiplus::Color normalColor;
+	CFontLoader::GetGDIFontColor(pMajor, 3, normalColor);
+	SolidBrush fontBrush(normalColor);
+
+	StringFormat fontFormat;
+	fontFormat.SetAlignment(StringAlignmentCenter);
+	fontFormat.SetLineAlignment(StringAlignmentCenter);
+	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+
+	if (bg_energymenu)
+		g->DrawImage(bg_energymenu, 0, 0, 1075, 750);
+
+	m_EnergyList.RemoveAll();
+	// die Inhalte der einzelnen Buttons berechnen, max. 3 vertikal und 3 horizontal
+	USHORT NumberOfBuildings = pDoc->GetSystem(p.x,p.y).GetAllBuildings()->GetSize();
+	// Alle Gebäude durchgehen, diese müssen nach RunningNumber aufsteigend sortiert sein und in die Variable schreiben
+	short spaceX = 0;	// Platz in x-Richtung
+	short spaceY = 0;	// Platz in y-Richtung
+	for (int i = 0; i < NumberOfBuildings; i++)
+	{
+		const CBuildingInfo *buildingInfo = &pDoc->BuildingInfo.GetAt(pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(i).GetRunningNumber() - 1);
+
+		// wenn das Gebäude Energie benötigt
+		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetShieldPower() > 0 || buildingInfo->GetShipDefend() > 0 || buildingInfo->GetGroundDefend() > 0)
+		{
+			ENERGYSTRUCT es;
+			es.index = i;
+			es.status = pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(i).GetIsBuildingOnline();
+			m_EnergyList.Add(es);
+		}
+	}
+
+	// provisorische Buttons für vor und zurück
+	Color redColor;
+	redColor.SetFromCOLORREF(RGB(200,50,50));
+	SolidBrush redBrush(redColor);
+
+	if (m_EnergyList.GetSize() > m_iELPage * NOBIEL + NOBIEL)
+	{
+		s = ">";
+		g->FillRectangle(&redBrush, RectF(1011,190,63,52));
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(1011,190,63,52), &fontFormat, &fontBrush);
+	}
+	if (m_iELPage > 0)
+	{
+		s = "<";
+		g->FillRectangle(&redBrush, RectF(1011,490,63,52));
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(1011,490,63,52), &fontFormat, &fontBrush);
+	}
+
+	// Gebäude, welche Energie benötigen anzeigen
+	SolidBrush blackBrush(Color::Black);
+	// prüfen, dass man nicht auf einer zu hohen Seite ist, wenn zu wenig Gebäude vorhanden sind
+	if (m_iELPage * NOBIEL >= m_EnergyList.GetSize())
+		m_iELPage = 0;
+
+	for (int i = m_iELPage * NOBIEL; i < m_EnergyList.GetSize(); i++)
+	{
+		// Wenn wir auf der richtigen Seite sind
+		if (i < m_iELPage * NOBIEL + NOBIEL)
+		{
+			// Aller 3 Einträge Y Platzhalter zurücksetzen und X Platzhalter eins hoch
+			if (i%3 == 0 && i != m_iELPage * NOBIEL)
+			{
+				spaceX++;
+				spaceY = 0;
+			}
+			// großes Rechteck, was gezeichnet wird
+			CRect r;
+			r.SetRect(90+spaceX*320,100+spaceY*170,320+spaceX*320,247+spaceY*170);
+			g->FillRectangle(&blackBrush, RectF(r.left, r.top, r.Width(), r.Height()));
+			m_EnergyList[i].rect = r;
+			// Rechteck machen damit der Text oben rechts steht
+			CRect tmpr;
+			tmpr.SetRect(r.left+10,r.top+5,r.right-5,r.bottom);
+			int id = pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(m_EnergyList.GetAt(i).index).GetRunningNumber();
+
+			const CBuildingInfo *buildingInfo = &pDoc->BuildingInfo.GetAt(id - 1);
+
+			fontFormat.SetAlignment(StringAlignmentNear);
+			fontFormat.SetLineAlignment(StringAlignmentNear);
+			g->DrawString(CComBSTR(pDoc->GetBuildingName(id)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(tmpr.left, tmpr.top, tmpr.Width(), tmpr.Height()), &fontFormat, &fontBrush);
+
+			// nötige Energie über den Status zeichnen
+			fontFormat.SetAlignment(StringAlignmentCenter);
+			fontFormat.SetLineAlignment(StringAlignmentCenter);
+			tmpr.SetRect(r.right-70,r.bottom-100,r.right-5,r.bottom);
+			s.Format("%d EP", buildingInfo->GetNeededEnergy());
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(tmpr.left, tmpr.top, tmpr.Width(), tmpr.Height()), &fontFormat, &fontBrush);
+
+			// Rechteck machen damit der Status unten rechts steht
+			tmpr.SetRect(r.right-70,r.bottom-50,r.right-5,r.bottom);
+			// Wenn es offline ist
+			if (!m_EnergyList.GetAt(i).status)
+			{
+				g->DrawString(L"offline", -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(tmpr.left, tmpr.top, tmpr.Width(), tmpr.Height()), &fontFormat, &SolidBrush(Color::Red));
+
+			}
+			// Wenn es online ist
+			else
+			{
+				g->DrawString(L"online", -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(tmpr.left, tmpr.top, tmpr.Width(), tmpr.Height()), &fontFormat, &SolidBrush(Color::Green));
+			}
+
+			// Das Bild zu dem Gebäude zeichnen
+			CString fileName;
+			fileName.Format("Buildings\\%s", buildingInfo->GetGraphikFileName());
+			Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic(fileName);
+			if (graphic == NULL)
+				graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Buildings\\ImageMissing.bop");
+			if (graphic)
+			{
+				g->DrawImage(graphic, r.left + 5, r.top + 32, 150, 113);
+			}
+			spaceY++;
+		}
+	}
+
+	// Oben in der Mitte den aktuellen/verfügbaren Energiebetrag zeichnen
+	int energy = pDoc->GetSystem(p.x,p.y).GetProduction()->GetEnergyProd();
+	s.Format("%s: %d",CLoc::GetString("USABLE_ENERGY"), energy);
+	Color energyColor;
+	if (energy < 0)
+		energyColor.SetFromCOLORREF(RGB(200,0,0));
+	else if (energy == 0)
+		energyColor.SetFromCOLORREF(RGB(200,200,0));
+	else
+		energyColor.SetFromCOLORREF(RGB(0,200,0));
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(190, 65, 675, 30), &fontFormat, &SolidBrush(energyColor));
+
+	// Systemnamen mit größerer Schrift in der Mitte zeichnen
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
+	// Schriftfarbe wählen
+	CFontLoader::GetGDIFontColor(pMajor, 3, normalColor);
+	fontBrush.SetColor(normalColor);
+
+	fontFormat.SetAlignment(StringAlignmentCenter);
+	fontFormat.SetLineAlignment(StringAlignmentCenter);
+	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+
+	// Name des Systems oben in der Mitte zeichnen
+	s = CLoc::GetString("ENERGY_MENUE")+" "+pDoc->GetSector(p.x,p.y).GetName();
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormat, &fontBrush);
+}
+void CSystemMenuView::DrawShipdesign(Graphics* g)
+{
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+
+	resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
+}
+
+void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
+{
 /////////////////////////////////////////////////////////////////////////////////////////
 // Ab hier die ganzen Buttons mit ihrer Beschreibung am unteren Bildschirmrand
 /////////////////////////////////////////////////////////////////////////////////////////
-void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
-{
 	ASSERT((CBotEDoc*)GetDocument());
 
 	CMajor* pMajor = m_pPlayersRace;
@@ -2265,9 +2473,103 @@ void CSystemMenuView::DrawBuildingProduction(Graphics* g)
 	{
 		CBuildingInfo* b = &pDoc->GetBuildingInfo(RunningNumber);
 
+		// name of building
 		s.Format("%s",pDoc->GetBuildingName(RunningNumber));
 		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
 		r.Y += 30;
+
+		// Ab hier die Vorraussetzungen
+		fontBrush.SetColor(markColor);
+		s = CLoc::GetString("PREREQUISITES")+":";
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+		r.Y += 22;
+		fontBrush.SetColor(normalColor);
+		// benötigte Systeme
+		if (b->GetNeededSystems() != 0)
+		{
+			s.Format("%s: %i\n", CLoc::GetString("NEEDED_SYSTEMS"), b->GetNeededSystems());
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		// max X mal von ID pro Imperium
+		if (b->GetMaxInEmpire() > 0)
+		{
+			if (b->GetMaxInEmpire() == 1)
+			{
+				s = CLoc::GetString("ONCE_PER_EMPIRE");
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+				r.Y += 22;
+			}
+			else
+			{
+				s.Format("%d",b->GetMaxInEmpire());
+				g->DrawString(CComBSTR(CLoc::GetString("MAX_PER_EMPIRE",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+				r.Y += 22;
+			}
+		}
+		// max X mal von ID pro System
+		if (b->GetMaxInSystem().Number > 0 && b->GetMaxInSystem().RunningNumber == b->GetRunningNumber())
+		{
+			if (b->GetMaxInSystem().Number == 1)
+			{
+				g->DrawString(CComBSTR(CLoc::GetString("ONCE_PER_SYSTEM")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+				r.Y += 22;
+			}
+			else
+			{
+				s.Format("%d",b->GetMaxInSystem().Number);
+				g->DrawString(CComBSTR(CLoc::GetString("MAX_PER_SYSTEM",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+				r.Y += 22;
+			}
+		}
+		else if (b->GetMaxInSystem().Number > 0 && b->GetMaxInSystem().RunningNumber != b->GetRunningNumber())
+		{
+			s.Format("%d",b->GetMaxInSystem().Number);
+			g->DrawString(CComBSTR(CLoc::GetString("MAX_ID_PER_SYSTEM",FALSE,s,pDoc->GetBuildingName(b->GetMaxInSystem().RunningNumber))), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		// min X mal von ID pro System
+		if (b->GetMinInSystem().Number > 0)
+		{
+			s.Format("%d",b->GetMinInSystem().Number);
+			g->DrawString(CComBSTR(CLoc::GetString("MIN_PER_SYSTEM",FALSE,s,pDoc->GetBuildingName(b->GetMinInSystem().RunningNumber))), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetOnlyHomePlanet() == TRUE)
+		{
+			g->DrawString(CComBSTR(CLoc::GetString("ONLY_HOMEPLANET")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetOnlyOwnColony() == TRUE)
+		{
+			g->DrawString(CComBSTR(CLoc::GetString("ONLY_OWN_COLONY")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetOnlyTakenSystem() == TRUE)
+		{
+			g->DrawString(CComBSTR(CLoc::GetString("ONLY_TAKEN_SYSTEM")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetMinHabitants() > 0)
+		{
+			s.Format("%d",b->GetMinHabitants());
+			g->DrawString(CComBSTR(CLoc::GetString("NEED_MIN_HABITANTS",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetNeededEnergy() > 0)
+		{
+			s.Format("%s: %i",CLoc::GetString("ENERGY"),b->GetNeededEnergy());
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+		if (b->GetWorker() == TRUE)
+		{
+			g->DrawString(CComBSTR(CLoc::GetString("NEED_WORKER")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
+			r.Y += 22;
+		}
+	
+
+// Production
 		fontBrush.SetColor(markColor);
 		g->DrawString(CComBSTR(CLoc::GetString("PRODUCTION")+":"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
 		r.Y += 22;
@@ -2753,98 +3055,8 @@ void CSystemMenuView::DrawBuildingProduction(Graphics* g)
 			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
 			r.Y += 22;
 		}
-
-		// Ab hier die Vorraussetzungen
-		fontBrush.SetColor(markColor);
-		s = CLoc::GetString("PREREQUISITES")+":";
-		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-		r.Y += 22;
-		fontBrush.SetColor(normalColor);
-		// benötigte Systeme
-		if (b->GetNeededSystems() != 0)
-		{
-			s.Format("%s: %i\n", CLoc::GetString("NEEDED_SYSTEMS"), b->GetNeededSystems());
-			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		// max X mal von ID pro Imperium
-		if (b->GetMaxInEmpire() > 0)
-		{
-			if (b->GetMaxInEmpire() == 1)
-			{
-				s = CLoc::GetString("ONCE_PER_EMPIRE");
-				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-				r.Y += 22;
-			}
-			else
-			{
-				s.Format("%d",b->GetMaxInEmpire());
-				g->DrawString(CComBSTR(CLoc::GetString("MAX_PER_EMPIRE",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-				r.Y += 22;
-			}
-		}
-		// max X mal von ID pro System
-		if (b->GetMaxInSystem().Number > 0 && b->GetMaxInSystem().RunningNumber == b->GetRunningNumber())
-		{
-			if (b->GetMaxInSystem().Number == 1)
-			{
-				g->DrawString(CComBSTR(CLoc::GetString("ONCE_PER_SYSTEM")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-				r.Y += 22;
-			}
-			else
-			{
-				s.Format("%d",b->GetMaxInSystem().Number);
-				g->DrawString(CComBSTR(CLoc::GetString("MAX_PER_SYSTEM",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-				r.Y += 22;
-			}
-		}
-		else if (b->GetMaxInSystem().Number > 0 && b->GetMaxInSystem().RunningNumber != b->GetRunningNumber())
-		{
-			s.Format("%d",b->GetMaxInSystem().Number);
-			g->DrawString(CComBSTR(CLoc::GetString("MAX_ID_PER_SYSTEM",FALSE,s,pDoc->GetBuildingName(b->GetMaxInSystem().RunningNumber))), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		// min X mal von ID pro System
-		if (b->GetMinInSystem().Number > 0)
-		{
-			s.Format("%d",b->GetMinInSystem().Number);
-			g->DrawString(CComBSTR(CLoc::GetString("MIN_PER_SYSTEM",FALSE,s,pDoc->GetBuildingName(b->GetMinInSystem().RunningNumber))), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetOnlyHomePlanet() == TRUE)
-		{
-			g->DrawString(CComBSTR(CLoc::GetString("ONLY_HOMEPLANET")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetOnlyOwnColony() == TRUE)
-		{
-			g->DrawString(CComBSTR(CLoc::GetString("ONLY_OWN_COLONY")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetOnlyTakenSystem() == TRUE)
-		{
-			g->DrawString(CComBSTR(CLoc::GetString("ONLY_TAKEN_SYSTEM")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetMinHabitants() > 0)
-		{
-			s.Format("%d",b->GetMinHabitants());
-			g->DrawString(CComBSTR(CLoc::GetString("NEED_MIN_HABITANTS",FALSE,s)), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetNeededEnergy() > 0)
-		{
-			s.Format("%s: %i",CLoc::GetString("ENERGY"),b->GetNeededEnergy());
-			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
-		if (b->GetWorker() == TRUE)
-		{
-			g->DrawString(CComBSTR(CLoc::GetString("NEED_WORKER")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), r, &fontFormat, &fontBrush);
-			r.Y += 22;
-		}
+	
 	}
-
 	// Wenn es sich um ein Upgrade handelt:
 	else if (m_vBuildlist[m_iClickedOn] < 0)
 	{
@@ -3038,12 +3250,16 @@ void CSystemMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		else if (ShipyardListButton.PtInRect(point))
 		{
+			// Schiffsdesignansicht zeichnen
+			if (ShipdesignButton.PtInRect(point))
+			{
+				resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	
+				Invalidate(FALSE);
+			}
+
 			// Wenn man keine Schiffe zur Auswahl hat dann wird wieder auf das normale Gebäudebaumenü umgeschaltet
 			if (pDoc->CurrentSystem().GetBuildableShips()->GetSize() == 0)
 				return;
-			if (ShipdesignButton.PtInRect(point))
-				resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
-
 			m_iClickedOn = 0;
 			m_byStartList = 0;
 			m_iWhichSubMenu = 1;
@@ -3978,6 +4194,17 @@ void CSystemMenuView::CreateButtons()
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(350,690), CSize(160,40), CLoc::GetString("BTN_ENERGYMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(520,690), CSize(160,40), CLoc::GetString("BTN_BUILDING_OVERVIEWMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(690,690), CSize(160,40), CLoc::GetString("BTN_TRADEMENUE"), fileN, fileI, fileA));
+	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(860,690), CSize(160,40), "BTN_Defence", fileN, fileI, fileA));
+
+	// switch to previous system
+	fileN = "Other\\" + sPrefix + "buttonminus.bop";
+	fileA = "Other\\" + sPrefix + "buttonminusa.bop";
+	m_SwitchSystemPrevious.Add(new CMyButton(CPoint(50,30) , CSize(40,40), "", fileN, fileN, fileA));
+
+	// switch to next system
+	fileN = "Other\\" + sPrefix + "buttonplus.bop";
+	fileA = "Other\\" + sPrefix + "buttonplusa.bop";
+	m_SwitchSystemNext.Add(new CMyButton(CPoint(1025,30) , CSize(40,40), "", fileN, fileN, fileA));
 
 	// Zuweisungsbuttons im Arbeitermenü
 	fileN = "Other\\" + sPrefix + "buttonminus.bop";

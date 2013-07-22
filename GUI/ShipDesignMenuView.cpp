@@ -47,6 +47,7 @@ void CShipDesignMenuView::OnNewRound()
 	m_iTorpedoWeaponNumber = 0;
 	m_bFoundBetterBeam = FALSE;
 	m_bFoundWorseBeam = FALSE;
+	m_bDisplayAllShips = FALSE;				///< Display of all ingame races (ingame-database)
 	m_pShownShip = NULL;
 }
 // CShipDesignMenuView drawing
@@ -109,6 +110,7 @@ void CShipDesignMenuView::OnInitialUpdate()
 	// Schiffsdesignansicht
 	m_iClickedOnShip = -1;
 	m_iOldClickedOnShip = -1;
+	m_bDisplayAllShips = FALSE;
 	m_iBeamWeaponNumber = 0;
 	m_iTorpedoWeaponNumber = 0;
 	m_bFoundBetterBeam = FALSE;
@@ -434,6 +436,19 @@ void CShipDesignMenuView::DrawShipDesignMenue(Graphics* g)
 		delete banner;
 	}
 
+	// draw Button DisplayAllShips
+	Bitmap* btnDisplayAllShips = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pMajor->GetPrefix() + "button_small.bop");//All-Button zeichnen
+	if(btnDisplayAllShips)
+		g->DrawImage(btnDisplayAllShips, 40, 650, 80, 30);
+
+	CString s;
+	if (!m_bDisplayAllShips)
+		s=CLoc::GetString("BTN_ALL");
+	else
+		s=CLoc::GetString("BTN_CURRENTS");
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(40,750,80,30), &fontFormat, &fontBrush);
+
+
 	// "Schiffsdesign" in der Mitte zeichnen
 	// Rassenspezifische Schriftart auswählen
 	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
@@ -457,6 +472,20 @@ void CShipDesignMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 	if (!pMajor)
 		return;
 
+	// clicked to DisplayAllShips
+	CRect rect;
+	rect.SetRect(40,750,80,30);
+	if (rect.PtInRect(point))
+	{
+		m_bDisplayAllShips=!m_bDisplayAllShips;
+		//if (m_bDisplayAllShips)
+		//	std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
+		//else
+		//	std::sort(m_vRaceList.begin(), m_vRaceList.end(),CompareRaceName);
+		Invalidate();
+		return;
+	}
+
 	CalcLogicalPoint(point);
 
 	// Wenn wir in der Schiffsdesignansicht sind
@@ -477,6 +506,7 @@ void CShipDesignMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 		pMajor->GetEmpire()->GetResearch()->GetConstructionTech(),
 		pMajor->GetEmpire()->GetResearch()->GetWeaponTech()
 	};
+
 
 	for (int i = 0; i < pDoc->m_ShipInfoArray.GetSize(); i++)
 		if (pDoc->m_ShipInfoArray.GetAt(i).GetRace() == pMajor->GetRaceShipNumber())
@@ -522,6 +552,15 @@ void CShipDesignMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 						j++;
 					}
 				}
+
+			if (m_bDisplayAllShips)
+			{
+			Invalidate(FALSE);
+			return;
+			}
+
+
+
 	// Bevor wir irgendetwas ändern können müssen wir überprüfen, dass das gerade angeklickte Schiff nicht gerade
 	// gebaut wird. Wenn das der Fall sein sollte können wir nix ändern. Es kommt dann eine Meldung in welchem
 	// System das Schiff gerade gebaut wird
@@ -531,6 +570,7 @@ void CShipDesignMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 			Invalidate(FALSE);
 			return;
 		}
+
 	counter = 0;
 	// Überprüfen ob irgendetwas an den Beamwaffen ändern möchte
 	if (m_pShownShip && m_pShownShip->GetBeamWeapons()->GetSize() > 0)

@@ -108,6 +108,20 @@ namespace EMPIRE_NEWS_TYPE
 		SOMETHING	= 6
 	};
 }
+namespace ADVISOR_NEWS_TYPE
+{
+	enum Typ
+	{
+		AD_TUTORIAL	= -1,
+		AD_NO_TYPE		= 0,
+		AD_ECONOMY		= 1,
+		AD_RESEARCH	= 2,
+		AD_SECURITY	= 3,
+		AD_DIPLOMACY	= 4,
+		AD_MILITARY	= 5,
+		AD_SOMETHING	= 6
+	};
+}
 
 // ------------- Reaktion auf Nachrichten --------------------------------------
 namespace ANSWER_STATUS

@@ -112,6 +112,8 @@ void CMainBaseView::DrawGDIButtons(Graphics* g, CArray<CMyButton*>* buttonArray,
 		buttonArray->GetAt(i)->DrawButton(*g, pDoc->GetGraphicPool(), font, fontBrush);
 }
 
+
+
 void CMainBaseView::ButtonReactOnMouseOver(const CPoint &point, CArray<CMyButton*>* buttonArray)
 {
 	ASSERT((CBotEDoc*)GetDocument());

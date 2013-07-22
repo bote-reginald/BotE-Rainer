@@ -201,17 +201,12 @@ if (m_vPlanetRects.empty() == FALSE)
 						case 7:			sBoni = CLoc::GetString("ENERGY");	break;
 					}
 
-					//CString sBonus;
 					sBonus.Format("%d%% %s\n",nBonus, sBoni);
-					//sBonus = CHTMLStringBuilder::GetHTMLColor(sBonus);
-					//sBonus = CHTMLStringBuilder::GetHTMLHeader(sBonus, _T("h5"));
 					sSystemBoni += sBonus;
 
-//					fontBrush.SetColor(Color(0,0,0));
-//		g.DrawString(CComBSTR(sSystemBoni), -1, &Gdiplus::Font(CComBSTR("ARIAL"), 8), PointF(950,100), &fontFormat, &fontBrush);
 				}
-									fontBrush.SetColor(Color(0,0,0));
-		g.DrawString(CComBSTR(sSystemBoni), -1, &Gdiplus::Font(CComBSTR("ARIAL"), 9), PointF(990,90), &fontFormat, &fontBrush);
+								fontBrush.SetColor(Color(0,0,0));
+				g.DrawString(CComBSTR(sSystemBoni), -1, &Gdiplus::Font(CComBSTR("ARIAL"), 9), PointF(990,90), &fontFormat, &fontBrush);
 			}
 //			return sSunColor + sSunDesc + sSystemBoni;
 		

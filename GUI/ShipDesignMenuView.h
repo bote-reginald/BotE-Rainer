@@ -65,6 +65,7 @@ private:
 	// Hier die Variablen, die wir benötigen, wenn wir in der Schiffsdesignansicht sind
 	short  m_iClickedOnShip;			// auf welches Schiff wurde in der Designansicht geklickt
 	short  m_iOldClickedOnShip;			// auf welches Schiffe wurde vorher geklickt, braucht man als Modifikator
+	bool m_bDisplayAllShips;				///< Display of all ingame ships (ingame-database)
 	short  m_nSizeOfShipDesignList;		///< Anzahl der Einträge in der Schiffsdesignliste
 	USHORT m_iBeamWeaponNumber;			// Nummer der Beamwaffe
 	USHORT m_iTorpedoWeaponNumber;		// Nummer der Torpedowaffe

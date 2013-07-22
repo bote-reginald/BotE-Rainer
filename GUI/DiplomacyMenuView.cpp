@@ -1844,11 +1844,25 @@ void CDiplomacyMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 	}
 
+	// clicked to Sort
 	rect.SetRect(40,70,120,100);
 	if (rect.PtInRect(point))
 	{
 		m_bSortRaceList=!m_bSortRaceList;
 		if (m_bSortRaceList)
+			std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
+		else
+			std::sort(m_vRaceList.begin(), m_vRaceList.end(),CompareRaceName);
+		Invalidate();
+		return;
+	}
+
+	// clicked to DisplayAllRaces
+	rect.SetRect(40,750,80,30);
+	if (rect.PtInRect(point))
+	{
+		m_bDisplayAllRaces=!m_bDisplayAllRaces;
+		if (m_bDisplayAllRaces)
 			std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
 		else
 			std::sort(m_vRaceList.begin(), m_vRaceList.end(),CompareRaceName);

@@ -73,6 +73,14 @@ private:
 	/// @param g Zeiger auf GDI+ Grafikobjekt
 	void DrawSystemTradeMenue(Graphics* g);
 
+		/// Funktion zum zeichnen der SystemVerteidigung
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	void DrawSystemDefenceMenue(Graphics* g);
+
+			/// Funktion zum zeichnen der SystemVerteidigung
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	void DrawShipdesign(Graphics* g);
+
 	/// Funktion zeichnet die groﬂen Buttons (Energy, Arbeiter...) unten in der Systemansicht
 	/// @param g Zeiger auf GDI+ Grafikobjekt
 	void DrawButtonsUnderSystemView(Graphics* g);
@@ -102,6 +110,9 @@ private:
 	CArray<CMyButton*> m_BuildMenueMainButtons;		///< die unteren Buttons in der Baumen¸ansicht (also Baumen¸, Arbeiter...)
 	CArray<CMyButton*> m_WorkerButtons;				///< die Buttons in der Arbeitermen¸ansicht zum ƒndern der zugewiesenen Arbeiter
 	CArray<CMyButton*> m_SystemTradeButtons;		///< die Buttons in der Systemmen¸handelsansicht zum ƒndern der Mengen im stellaren Lager
+
+	BOOLEAN m_SwitchSystemPrevious;
+	BOOLEAN m_SwitchSystemNext;
 
 	// sonstige Variablen
 	// Hier die Rechtecke zum Klicken Ìn der Baumen¸ansicht
@@ -140,9 +151,13 @@ private:
 	CRect BuildingInfoButton;				// Rechteck f¸r den Geb‰udeinfobutton
 	CRect BuildingDescriptionButton;		// Rechteck f¸r den Geb‰udebeschreibungsbutton
 	CRect ChangeWorkersButton;				// Rechteck f¸r den Button f¸r Umschaltung zwischen "normalen" und RES-Arbeitern
+	CRect SwitchSystemPrevious;
+	CRect SwitchSystemNext;
 	CRect Timber[5][200];					// Die Balken die die Arbeiterzuweisung anzeigen 5 St¸ck a max. 200 Arbeiter
 
 	BYTE m_bySubMenu;						// Welcher Button wurde gedr¸ckt (0 f¸r Baumen¸, 1 f¸r Arbeiter usw.)
+
+
 	BOOLEAN m_bClickedOnBuyButton;			// Wurde auf den "kaufen" Button in der Bauansicht geklickt
 	BOOLEAN m_bClickedOnDeleteButton;		// Wurde auf den "Bau_abbrechen" Button geklickt in der Bauansicht
 	BOOLEAN m_bClickedOnBuildingInfoButton;	// Wurde auf den "Info" Button f¸r ein Geb‰ude geklickt

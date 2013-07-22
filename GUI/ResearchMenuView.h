@@ -54,6 +54,22 @@ private:
 	/// @param g Zeiger auf GDI+ Grafikobjekt
 	void DrawUniqueResearchMenue(Graphics* g);
 
+		/// function for drawing researchmenue 3
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	void DrawResearchMenue3(Graphics* g);
+
+			/// function for drawing researchmenue 4
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+		void DrawResearchMenue4(Graphics* g);
+	
+		/// function for drawing researchmenue 5
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	void DrawResearchMenue5(Graphics* g);
+
+	/// function for drawing researchmenue 6
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	void DrawResearchMenue6(Graphics* g);
+
 	// Attribute
 
 	// Buttons
