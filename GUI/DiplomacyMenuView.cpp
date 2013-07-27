@@ -272,11 +272,11 @@ BOOL CDiplomacyMenuView::OnEraseBkgnd(CDC* /*pDC*/)
 	return FALSE;
 }
 
+void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
+{
 /////////////////////////////////////////////////////////////////////////////////////////
 // Hier die Funktion zum Zeichnen des Diplomatiemenüs
 /////////////////////////////////////////////////////////////////////////////////////////
-void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
-{
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -663,6 +663,10 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 		s = CLoc::GetString("DIPLOMACY_MENUE_OFFERS");
 	else if (m_bySubMenu == 2)
 		s = CLoc::GetString("DIPLOMACY_MENUE_RECEIPTS");
+	else if (m_bySubMenu == 3)
+		s = "Ingame";  // later get from Stringtable.txt
+	else if (m_bySubMenu == 4)
+		s = "Database"; // later get from Stringtable.txt
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx, 50), &fontFormat, &fontBrush);
 
 	resources::pMainFrame->InvalidateView(RUNTIME_CLASS(CDiplomacyBottomView));
@@ -707,7 +711,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 	// draw Button DisplayAllRaces
 		Bitmap* btnDisplayAllRaces = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pPlayer->GetPrefix() + "button_small.bop");//All-Button zeichnen
 	if(btnDisplayAllRaces)
-		g->DrawImage(btnDisplayAllRaces, 40, 650, 80, 30);
+		g->DrawImage(btnDisplayAllRaces,40,650,80,30);
 
 	if (!m_bDisplayAllRaces)
 		s=CLoc::GetString("BTN_ALL");
@@ -795,6 +799,10 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 				// Wenn wir im Angebotsbildschirm sind
 				else if (m_bySubMenu == 1)
 					this->DrawDiplomacyOfferMenue(g, pRace->GetRaceID());
+				else if (m_bySubMenu == 3)
+					this->DrawDiplomacyIngameMenue(g, pRace->GetRaceID());
+				else if (m_bySubMenu == 4)
+					this->DrawDiplomacyDatabaseMenue(g, pRace->GetRaceID());
 
 
 				// Name der Rasse zeichnen
@@ -853,10 +861,17 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 					else if (relation < 95) s = CLoc::GetString("ENTHUSED");
 					else s = CLoc::GetString("DEVOTED");
 
+					
+
 					CString str_relation;
 					str_relation.Format(" (%d)",relation);
 						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_relation);
 					s = s + str_relation;
+
+					CString str_Acceptance;
+					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
+						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_Acceptance);
+					s = s + str_Acceptance;
 					
 					fontFormat.SetAlignment(StringAlignmentCenter);
 					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(735,403,300,25), &fontFormat, &fontBrush);
@@ -1088,6 +1103,402 @@ void CDiplomacyMenuView::DrawDiplomacyInfoMenue(Graphics* g, const CString& sWhi
 	CRace* pRace = pDoc->GetRaceCtrl()->GetRace(sWhichRace);
 	if (!pRace)
 		return;
+
+	CString fontName = "";
+	Gdiplus::REAL fontSize = 0.0;
+
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pPlayer, 2, fontName, fontSize);
+	// Schriftfarbe wählen
+	Gdiplus::Color normalColor;
+	CFontLoader::GetGDIFontColor(pPlayer, 3, normalColor);
+	SolidBrush fontBrush(normalColor);
+
+	StringFormat fontFormat;
+	fontFormat.SetAlignment(StringAlignmentNear);
+	fontFormat.SetLineAlignment(StringAlignmentNear);
+	fontFormat.SetFormatFlags(!StringFormatFlagsNoWrap);
+
+	Gdiplus::Color markColor;
+	markColor.SetFromCOLORREF(pPlayer->GetDesign()->m_clrListMarkTextColor);
+
+	CString s;
+
+	// Beschreibung der Rasse
+	g->DrawString(CComBSTR(pRace->GetRaceDesc()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(190,475,845,190), &fontFormat, &fontBrush);
+
+	// Ingame-Daten zu der Rasse, welche in der Box angezeigt werden
+	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+	fontBrush.SetColor(markColor);
+	RectF rect(215,110,260,25);
+	s = CLoc::GetString("NAME").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+	s = CLoc::GetString("HOMESYSTEM").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+	s = CLoc::GetString("RELATIONSHIP").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 50;
+	s = CLoc::GetString("KNOWN_EMPIRES").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+
+	// Informationen anzeigen
+	rect.Y -= 100;
+	fontBrush.SetColor(normalColor);
+	fontFormat.SetAlignment(StringAlignmentFar);
+	s = pRace->GetRaceName();
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+
+	// Name des Heimatsystems und Sektorkoordinate anzeigen
+	s = pRace->GetHomesystemName();
+	if (!s.IsEmpty())
+	{
+		for (int y = 0; y < STARMAP_SECTORS_VCOUNT; y++)
+		{
+			for (int x = 0; x < STARMAP_SECTORS_HCOUNT; x++)
+			{
+				if(pDoc->GetSector(x,y).GetName()==s&&pDoc->GetSector(x,y).GetKnown(pPlayer->GetRaceID()))
+				{
+					CString coords;
+					coords.Format(" (%i/%i)", y,x);
+					s += coords;
+					break;
+				}
+				else if(pDoc->GetSector(x,y).GetName()==s&&!pDoc->GetSector(x,y).GetKnown(pPlayer->GetRaceID()))
+				{
+					CString coords;
+					coords.Format(" (%s)", CLoc::GetString("UNKNOWN"));
+					s += coords;
+					break;
+				}
+			}
+		}
+
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	rect.Y += 25;
+
+	Gdiplus::Color color(normalColor);
+	s = this->PrintDiplomacyStatus(pPlayer->GetRaceID(), sWhichRace, color);
+	fontBrush.SetColor(color);
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+
+	if (pRace->IsMinor())
+	{
+		fontBrush.SetColor(markColor);
+		fontFormat.SetAlignment(StringAlignmentNear);
+		s = CLoc::GetString("ACCEPTANCE").MakeUpper()+":";
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+		fontBrush.SetColor(normalColor);
+		fontFormat.SetAlignment(StringAlignmentFar);
+		s.Format("%d%%",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+		// (ok) MYTRACE("diplomacy")(MT::LEVEL_DEBUG, "AcceptancePoints: %s\n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+	// Wenn wir einen Verteidigungpakt mit der Rasse haben (nur bei Majors)
+	else if (pRace->IsMajor() && pPlayer->GetDefencePact(sWhichRace) == true)
+	{
+		fontBrush.SetColor(Color(226,44,250));
+		if (pPlayer->GetDefencePactDuration(sWhichRace) != 0)
+			s.Format("%s (%d)", CLoc::GetString("DEFENCE_PACT"), pPlayer->GetDefencePactDuration(sWhichRace));
+		else
+			s = CLoc::GetString("DEFENCE_PACT");
+		fontFormat.SetAlignment(StringAlignmentCenter);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	fontBrush.SetColor(normalColor);
+	fontFormat.SetAlignment(StringAlignmentNear);
+	rect.Y += 50;
+
+	// bei Freundschaft wird der Status zu den anderen Rassen angezeigt
+	if (pPlayer->GetAgreement(sWhichRace) >= DIPLOMATIC_AGREEMENT::FRIENDSHIP)
+	{
+		map<CString, CMajor*>* pmMajors = pDoc->GetRaceCtrl()->GetMajors();
+		for (map<CString, CMajor*>::const_iterator it = pmMajors->begin(); it != pmMajors->end(); ++it)
+			if (it->first != sWhichRace && it->first != pPlayer->GetRaceID())
+				if (pRace->IsRaceContacted(it->first))
+				{
+					fontBrush.SetColor(normalColor);
+					fontFormat.SetAlignment(StringAlignmentNear);
+					s = it->second->GetRaceName();
+					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+
+					fontFormat.SetAlignment(StringAlignmentFar);
+					Gdiplus::Color color(normalColor);
+					s = this->PrintDiplomacyStatus(it->first, sWhichRace, color);
+					fontBrush.SetColor(color);
+					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+					rect.Y += 25;
+					//MYTRACE("logdata")(MT::LEVEL_DEBUG, "PrintDiplomacyStatus: %s\n", s);
+				}
+	}
+	// sonst keine Angaben
+	else
+	{
+		s = CLoc::GetString("NO_SPECS");
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	// Hier die ganzen Buttons in der Informationsansicht zeichnen
+	// Wenn wir einen Vertrag mit einer Minorrace haben so können wir diesen auch aufheben
+	if (pRace->IsMinor())
+	{
+		// Angebote durchgehen, suchen ob wir schon eine Kündigung bei der Rasse gemacht haben
+		for (UINT i = 0; i < pPlayer->GetOutgoingDiplomacyNews()->size(); i++)
+		{
+			m_OutgoingInfo = pPlayer->GetOutgoingDiplomacyNews()->at(i);
+			if (m_OutgoingInfo.m_nType == DIPLOMATIC_AGREEMENT::NONE && m_OutgoingInfo.m_sToRace == sWhichRace && m_OutgoingInfo.m_sFromRace == pPlayer->GetRaceID())
+			{
+				m_bShowSendButton = FALSE;
+				CDiplomacyBottomView::SetHeadLine(m_OutgoingInfo.m_sHeadline);
+				CDiplomacyBottomView::SetText(m_OutgoingInfo.m_sText);
+				break;
+			}
+		}
+
+		if (pRace->GetAgreement(pPlayer->GetRaceID()) > DIPLOMATIC_AGREEMENT::NONE)
+		{
+			m_OutgoingInfo.m_sHeadline = CLoc::GetString("CANCEL_AGREEMENT");
+			Gdiplus::Color color;
+			m_OutgoingInfo.m_sText = CLoc::GetString("CANCEL_AGREEMENT_TEXT", FALSE, this->PrintDiplomacyStatus(pPlayer->GetRaceID(), m_sClickedOnRace, color), pRace->GetRaceName());
+
+			if (m_bShowSendButton == TRUE)
+				s = CLoc::GetString("BTN_ANNUL");
+			else
+				s = CLoc::GetString("BTN_CANCEL");
+
+			Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pPlayer->GetPrefix() + "button_small.bop");
+			Color btnColor;
+			CFontLoader::GetGDIFontColor(pPlayer, 1, btnColor);
+			SolidBrush btnBrush(btnColor);
+			if (graphic)
+				g->DrawImage(graphic, 275, 370, 120, 30);
+
+			fontFormat.SetAlignment(StringAlignmentCenter);
+			fontFormat.SetLineAlignment(StringAlignmentCenter);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(275,370,120,30), &fontFormat, &btnBrush);
+		}
+	}
+}
+void CDiplomacyMenuView::DrawDiplomacyDatabaseMenue(Graphics* g, const CString& sWhichRace)
+{
+	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	CMajor* pPlayer = m_pPlayersRace;
+	ASSERT(pPlayer);
+
+
+
+
+	CRace* pRace = pDoc->GetRaceCtrl()->GetRace(sWhichRace);
+	if (!pRace)
+		return;
+
+	CString fontName = "";
+	Gdiplus::REAL fontSize = 0.0;
+
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pPlayer, 2, fontName, fontSize);
+	// Schriftfarbe wählen
+	Gdiplus::Color normalColor;
+	CFontLoader::GetGDIFontColor(pPlayer, 3, normalColor);
+	SolidBrush fontBrush(normalColor);
+
+	StringFormat fontFormat;
+	fontFormat.SetAlignment(StringAlignmentNear);
+	fontFormat.SetLineAlignment(StringAlignmentNear);
+	fontFormat.SetFormatFlags(!StringFormatFlagsNoWrap);
+
+	Gdiplus::Color markColor;
+	markColor.SetFromCOLORREF(pPlayer->GetDesign()->m_clrListMarkTextColor);
+
+	CString s;
+
+	// Beschreibung der Rasse
+	g->DrawString(CComBSTR(pRace->GetRaceDesc()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(190,475,845,190), &fontFormat, &fontBrush);
+
+	// Ingame-Daten zu der Rasse, welche in der Box angezeigt werden
+	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+	fontBrush.SetColor(markColor);
+	RectF rect(215,110,260,25);
+	s = CLoc::GetString("NAME").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+	s = CLoc::GetString("HOMESYSTEM").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+	s = CLoc::GetString("RELATIONSHIP").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 50;
+	s = CLoc::GetString("KNOWN_EMPIRES").MakeUpper()+":";
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+
+	// Informationen anzeigen
+	rect.Y -= 100;
+	fontBrush.SetColor(normalColor);
+	fontFormat.SetAlignment(StringAlignmentFar);
+	s = pRace->GetRaceName();
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+
+	// Name des Heimatsystems und Sektorkoordinate anzeigen
+	s = pRace->GetHomesystemName();
+	if (!s.IsEmpty())
+	{
+		for (int y = 0; y < STARMAP_SECTORS_VCOUNT; y++)
+		{
+			for (int x = 0; x < STARMAP_SECTORS_HCOUNT; x++)
+			{
+				if(pDoc->GetSector(x,y).GetName()==s&&pDoc->GetSector(x,y).GetKnown(pPlayer->GetRaceID()))
+				{
+					CString coords;
+					coords.Format(" (%i/%i)", y,x);
+					s += coords;
+					break;
+				}
+				else if(pDoc->GetSector(x,y).GetName()==s&&!pDoc->GetSector(x,y).GetKnown(pPlayer->GetRaceID()))
+				{
+					CString coords;
+					coords.Format(" (%s)", CLoc::GetString("UNKNOWN"));
+					s += coords;
+					break;
+				}
+			}
+		}
+
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	rect.Y += 25;
+
+	Gdiplus::Color color(normalColor);
+	s = this->PrintDiplomacyStatus(pPlayer->GetRaceID(), sWhichRace, color);
+	fontBrush.SetColor(color);
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	rect.Y += 25;
+
+	if (pRace->IsMinor())
+	{
+		fontBrush.SetColor(markColor);
+		fontFormat.SetAlignment(StringAlignmentNear);
+		s = CLoc::GetString("ACCEPTANCE").MakeUpper()+":";
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+		fontBrush.SetColor(normalColor);
+		fontFormat.SetAlignment(StringAlignmentFar);
+		s.Format("%d%%",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+		// (ok) MYTRACE("diplomacy")(MT::LEVEL_DEBUG, "AcceptancePoints: %s\n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+	// Wenn wir einen Verteidigungpakt mit der Rasse haben (nur bei Majors)
+	else if (pRace->IsMajor() && pPlayer->GetDefencePact(sWhichRace) == true)
+	{
+		fontBrush.SetColor(Color(226,44,250));
+		if (pPlayer->GetDefencePactDuration(sWhichRace) != 0)
+			s.Format("%s (%d)", CLoc::GetString("DEFENCE_PACT"), pPlayer->GetDefencePactDuration(sWhichRace));
+		else
+			s = CLoc::GetString("DEFENCE_PACT");
+		fontFormat.SetAlignment(StringAlignmentCenter);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	fontBrush.SetColor(normalColor);
+	fontFormat.SetAlignment(StringAlignmentNear);
+	rect.Y += 50;
+
+	// bei Freundschaft wird der Status zu den anderen Rassen angezeigt
+	if (pPlayer->GetAgreement(sWhichRace) >= DIPLOMATIC_AGREEMENT::FRIENDSHIP)
+	{
+		map<CString, CMajor*>* pmMajors = pDoc->GetRaceCtrl()->GetMajors();
+		for (map<CString, CMajor*>::const_iterator it = pmMajors->begin(); it != pmMajors->end(); ++it)
+			if (it->first != sWhichRace && it->first != pPlayer->GetRaceID())
+				if (pRace->IsRaceContacted(it->first))
+				{
+					fontBrush.SetColor(normalColor);
+					fontFormat.SetAlignment(StringAlignmentNear);
+					s = it->second->GetRaceName();
+					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+
+					fontFormat.SetAlignment(StringAlignmentFar);
+					Gdiplus::Color color(normalColor);
+					s = this->PrintDiplomacyStatus(it->first, sWhichRace, color);
+					fontBrush.SetColor(color);
+					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+					rect.Y += 25;
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "PrintDiplomacyStatus: %s\n", s);
+				}
+	}
+	// sonst keine Angaben
+	else
+	{
+		s = CLoc::GetString("NO_SPECS");
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+	}
+
+	// Hier die ganzen Buttons in der Informationsansicht zeichnen
+	// Wenn wir einen Vertrag mit einer Minorrace haben so können wir diesen auch aufheben
+	if (pRace->IsMinor())
+	{
+		// Angebote durchgehen, suchen ob wir schon eine Kündigung bei der Rasse gemacht haben
+		for (UINT i = 0; i < pPlayer->GetOutgoingDiplomacyNews()->size(); i++)
+		{
+			m_OutgoingInfo = pPlayer->GetOutgoingDiplomacyNews()->at(i);
+			if (m_OutgoingInfo.m_nType == DIPLOMATIC_AGREEMENT::NONE && m_OutgoingInfo.m_sToRace == sWhichRace && m_OutgoingInfo.m_sFromRace == pPlayer->GetRaceID())
+			{
+				m_bShowSendButton = FALSE;
+				CDiplomacyBottomView::SetHeadLine(m_OutgoingInfo.m_sHeadline);
+				CDiplomacyBottomView::SetText(m_OutgoingInfo.m_sText);
+				break;
+			}
+		}
+
+		if (pRace->GetAgreement(pPlayer->GetRaceID()) > DIPLOMATIC_AGREEMENT::NONE)
+		{
+			m_OutgoingInfo.m_sHeadline = CLoc::GetString("CANCEL_AGREEMENT");
+			Gdiplus::Color color;
+			m_OutgoingInfo.m_sText = CLoc::GetString("CANCEL_AGREEMENT_TEXT", FALSE, this->PrintDiplomacyStatus(pPlayer->GetRaceID(), m_sClickedOnRace, color), pRace->GetRaceName());
+
+			if (m_bShowSendButton == TRUE)
+				s = CLoc::GetString("BTN_ANNUL");
+			else
+				s = CLoc::GetString("BTN_CANCEL");
+
+			Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pPlayer->GetPrefix() + "button_small.bop");
+			Color btnColor;
+			CFontLoader::GetGDIFontColor(pPlayer, 1, btnColor);
+			SolidBrush btnBrush(btnColor);
+			if (graphic)
+				g->DrawImage(graphic, 275, 370, 120, 30);
+
+			fontFormat.SetAlignment(StringAlignmentCenter);
+			fontFormat.SetLineAlignment(StringAlignmentCenter);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(275,370,120,30), &fontFormat, &btnBrush);
+		}
+	}
+}
+void CDiplomacyMenuView::DrawDiplomacyIngameMenue(Graphics* g, const CString& sWhichRace)
+{
+	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	CMajor* pPlayer = m_pPlayersRace;
+	ASSERT(pPlayer);
+
+			map<CString, CRace*>* pmRaces = m_pRaceCtrl->GetRaces();
+			for (map<CString, CRace*>::iterator it = pmRaces->begin(); it != pmRaces->end(); ++it)
+				for (map<CString, CRace*>::const_iterator jt = pmRaces->begin(); jt != pmRaces->end(); ++jt)
+					if (it->first != jt->first && it->second->IsMajor() && jt->second->IsMajor())
+						it->second->SetIsRaceContacted(jt->first, true);
+
+	CRace* pRace = pDoc->GetRaceCtrl()->GetRace(sWhichRace);
+	if (!pRace)
+		return;
+	AfxMessageBox("pRace"); 
 
 	CString fontName = "";
 	Gdiplus::REAL fontSize = 0.0;
@@ -2529,6 +2940,8 @@ void CDiplomacyMenuView::CreateButtons()
 	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(10,690) , CSize(160,40), CLoc::GetString("BTN_INFORMATION"), fileN, fileI, fileA));
 	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(200,690) , CSize(160,40), CLoc::GetString("OFFER"), fileN, fileI, fileA));
 	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(390,690) , CSize(160,40), CLoc::GetString("RECEIPT"), fileN, fileI, fileA));
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(580,690) , CSize(160,40), "ingame", fileN, fileI, fileA));
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(770,690) , CSize(160,40), "Database", fileN, fileI, fileA));
 	// Angebotsbuttons in der Diplomatieangebotsansicht
 	m_DiplomacyMajorOfferButtons.Add(new CMyButton(CPoint(200,140) , CSize(160,40), CLoc::GetString("BTN_TRADECONTRACT"), fileN, fileI, fileA));
 	m_DiplomacyMajorOfferButtons.Add(new CMyButton(CPoint(400,140) , CSize(160,40), CLoc::GetString("BTN_FRIENDSHIP"), fileN, fileI, fileA));
@@ -2671,7 +3084,7 @@ CString CDiplomacyMenuView::CreateTooltip(void)
 			USHORT relation = pRace->GetRelation(pPlayer->GetRaceID());
 			CString strRelation;
 			strRelation.Format ("%i", relation);
-			MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
+			//MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
 			sTip_add = "\n\n\n"+CLoc::GetString("RELATIONSHIP")+"-"+CLoc::GetString("MORALVALUE")+": " + strRelation;
 
 			CString sTip = pRace->GetRaceDesc();

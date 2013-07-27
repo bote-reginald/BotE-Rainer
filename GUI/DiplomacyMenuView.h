@@ -45,6 +45,8 @@ public:
 
 	BYTE GetSubMenu() const {return m_bySubMenu;}
 
+	CRaceController* m_pRaceCtrl;		///< Rassencontroller für alle Rassen des Spiels
+
 private:
 	// Funktionen
 	/// Funkion legt alle Buttons für die Geheimdienstansichten an.
@@ -62,6 +64,16 @@ private:
 	/// @param g Zeiger auf GDI+ Grafikobjekt
 	/// @param sWhichRace aktuell angeklickte Rasse
 	void DrawDiplomacyInfoMenue(Graphics* g, const CString& sWhichRace);
+
+		/// Funktion zeichnet das Informationsmenü in der Diplomatieansicht
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	/// @param sWhichRace aktuell angeklickte Rasse
+	void DrawDiplomacyIngameMenue(Graphics* g, const CString& sWhichRace);
+
+		/// Funktion zeichnet das Informationsmenü in der Diplomatieansicht
+	/// @param g Zeiger auf GDI+ Grafikobjekt
+	/// @param sWhichRace aktuell angeklickte Rasse
+	void DrawDiplomacyDatabaseMenue(Graphics* g, const CString& sWhichRace);
 
 	/// Funktion zeichnet das Angebotsmenü der Diplomatieansicht
 	/// @param g Zeiger auf GDI+ Grafikobjekt

@@ -1855,7 +1855,9 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 		const CBuildingInfo *buildingInfo = &pDoc->BuildingInfo.GetAt(pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(i).GetRunningNumber() - 1);
 
 		// wenn das Gebäude Energie benötigt
-		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetShieldPower() > 0 || buildingInfo->GetShipDefend() > 0 || buildingInfo->GetGroundDefend() > 0)
+		//		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetShieldPower() > 0 || buildingInfo->GetShipDefend() > 0 || buildingInfo->GetGroundDefend() > 0)
+
+		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0)
 		{
 			ENERGYSTRUCT es;
 			es.index = i;
@@ -1979,10 +1981,10 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 }
 void CSystemMenuView::DrawShipdesign(Graphics* g)
 {
-	CMajor* pMajor = m_pPlayersRace;
-	ASSERT(pMajor);
+	//CMajor* pMajor = m_pPlayersRace;
+	//ASSERT(pMajor);
 
-	resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
+	//resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
 }
 
 void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
@@ -4071,6 +4073,15 @@ void CSystemMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	ASSERT(pMajor);
 	if (!pMajor)
 		return;
+
+	//handle all global Hotkeys
+	//CGalaxyMenuView::HandleGlobalHotkeys(nChar, pDoc);
+
+	if (nChar == VK_F2)
+	{
+			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
+			Invalidate(FALSE);
+	}
 
 	// Wenn wir in irgendeinem System sind, können wir mit dem links rechts Pfeil zu einem anderen System wechseln
 	CPoint p = pDoc->GetKO();

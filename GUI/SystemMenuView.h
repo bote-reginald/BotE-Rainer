@@ -111,8 +111,8 @@ private:
 	CArray<CMyButton*> m_WorkerButtons;				///< die Buttons in der Arbeitermenüansicht zum Ändern der zugewiesenen Arbeiter
 	CArray<CMyButton*> m_SystemTradeButtons;		///< die Buttons in der Systemmenühandelsansicht zum Ändern der Mengen im stellaren Lager
 
-	BOOLEAN m_SwitchSystemPrevious;
-	BOOLEAN m_SwitchSystemNext;
+	CArray<CMyButton*>  m_SwitchSystemPrevious;
+	CArray<CMyButton*>  m_SwitchSystemNext;
 
 	// sonstige Variablen
 	// Hier die Rechtecke zum Klicken ín der Baumenüansicht

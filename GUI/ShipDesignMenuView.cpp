@@ -439,10 +439,11 @@ void CShipDesignMenuView::DrawShipDesignMenue(Graphics* g)
 	// draw Button DisplayAllShips
 	Bitmap* btnDisplayAllShips = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pMajor->GetPrefix() + "button_small.bop");//All-Button zeichnen
 	if(btnDisplayAllShips)
-		g->DrawImage(btnDisplayAllShips, 40, 650, 80, 30);
+		g->DrawImage(btnDisplayAllShips,40,750,80,30);
 
 	CString s;
-	if (!m_bDisplayAllShips)
+	//AfxMessageBox("m_bDisplayAllShips"); 
+	if (m_bDisplayAllShips)
 		s=CLoc::GetString("BTN_ALL");
 	else
 		s=CLoc::GetString("BTN_CURRENTS");
@@ -477,7 +478,9 @@ void CShipDesignMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 	rect.SetRect(40,750,80,30);
 	if (rect.PtInRect(point))
 	{
+		AfxMessageBox("Button DisplayAllShips pressed"); 
 		m_bDisplayAllShips=!m_bDisplayAllShips;
+		AfxMessageBox("Button DisplayAllShips pressed2"); 
 		//if (m_bDisplayAllShips)
 		//	std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
 		//else

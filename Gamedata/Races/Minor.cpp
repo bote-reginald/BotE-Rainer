@@ -623,9 +623,9 @@ CString CMinor::GetTooltip(void) const
 	sCor = CHTMLStringBuilder::GetHTMLColor(sCor, _T("silver"));
 	sCor = CHTMLStringBuilder::GetHTMLHeader(sCor, _T("h4"));
 	sCor += ": ";
-	//sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
-	//sCor += CHTMLStringBuilder::GetHTMLStringHorzLine();
-	//sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+	sCor += CHTMLStringBuilder::GetHTMLStringHorzLine();
+	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
 
 	s = "";
 	switch (GetCorruptibility())
@@ -700,18 +700,18 @@ CString sRelation;
 	sDesc = " ";
 	sDesc = CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
 	sDesc += CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h4"));
-	//sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
-	//sDesc += CHTMLStringBuilder::GetHTMLStringHorzLine();
+	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
+	sDesc += CHTMLStringBuilder::GetHTMLStringHorzLine();
 	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
 	sDesc += m_sDesc;
-	sDesc += CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
+	//sDesc += CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
 
 	//sDesc += m_sDesc;
-
-	s = CHTMLStringBuilder::GetHTMLColor(sDesc);
-	s = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h5"));
-	sCor += s;
-	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+//s = "";
+//	s = CHTMLStringBuilder::GetHTMLColor(sDesc);
+//	s = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h5"));
+//	sCor += s;
+//	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
 //*/
 
 	return CHTMLStringBuilder::GetHTMLCenter(sTip + sProgress + sCor + sRelation + sAcceptance + sDesc);

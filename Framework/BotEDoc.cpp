@@ -6245,13 +6245,13 @@ void CBotEDoc::CalcAlienShipEffects()
 void CBotEDoc::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Fügen Sie hier Ihren Befehlsaktualisierungs-UI-Behandlungscode ein.
-	pCmdUI->Enable(FALSE);
+	pCmdUI->Enable(TRUE);
 }
 
 void CBotEDoc::OnUpdateFileOpen(CCmdUI *pCmdUI)
 {
 	// TODO: Fügen Sie hier Ihren Befehlsaktualisierungs-UI-Behandlungscode ein.
-	pCmdUI->Enable(FALSE);
+	pCmdUI->Enable(TRUE);
 }
 
 BOOL CBotEDoc::OnOpenDocument(LPCTSTR lpszPathName)
