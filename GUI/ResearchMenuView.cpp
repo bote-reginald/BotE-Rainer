@@ -808,16 +808,16 @@ void CResearchMenuView::DrawResearchMenue3(Graphics* g)
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
 	// Wenn wir eine Unique Forschung zur Auswahl haben
-	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
-	{
-		if (bg_urmenu)
-			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
-	}
-	else
-	{
-		if (bg_emptyur)
+	// if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	// {
+	// 	if (bg_urmenu)
+	// 		g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	// }
+	// else
+	// {
+	// 	if (bg_emptyur)
 			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
-	}
+	// }
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -1141,16 +1141,16 @@ void CResearchMenuView::DrawResearchMenue4(Graphics* g)
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
 	// Wenn wir eine Unique Forschung zur Auswahl haben
-	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
-	{
-		if (bg_urmenu)
-			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
-	}
-	else
-	{
-		if (bg_emptyur)
+	// if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	// {
+	// 	if (bg_urmenu)
+	// 		g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	// }
+	// else
+	// {
+	// 	if (bg_emptyur)
 			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
-	}
+	// }
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -1474,16 +1474,16 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
 	// Wenn wir eine Unique Forschung zur Auswahl haben
-	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
-	{
-		if (bg_urmenu)
-			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
-	}
-	else
-	{
-		if (bg_emptyur)
+	// if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	// {
+	// 	if (bg_urmenu)
+	// 		g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	// }
+	// else
+	// {
+	// 	if (bg_emptyur)
 			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
-	}
+	// }
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -2122,6 +2122,7 @@ void CResearchMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 	// Hier überprüfen auf welchen Menübutton wir in den Forschungsansichten (normal und unique) geklickt haben
 	// wechsel zwischen normaler <--> unique Forschung
 	int temp = m_bySubMenu;
+	AfxMessageBox(temp); 
 	if (ButtonReactOnLeftClick(point, &m_ResearchMainButtons, temp, FALSE))
 	{
 		m_bySubMenu = temp;

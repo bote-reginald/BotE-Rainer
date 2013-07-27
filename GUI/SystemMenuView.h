@@ -151,6 +151,7 @@ private:
 	CRect BuildingInfoButton;				// Rechteck für den Gebäudeinfobutton
 	CRect BuildingDescriptionButton;		// Rechteck für den Gebäudebeschreibungsbutton
 	CRect ChangeWorkersButton;				// Rechteck für den Button für Umschaltung zwischen "normalen" und RES-Arbeitern
+	CRect ChangeToTroopsButton;				// Rechteck für den Button für Umschaltung zwischen Defence
 	CRect SwitchSystemPrevious;
 	CRect SwitchSystemNext;
 	CRect Timber[5][200];					// Die Balken die die Arbeiterzuweisung anzeigen 5 Stück a max. 200 Arbeiter
