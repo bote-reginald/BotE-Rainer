@@ -979,14 +979,16 @@ void CBotEDoc::PrepareData()
 		MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: RESEARCHSPEED: %d\n", CResearchInfo::m_dResearchSpeedFactor);
 
 		MYTRACE("general")(MT::LEVEL_INFO, "Preparing game data ready...\n");
-		/*
+		//   /*
 		double habis = 0;
 		CString s;
 		double hab = 0;
 		double temp;
 		CPoint poi;
-		for (int y = 0; y < 20; y++)
-			for (int x = 0; x < 30; x++)
+		int yMax = STARMAP_SECTORS_VCOUNT;
+		int xMax = STARMAP_SECTORS_VCOUNT;
+		for (int y = 0; y < yMax; y++)
+			for (int x = 0; x < xMax; x++)
 			{
 				temp = 0;
 				hab = 0;
@@ -1004,8 +1006,9 @@ void CBotEDoc::PrepareData()
 				}
 			}
 		s.Format("Größtes System ist %s mit %lf Bevölkerung\nin Sektor %d:%d",m_Sectors.at(poi.x+(poi.y)*STARMAP_SECTORS_HCOUNT).GetName(),habis,poi.x,poi.y);
-		AfxMessageBox(s);
-		*/
+		MYTRACE("general")(MT::LEVEL_INFO, s+"\n");
+		//AfxMessageBox(s);
+		//  */
 
 		if(clp->GetTest()) {
 			const CTest* const test = CTest::GetInstance(*this);
@@ -1396,6 +1399,43 @@ void CBotEDoc::NextRound()
 	{
 		MYTRACE("logdata")(MT::LEVEL_INFO, "##################### START NEXT ROUND (round: %d) ####################", GetCurrentRound());
 
+CEmpireNews message;
+CPoint p;
+message.CreateNews("new turn began AD-NO-TYPE", EMPIRE_NEWS_TYPE::TUTORIAL, "no system here",p);
+/*it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+/*
+CEmpireNews message;
+message.CreateNews("new turn began AD_ECONOMY", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_ECONOMY, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+
+CEmpireNews message;
+message.CreateNews("new turn began AD_RESEARCH", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_RESEARCH, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+
+CEmpireNews message;
+message.CreateNews("new turn began AD_SECURITY", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_SECURITY, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+*/
 		// Seed initialisieren
 		RandomSeed();
 

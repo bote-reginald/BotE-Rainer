@@ -98,10 +98,12 @@ namespace EMPIRE_NEWS_TYPE
 {
 	enum Typ
 	{
-		TUTORIAL	= -1,
+		//TUTORIAL	= -1,
+		RESEARCH	= -1,
+
 		NO_TYPE		= 0,
 		ECONOMY		= 1,
-		RESEARCH	= 2,
+		TUTORIAL	= 2,
 		SECURITY	= 3,
 		DIPLOMACY	= 4,
 		MILITARY	= 5,

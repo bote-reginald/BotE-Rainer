@@ -864,6 +864,9 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(550, 70 , 120, 30), &fontFormat, &btnBrush);
 	}
 
+
+
+
 	// Systemnamen mit größerer Schrift in der Mitte zeichnen
 	// Rassenspezifische Schriftart auswählen
 	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
@@ -874,27 +877,25 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 	s.Format("%s", pDoc->GetSector(p.x,p.y).GetName());
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 50), &fontFormat, &fontBrush);
 
-	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
+	// draw Relation and Acceptance top middle
+	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
 	// Schriftfarbe wählen
 	CFontLoader::GetGDIFontColor(pMajor, 4, color);
 	fontBrush.SetColor(color);
-	// draw Relation and Acceptance top middle
 
+CMajor* pPlayer2 = m_pPlayersRace;
+ASSERT(pPlayer2);
 
-
-CMajor* pPlayer = m_pPlayersRace;
-ASSERT(pPlayer);
-
-CString sRace = pDoc->GetSystem(p.x, p.y).GetOwnerOfSystem();
+CString sRace2 = pDoc->GetSystem(p.x, p.y).GetOwnerOfSystem();
 //if (sRace.IsEmpty())
 //  return 0;
 
-CRace* pRace = pDoc->GetRaceCtrl()->GetRace(sRace);
-ASSERT(pRace);
+CRace* pRace2 = pDoc->GetRaceCtrl()->GetRace(sRace2);
+ASSERT(pRace2);
 //if (!pRace->IsMajor())
 //  return 0;
 
-						USHORT relation = pRace->GetRelation(pPlayer->GetRaceID());
+						USHORT relation = pRace2->GetRelation(pPlayer2->GetRaceID());
 											
 					if (relation < 5) s = CLoc::GetString("HATEFUL");
 					else if (relation < 15) s = CLoc::GetString("FURIOUS");
@@ -907,15 +908,14 @@ ASSERT(pRace);
 					else if (relation < 85) s = CLoc::GetString("OPTIMISTIC");
 					else if (relation < 95) s = CLoc::GetString("ENTHUSED");
 					else s = CLoc::GetString("DEVOTED");
-//	s.Format("%s", pDoc->GetSector(p.x,p.y).GetName());
-//					s.Format("Relation:%s", Relation);
+
 					CString str_relation;
 					str_relation.Format(" (%d)",relation);
 						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_relation);
 					s = s + str_relation;
 
 					CString str_Acceptance;
-					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
+					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()) / 50),((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()));
 						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_Acceptance);
 					s = s + str_Acceptance;
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 80), &fontFormat, &fontBrush);
@@ -1282,6 +1282,51 @@ void CSystemMenuView::DrawWorkersMenue(Graphics* g)
 	// Arbeiterzuweisung auf xxx oben links zeichnen
 	s = CLoc::GetString("WORKERS_MENUE")+" "+pDoc->GetSector(p.x,p.y).GetName();
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,720,60), &fontFormat, &fontBrush);
+
+
+	// draw Relation and Acceptance top middle
+	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
+	// Schriftfarbe wählen
+	CFontLoader::GetGDIFontColor(pMajor, 4, normalColor);
+	fontBrush.SetColor(normalColor);
+
+CMajor* pPlayer2 = m_pPlayersRace;
+ASSERT(pPlayer2);
+
+CString sRace2 = pDoc->GetSystem(p.x, p.y).GetOwnerOfSystem();
+//if (sRace.IsEmpty())
+//  return 0;
+
+CRace* pRace2 = pDoc->GetRaceCtrl()->GetRace(sRace2);
+ASSERT(pRace2);
+//if (!pRace->IsMajor())
+//  return 0;
+
+						USHORT relation = pRace2->GetRelation(pPlayer2->GetRaceID());
+											
+					if (relation < 5) s = CLoc::GetString("HATEFUL");
+					else if (relation < 15) s = CLoc::GetString("FURIOUS");
+					else if (relation < 25) s = CLoc::GetString("HOSTILE");
+					else if (relation < 35) s = CLoc::GetString("ANGRY");
+					else if (relation < 45) s = CLoc::GetString("NOT_COOPERATIVE");
+					else if (relation < 55) s = CLoc::GetString("NEUTRAL");
+					else if (relation < 65) s = CLoc::GetString("COOPERATIVE");
+					else if (relation < 75) s = CLoc::GetString("FRIENDLY");
+					else if (relation < 85) s = CLoc::GetString("OPTIMISTIC");
+					else if (relation < 95) s = CLoc::GetString("ENTHUSED");
+					else s = CLoc::GetString("DEVOTED");
+
+					CString str_relation;
+					str_relation.Format(" (%d)",relation);
+						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_relation);
+					s = s + str_relation;
+
+					CString str_Acceptance;
+					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()) / 50),((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()));
+						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_Acceptance);
+					s = s + str_Acceptance;
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 80), &fontFormat, &fontBrush);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -2068,6 +2113,9 @@ void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
 	SolidBrush fontBrush(btnColor);
 
 	DrawGDIButtons(g, &m_BuildMenueMainButtons, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
+
+	DrawGDIButtons(g, &m_SwitchSystemPrevious, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
+	DrawGDIButtons(g, &m_SwitchSystemNext, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -3845,7 +3893,7 @@ void CSystemMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 				}
 			}
 			// go to Defence Menu
-	else if (m_bySubMenu == 5)
+	else if (m_bySubMenu == 3)
 	{
 		CPoint p = pDoc->GetKO();
 		if (ChangeToTroopsButton.PtInRect(point))
@@ -3885,6 +3933,7 @@ void CSystemMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	CMainBaseView::OnLButtonDown(nFlags, point);
 }
+
 
 BOOL CSystemMenuView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {

@@ -8,6 +8,7 @@
 #include "Graphic\memdc.h"
 #include "General/Loc.h"
 #include "GraphicPool.h"
+#include "MainFrm.h"
 
 // CShipDesignBottomView
 
@@ -124,3 +125,84 @@ BOOL CShipDesignBottomView::OnEraseBkgnd(CDC* /*pDC*/)
 	// TODO: Add your message handler code here and/or call default
 	return FALSE;
 }
+
+void CShipDesignBottomView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen und/oder Standard aufrufen
+	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	if (!pDoc->m_bDataReceived)
+		return;
+
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+	if (!pMajor)
+		return;
+
+	if (nChar == VK_F1)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(1, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+	if (nChar == VK_F2)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+		if (nChar == VK_F3)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(3, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+			if (nChar == VK_F4)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(4, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+				if (nChar == VK_F5)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(5, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+	if (nChar == VK_F6)
+	{
+			resources::pMainFrame->SelectMainView(6, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+		if (nChar == VK_F7)
+	{
+			resources::pMainFrame->SelectMainView(7, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+			if (nChar == VK_F9)
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+						if (nChar == 'T')
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+}
+
+

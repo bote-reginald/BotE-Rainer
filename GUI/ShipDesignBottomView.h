@@ -38,8 +38,11 @@ public:
 private:
 	int m_nCurrentShipInfo;	///< Welche Schiffsinfo soll angezeigt werden
 
+
+
 protected:
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };

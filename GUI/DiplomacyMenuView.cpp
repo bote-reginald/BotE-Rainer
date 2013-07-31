@@ -295,15 +295,30 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 	SolidBrush fontBrush(normalColor);
 
 
-	if (m_bySubMenu == 0)
+	if (m_bySubMenu == 0) // DiploInfo
 	{
 		if (bg_diploinfomenu)
 			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
-	else if (m_bySubMenu == 1)
+	else if (m_bySubMenu == 1) // DiploOffers(out)
 	{
 		if (bg_diplooutmenu)
 			g->DrawImage(bg_diplooutmenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 2) // DiploIn
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinmenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 3) //DiploIngame
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 4) //DiploDatabase
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
 	else
 	{
@@ -810,6 +825,15 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 				s = pRace->GetRaceName();// + pRace->GetAgreementDuration();
 				//if (pRace->GetAgreementDuration(s) != 0)
 				//s += status.Format("%s (%d)",CLoc::GetString("FRIENDSHIP_SHORT"), pRace->GetAgreementDuration(s));
+
+				CString sAdd;
+				//sAdd.Format("(%d)",pRace->GetRelation(pRace->GetRaceID()->pRace->GetRaceName())); // Acceptance missing yet
+				sAdd = " (R;";
+				s += sAdd;
+				CString str_Acceptance;
+				// str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
+				str_Acceptance.Format(" A:%d%%)",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				s += sAdd;
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 
 				// Farbe der Schrift und Markierung wählen, wenn wir auf eine Rasse geklickt haben
@@ -884,6 +908,14 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 				Gdiplus::Color color(normalColor);
 				s = this->PrintDiplomacyStatus(pPlayer->GetRaceID(), pRace->GetRaceID(), color);
 				fontBrush.SetColor(color);
+				CString sAdd;
+				//sAdd.Format("(%d)",pRace->GetRelation(pRace->GetRaceID()->pRace->GetRaceName())); // Acceptance missing yet
+				sAdd = "R:,";
+				s += sAdd;
+				CString str_Acceptance;
+				// str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
+				str_Acceptance.Format(" A:%d%%)",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				s += str_Acceptance;
 				g->DrawString(CComBSTR(pRace->GetRaceName()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 			}
 			fontBrush.SetColor(normalColor);

@@ -690,16 +690,24 @@ sAcceptance.Format("xx",GetAcceptancePoints(it->first));
 */
 
 
-CString sRelation;
+	CString sRelation;
+	sRelation = CHTMLStringBuilder::GetHTMLColor(sRelation, _T("silver"));
+	sRelation = CHTMLStringBuilder::GetHTMLHeader(sRelation, _T("h4"));
 	sRelation = "Relation not ready";
+	sRelation += CHTMLStringBuilder::GetHTMLStringNewLine();
+
 
 	CString sAcceptance;
+	sAcceptance = CHTMLStringBuilder::GetHTMLColor(sAcceptance, _T("silver"));
+	sAcceptance = CHTMLStringBuilder::GetHTMLHeader(sAcceptance, _T("h4"));
 	sAcceptance = "Acceptance not ready ";
+	sAcceptance += CHTMLStringBuilder::GetHTMLStringNewLine();
+
 //
 	CString sDesc;
 	sDesc = " ";
 	sDesc = CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
-	sDesc += CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h4"));
+	sDesc = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h4"));
 	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
 	sDesc += CHTMLStringBuilder::GetHTMLStringHorzLine();
 	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
