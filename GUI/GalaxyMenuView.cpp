@@ -1789,9 +1789,10 @@ CString CGalaxyMenuView::CreateTooltip(void)
 					if (pDoc->GetSystem(ko.x, ko.y).GetAllBuildings()->GetAt(l).GetIsBuildingOnline() || pBuildingInfo->GetNeededEnergy() == 0 || pBuildingInfo->GetAllwaysOnline())
 						mOnlineDefenceBuildings[pBuildingInfo->GetBuildingName()] += 1;
 				}
-					mAllShieldPower[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetShieldPower();
-					mAllShipDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetShipDefend();
-					mAllGroundDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetGroundDefend();
+					mAllShieldPower[0]+= pBuildingInfo->GetShieldPower();
+					mAllShipDefence[0] += pBuildingInfo->GetShipDefend();
+					mAllGroundDefence[0] += pBuildingInfo->GetGroundDefend();
+					//mAllGroundDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetGroundDefend();
 					// Boni missing yet
 			}
 
@@ -1805,7 +1806,8 @@ CString CGalaxyMenuView::CreateTooltip(void)
 				for (map<CString, int>::const_iterator it = mAllDefenceBuildings.begin(); it != mAllDefenceBuildings.end(); ++it)
 				{
 					CString sDefence;
-					sDefence.Format("%s: %d/%d\nShieldPower: %i\nShipDefence: %i\nGroundDefence: %i\n", it->first, mOnlineDefenceBuildings[it->first], it->second, mAllShieldPower, mAllShipDefence, mAllGroundDefence);
+					sDefence.Format("%s: %d/%d\nShieldPower: %d\nShipDefence: %d\nGroundDefence: %d\n", 
+						it->first, mOnlineDefenceBuildings[it->first], it->second, mAllShieldPower[0], mAllShipDefence[0], mAllGroundDefence[0]);
 					sDefence = CHTMLStringBuilder::GetHTMLColor(sDefence);
 					sDefence = CHTMLStringBuilder::GetHTMLHeader(sDefence, _T("h5"));
 					sTip += sDefence;

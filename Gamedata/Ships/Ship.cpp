@@ -181,23 +181,24 @@ void CShip::Serialize(CArchive &ar)
 		ar << m_iID;
 
 		if (m_sOwnerOfShip != "")
-			MYTRACE("logsave")(MT::LEVEL_INFO, "Ship.CPP: m_iID: %i, Type:%d, m_sOwnerOfShip: %s, now:%i/%i, aim: %i/%i, Spped:%i, Costs: %i, Exp:%i\n", 
-			m_iID, m_iShipType, m_sOwnerOfShip, m_KO.y, m_KO.x, m_TargetKO.y, m_TargetKO.x, m_iSpeed, m_iMaintenanceCosts, m_iCrewExperiance);
+			MYTRACE("logsave")(MT::LEVEL_INFO, "Ship.CPP: Name:%s (%s), \tOwner:%s, \tnow:%i/%i, Target: %i/%i, order:%i, Tactic:%i, Speed:%i, Costs: %i, Special_1/2:(%d,%d), Exp:%i\n", 
+			m_strShipName, m_strShipClass, m_sOwnerOfShip, m_KO.y, m_KO.x, m_TargetKO.y, m_TargetKO.x, m_iCurrentOrder, m_nCombatTactic, m_iSpeed, m_iMaintenanceCosts, 
+			m_nSpecial[0],m_nSpecial[1],m_iCrewExperiance);
 		
 		ar << m_KO;
 		//see above MYTRACE("logsave")(MT::LEVEL_DEBUG, "Ship-m_KO: %i/%i", m_KO.y, m_KO.x);
 		ar << m_TargetKO;
 		//see above MYTRACE("logsave")(MT::LEVEL_DEBUG, "Ship-m_KO: %i/%i", m_TargetKO.y, m_TargetKO.x);
-		ar << m_sOwnerOfShip;
-		ar << m_iMaintenanceCosts;
-		ar << m_iShipType;
-		ar << m_nShipSize;
+		ar << m_sOwnerOfShip; // see above
+		ar << m_iMaintenanceCosts; // see above
+		ar << m_iShipType; // not neccessary see m_strShipClass
+		ar << m_nShipSize; 
 		ar << m_byManeuverability;
 		ar << (BYTE)(m_iSpeed);
 		ar << m_iRange;
 		ar << m_iScanPower;
 		ar << m_iScanRange;
-		ar << m_iCrewExperiance;
+		ar << m_iCrewExperiance; // see above
 		ar << m_iStealthGrade;
 		ar << m_bCloakOn;
 		ar << m_iStorageRoom;
@@ -205,13 +206,13 @@ void CShip::Serialize(CArchive &ar)
 			ar << m_iLoadedResources[i];
 		ar << m_iColonizePoints;
 		ar << m_iStationBuildPoints;
-		ar << m_iCurrentOrder;
-		ar << m_nSpecial[0];
-		ar << m_nSpecial[1];
+		ar << m_iCurrentOrder; // see above
+		ar << m_nSpecial[0]; // see above
+		ar << m_nSpecial[1]; // see above
 		ar << m_nTerraformingPlanet;
-		ar << m_strShipName;
-		ar << m_strShipDescription;
-		ar << m_strShipClass;
+		ar << m_strShipName; // see above
+		ar << m_strShipDescription; // not neccessary see m_strShipClass
+		ar << m_strShipClass; // see above
 		ar << m_bIsFlagShip;
 		ar << m_TorpedoWeapons.GetSize();
 		for (int i = 0; i < m_TorpedoWeapons.GetSize(); i++)
@@ -223,7 +224,7 @@ void CShip::Serialize(CArchive &ar)
 		ar << m_Troops.GetSize();
 		for (int i = 0; i < m_Troops.GetSize(); i++)
 			m_Troops.GetAt(i).Serialize(ar);
-		ar << m_nCombatTactic;
+		ar << m_nCombatTactic; // see above
 	}
 	// wenn geladen wird
 	if (ar.IsLoading())

@@ -245,6 +245,8 @@ namespace PLANT_SIZE
 #define MINPLANETPOP		3	// Minimalbevölkerung für Planeten
 #define TERRAFORMPERCENT	10	// Prozent Planetenwachstum pro Terraformer
 
+//#define SYSTEMAMOUNT	1	// amount of sun systems - will be changed later (the more systems the more effects to some things)
+
 // ------------- Forschung -----------------------------------------------------
 namespace RESEARCH_STATUS
 {

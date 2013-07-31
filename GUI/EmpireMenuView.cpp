@@ -267,7 +267,7 @@ void CEmpireMenuView::DrawEmpireNewsMenue(Graphics* g)
 					switch (pMajor->GetEmpire()->GetMsgs()->GetAt(i).GetType())
 					{
 						case EMPIRE_NEWS_TYPE::ECONOMY:  fontBrush.SetColor(Color(0,150,0));	break;
-						case EMPIRE_NEWS_TYPE::RESEARCH: fontBrush.SetColor(Color(50,75,255));	break;
+						case EMPIRE_NEWS_TYPE::TUTORIAL: fontBrush.SetColor(Color(50,75,255));	break;
 						case EMPIRE_NEWS_TYPE::SECURITY: fontBrush.SetColor(Color(155,25,255));	break;
 						case EMPIRE_NEWS_TYPE::DIPLOMACY:fontBrush.SetColor(Color(255,220,0));	break;
 						case EMPIRE_NEWS_TYPE::MILITARY: fontBrush.SetColor(Color(255,0,0));	break;
@@ -718,6 +718,10 @@ void CEmpireMenuView::DrawEmpireSystemMenue(Graphics* g)
 				s.Format("%d", pDoc->GetSystem(KO.x, KO.y).GetProduction()->GetScanPower());
 				MYTRACE("logdata")(MT::LEVEL_DEBUG, "ScanPower: %s\n", s);
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(820,140+j*25,150,25), &fontFormat, &fontBrush);
+				// draw Resistance
+				s.Format("%d", pDoc->GetSystem(KO.x, KO.y).GetProduction()->GetResistance());
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "Resistance: %s\n", s);
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(930,140+j*25,150,25), &fontFormat, &fontBrush);
 			}
 			else if (m_iSystemSubMenue == EMPIREVIEW_SYSTEMS_TRADE)
 			{
@@ -730,7 +734,112 @@ void CEmpireMenuView::DrawEmpireSystemMenue(Graphics* g)
 			}
 			else if (m_iSystemSubMenue == EMPIREVIEW_SYSTEMS_TUTORIAL)
 			{
-				g->DrawString(CComBSTR("empty yet"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(820,140+j*25,150,25), &fontFormat, &fontBrush);
+					ASSERT((CBotEDoc*)GetDocument());
+
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+	if (!pMajor)
+		return;
+
+	CString fontName = "";
+	Gdiplus::REAL fontSize = 0.0;
+
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
+	// Schriftfarbe wählen
+	Gdiplus::Color normalColor;
+	CFontLoader::GetGDIFontColor(pMajor, 3, normalColor);
+	SolidBrush fontBrush(normalColor);
+
+	StringFormat fontFormat;
+	fontFormat.SetAlignment(StringAlignmentCenter);
+	fontFormat.SetLineAlignment(StringAlignmentCenter);
+	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
+
+	Gdiplus::Color markColor;
+	markColor.SetFromCOLORREF(pMajor->GetDesign()->m_clrListMarkTextColor);
+
+	if (bg_newsovmenu)
+		g->DrawImage(bg_newsovmenu, 0, 0, 1075, 750);
+
+	CString s;
+	// Farbe der Schrift und Markierung wählen, wenn wir auf eine Rasse geklickt haben
+	Gdiplus::Color penColor;
+	penColor.SetFromCOLORREF(pMajor->GetDesign()->m_clrListMarkPenColor);
+
+	// Es gehen nur 21 Einträge auf die Seite, deshalb muss abgebrochen werden
+	// Wenn noch keine News angeklickt wurde, es aber News gibt, dann die erste in der Reihe markieren
+	if (m_iClickedNews == -1 && pMajor->GetEmpire()->GetMsgs()->GetSize() > 0)
+	{
+		m_iClickedNews = 0;
+		m_iOldClickedNews = 0;
+	}
+	int j = 0;
+	short counter = m_iClickedNews - 20 + m_iOldClickedNews;
+	short oldClickedNews = m_iClickedNews;
+	for (int i = 0; i < pMajor->GetEmpire()->GetMsgs()->GetSize(); i++)
+		// nur Nachrichten anzeigen, dessen Typ wir auch gewählt haben
+		if (m_iWhichNewsButtonIsPressed == pMajor->GetEmpire()->GetMsgs()->GetAt(i).GetType() ||
+			m_iWhichNewsButtonIsPressed == EMPIRE_NEWS_TYPE::NO_TYPE)
+		{
+			// (not good) MYTRACE("logdata")(MT::LEVEL_INFO, "NEWS-neu: %s \n", s);
+			if (counter > 0)
+			{
+				m_iClickedNews--;
+				counter--;
+				continue;
+			}
+			if (j < 21)
+			{
+				// Die News markieren
+				if (j == m_iClickedNews)
+				{
+					fontBrush.SetColor(markColor);
+					// Markierung worauf wir geklickt haben
+					g->FillRectangle(&SolidBrush(Color(50,200,200,200)), RectF(100,140+j*25,875,25));
+					g->DrawLine(&Gdiplus::Pen(penColor), 100, 140+j*25, 975, 140+j*25);
+					g->DrawLine(&Gdiplus::Pen(penColor), 100, 165+j*25, 975, 165+j*25);
+				}
+				else
+				{
+					switch (pMajor->GetEmpire()->GetMsgs()->GetAt(i).GetType())
+					{
+						case EMPIRE_NEWS_TYPE::ECONOMY:  fontBrush.SetColor(Color(0,150,0));	break;
+						case EMPIRE_NEWS_TYPE::RESEARCH: fontBrush.SetColor(Color(50,75,255));	break;
+						case EMPIRE_NEWS_TYPE::SECURITY: fontBrush.SetColor(Color(155,25,255));	break;
+						case EMPIRE_NEWS_TYPE::DIPLOMACY:fontBrush.SetColor(Color(255,220,0));	break;
+						case EMPIRE_NEWS_TYPE::MILITARY: fontBrush.SetColor(Color(255,0,0));	break;
+						default: fontBrush.SetColor(normalColor);
+					}
+				}
+				s = pMajor->GetEmpire()->GetMsgs()->GetAt(i).GetText();
+				MYTRACE("logdata")(MT::LEVEL_INFO, "NEWS: %s \n", s);
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,140+j*25,875,25), &fontFormat, &fontBrush);
+				j++;
+			}
+					//MYTRACE("logdata")(MT::LEVEL_INFO, "NEWS: --------------------------------- \n");
+		}
+	m_iClickedNews = oldClickedNews;
+
+	// Schriftart für große Buttons laden
+	CFontLoader::CreateGDIFont(pMajor, 3, fontName, fontSize);
+	// Schriftfarbe wählen
+	Gdiplus::Color btnColor;
+	CFontLoader::GetGDIFontColor(pMajor, 2, btnColor);
+	SolidBrush btnBrush(btnColor);
+	// Buttons am oberen Bildrand zeichnen, womit wir die Nachrichtenart verändern können, die angezeigt wird
+	DrawGDIButtons(g, &m_EmpireNewsFilterButtons, m_iWhichNewsButtonIsPressed, Gdiplus::Font(CComBSTR(fontName), fontSize), btnBrush);
+	// Buttons am unteren Bildrand zeichnen
+	DrawGDIButtons(g, &m_EmpireNewsButtons, m_iSubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), btnBrush);
+
+	// "Nachrichten und Informationen" in der Mitte zeichnen
+	// Rassenspezifische Schriftart auswählen
+	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
+	// Schriftfarbe wählen
+	CFontLoader::GetGDIFontColor(pMajor, 3, normalColor);
+	fontBrush.SetColor(normalColor);
+	s = CLoc::GetString("NEWS_MENUE");
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx, 50), &fontFormat, &fontBrush);
 			}
 			else if (m_iSystemSubMenue == EMPIREVIEW_SYSTEMS_ENERGY) 
 			{

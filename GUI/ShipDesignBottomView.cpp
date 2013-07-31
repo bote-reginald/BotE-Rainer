@@ -197,7 +197,13 @@ void CShipDesignBottomView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			Invalidate(FALSE);
 	}
 
-						if (nChar == 'T')
+								if (nChar == 'D') // Demontage
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+						if (nChar == 'T') // Turn End
 	{
 			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
 			Invalidate(FALSE);

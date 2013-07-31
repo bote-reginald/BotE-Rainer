@@ -522,6 +522,7 @@ LRESULT CMainFrame::InitViews(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	// alle rassenabhängigen Grafiken in jeder View laden
 	pDoc->LoadViewGraphics();
 
+
 	MYTRACE("general")(MT::LEVEL_DEBUG, "Init all Views done\n");
 	return TRUE;
 }
