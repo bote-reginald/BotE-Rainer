@@ -154,12 +154,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnScroll(UINT nScrollCode, UINT nPos, BOOL bDoScroll = TRUE);
-	virtual void HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc);
+	//virtual void HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc);
 protected:
 	virtual BOOL OnScrollBy(CSize sizeScroll, BOOL bDoScroll = TRUE);
 
 private:
 	void HandleShipHotkeys(const UINT nChar, CBotEDoc* pDoc);
+	void HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc);
 	void SearchNextIdleShipAndJumpToIt(CBotEDoc* pDoc, SHIP_ORDER::Typ order);
 
 	 //remember the ship in shiparray which was jumped to by last press of n or spacebar

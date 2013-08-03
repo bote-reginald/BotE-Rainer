@@ -106,7 +106,7 @@ void CShipHistory::AddShip(const CShips* ship, const CString& buildsector, short
 			return;
 		}
 	CShipHistoryStruct temp;
-	temp.m_strShipName = ship->GetShipName(); 
+	temp.m_strShipName = ship->GetShipName();
 	temp.m_strShipType = ship->GetShipTypeAsString();
 	temp.m_strShipClass = ship->GetShipClass();
 	temp.m_strSectorName = buildsector;
@@ -117,8 +117,7 @@ void CShipHistory::AddShip(const CShips* ship, const CString& buildsector, short
 	temp.m_iBuildRound = round;
 	temp.m_iDestroyRound = 0;
 	temp.m_iExperiance = ship->GetCrewExperience();
-	MYTRACE("logships")(MT::LEVEL_INFO, "ShipHistory.cpp: added: %s (%s), build in round: %d, Experiance:%i, Target:%s, Order:%s\n", 
-		ship->GetShipName(), ship->GetShipTypeAsString(), round, ship->GetCrewExperience(),ship->GetCurrentTargetAsString(),ship->GetCurrentOrderAsString());
+	MYTRACE("logships")(MT::LEVEL_INFO, "Ship %s added to shiphistory: Build in round: %d, Experiance:%i\n", ship->GetShipName(), round, ship->GetCrewExperience());
 
 
 	m_ShipHistory.Add(temp);

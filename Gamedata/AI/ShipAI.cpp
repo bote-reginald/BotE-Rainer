@@ -136,11 +136,7 @@ void CShipAI::CalculateShipOrders(CSectorAI* SectorAI)
 						{
 							// Zielkoordinate für das Schiff setzen
 							i->second->SetTargetKO(ko);
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship to Minor: %s (%s) - Target: %d,%d, MinorDanger:%i\n",
-								sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y, m_pSectorAI->GetCompleteDanger(sOwner, ko));
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship to Minor: %s, MinorDanger:%i, DangerCombatShips:%i\n",
-								sOwner, m_pSectorAI->GetCompleteDanger(sOwner, ko), m_pSectorAI->GetDangerOnlyFromCombatShips(sOwner, i->second->GetKO()));
-
+							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship to Minor: %s (%s) - Target: %d,%d\n",sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y);
 							vMinorraceSectors->erase(vMinorraceSectors->begin() + j--);
 							bSet = true;
 							break;
@@ -175,12 +171,7 @@ void CShipAI::CalculateShipOrders(CSectorAI* SectorAI)
 						{
 							// Zielkoordinate für das Schiff setzen
 							i->second->SetTargetKO(ko == i->second->GetKO() ? CPoint(-1, -1) : ko);
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship %s (%s) has terraforming target: %d,%d\n",
-								sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y);
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship has terraforming target: EnemyDanger:%i, DangerCombatShips:%i\n",
-								sOwner, m_pSectorAI->GetCompleteDanger(sOwner, ko), m_pSectorAI->GetDanger(sOwner, i->second->GetKO()));
-								//sOwner, m_pSectorAI->GetCompleteDanger(sOwner, ko), m_pSectorAI->m_pSectorAI->GetDanger(sOwner, i->second->GetKO()));
-
+							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship %s (%s) has terraforming target: %d,%d\n",sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y);
 							break;
 						}
 					}
@@ -201,10 +192,7 @@ void CShipAI::CalculateShipOrders(CSectorAI* SectorAI)
 						{
 							// Zielkoordinate für das Schiff setzen
 							i->second->SetTargetKO(ko == i->second->GetKO() ? CPoint(-1, -1) : ko);
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship %s (%s) has stationbuild target: %d,%d\n",
-								sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y);
-							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: stationbuild target: EnemyDanger:%i, DangerCombatShips:%i\n",
-								sOwner, m_pSectorAI->GetCompleteDanger(sOwner, ko), m_pSectorAI->GetDanger(sOwner, i->second->GetKO()));
+							MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Ship %s (%s) has stationbuild target: %d,%d\n",sOwner, i->second->GetShipName(), i->second->GetShipTypeAsString(), ko.x,ko.y);
 						}
 					}
 				}
@@ -252,8 +240,6 @@ void CShipAI::CalculateAlienShipOrders(CShips& ship)
 					return;
 				}
 			}
-			MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race MIDWAY:%s Ship %s, Sector: %d,%d, Order:%s\n",
-								owner, ship.GetShipName(), co.x,co.y, ship.GetCurrentOrderAsString());
 		}
 
 		// in allen anderen Fällen keinen Systemangriffsbefehl geben bzw. diesen zurücksetzen
@@ -316,13 +302,9 @@ bool CShipAI::DoTerraform(CShips* pShip)
 	// sofort kolonisiert werden könnte, dann den gefundenen Planeten terraformen
 	if (nPlanet != -1 && (!bColonizable || nMinTerraPoints / nTerraPoints < 8))
 	{
-		const CPlanet* pPlanet = pSector->GetPlanet(nPlanet);
 		// Hier muss als erstes ein möglicher neuer Kurs gelöscht werden
 		pShip->SetTargetKO(CPoint(-1, -1));
 		pShip->SetTerraform(nPlanet);
-		MYTRACE("shipai")(MT::LEVEL_DEBUG, "Race %s: Sector: %d,%d: Planet:%d will be terraformed (needed Points:%d)\n",
-								pShip->GetOwnerOfShip(), pShip->GetKO().x,pShip->GetKO().y, nPlanet, pPlanet->GetNeededTerraformPoints());
-
 
 		return true;
 	}
@@ -358,8 +340,6 @@ bool CShipAI::DoColonize(CShips* pShip)
 			// Hier muss als erstes ein möglicher neuer Kurs gelöscht werden
 			pShip->SetTargetKO(CPoint(-1, -1));
 			pShip->SetCurrentOrder(SHIP_ORDER::COLONIZE);
-			MYTRACE("shipai")(MT::LEVEL_DEBUG, "Sector: %d,%d: Planet:%d will be colonized\n",
-								pShip->GetKO().x,pShip->GetKO().y, i);
 			return true;
 		}
 	}

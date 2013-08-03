@@ -174,8 +174,7 @@ void CSystem::Serialize(CArchive &ar)
 	{
 		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "SYSTEMS: ------------------------------");
 		ar << m_sOwnerOfSystem;
-		MYTRACE("logsave")(MT::LEVEL_DEBUG, "SYSTEMS: m_iMoral: %d, m_bAutoBuild; %s, m_dHabitants: %g, m_sOwnerOfSystem: %s, round:??\n", 
-			m_iMoral, m_bAutoBuild, m_dHabitants, m_sOwnerOfSystem);
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "SYSTEMS: m_iMoral: %d, m_bAutoBuild; %s, m_dHabitants: %g, m_sOwnerOfSystem: %s, round:??\n", m_iMoral, m_bAutoBuild, m_dHabitants, m_sOwnerOfSystem);
 		ar << m_dHabitants;
 		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "m_dHabitants: %f\n", m_dHabitants);
 		ar << m_iMoral;

@@ -5,7 +5,6 @@
 #include "Galaxy\Anomaly.h"
 #include "Ships/Ships.h"
 #include <algorithm>
-#include "MyTrace.h"
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -35,11 +34,7 @@ UINT CSectorAI::GetCompleteDanger(const CString& sOwnRaceID, const CPoint& secto
 		if (it->first != sOwnRaceID)
 			for (map<pair<int, int>, UINT>::const_iterator itt = it->second.begin(); itt != it->second.end(); ++itt)
 				if (CPoint(itt->first.first, itt->first.second) == sector)
-				{
 					danger += itt->second;
-					//MYTRACE_CHECKED("ai")(MT::LEVEL_DEBUG, "SectorAI.cpp: EnemyDanger: %i, new Summary: %i\n", itt->second, danger);
-				}
-				//MYTRACE_CHECKED("ai")(MT::LEVEL_DEBUG, "SectorAI.cpp: EnemyDanger: %i, new Summary: %i\n", itt->second, danger);
 	return danger;
 }
 
@@ -141,20 +136,13 @@ void CSectorAI::AddDanger(const CShips* ship)
 	{
 		m_iCompleteDanger[race] += (offensive + defensive);
 		m_iCombatShipDangers[race][pair<int, int>(ship->GetKO().x, ship->GetKO().y)] += (offensive + defensive);
-		MYTRACE_CHECKED("shipdetails")(MT::LEVEL_DEBUG, "SectorAI.cpp: %s (%s), Off:%i + Def.(half):%i = CompleteDanger:%i\n", 
-				ship->GetShipName(),ship->GetShipTypeAsString(),offensive,defensive,m_iCompleteDanger[race]);
-
 	}
-	// (not necassary) MYTRACE_CHECKED("shipdetails")(MT::LEVEL_DEBUG, "SectorAI.cpp: %s, Off:%i + Def.(half):%i = Compl.DangerOutOfShips:%i\n", 
-	//			race, m_iCompleteDanger[race],offensive,defensive, m_iCompleteDanger[race]);
 
 	// Hier wird die Anzahl an Kolonieschiffen für die Rassen hochgezählt.
 	if (ship->GetShipType() == SHIP_TYPE::COLONYSHIP)
 		m_iColoShips[race] += 1;
 	else if (ship->GetShipType() == SHIP_TYPE::TRANSPORTER)
 		m_iTransportShips[race] += 1;
-	// (not good/neccessary) MYTRACE_CHECKED("shipdetails")(MT::LEVEL_DEBUG, "SectorAI.cpp: %s, Compl.DangerOutOfShips:%i, Off:%i,Def.(half):%i, further Ships: Colo:%d, Transp.:%d\n", 
-	//			race, m_iCompleteDanger[race], offensive, defensive, m_iColoShips[race], m_iTransportShips[race]);
 }
 
 /// Diese Funktion ermittelt die Sektoren, welche sich am ehesten zum Terraformen für eine bestimmte Rasse eignen.

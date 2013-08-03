@@ -1288,68 +1288,6 @@ void CGalaxyMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (!pMajor)
 		return;
 
-	if (nChar == VK_F1)
-	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(1, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
-	}
-
-	if (nChar == VK_F2)
-	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
-	}
-
-		if (nChar == VK_F3)
-	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(3, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
-	}
-			if (nChar == VK_F4)
-	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(4, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
-	}
-
-				if (nChar == VK_F5)
-	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(5, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
-	}
-
-	if (nChar == VK_F6)
-	{
-			resources::pMainFrame->SelectMainView(6, pMajor->GetRaceID());	// draw View
-			Invalidate(FALSE);
-	}
-
-		if (nChar == VK_F7)
-	{
-			resources::pMainFrame->SelectMainView(7, pMajor->GetRaceID());	// draw View
-			Invalidate(FALSE);
-	}
-
-			if (nChar == VK_F9)
-	{
-			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
-			Invalidate(FALSE);
-	}
-
-						if (nChar == 'T')
-	{
-			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
-			Invalidate(FALSE);
-	}
 
 	CRect client;
 	GetClientRect(&client);
@@ -1445,36 +1383,6 @@ void CGalaxyMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CGalaxyMenuView::HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc)
-{
-
-		CMajor* pMajor = m_pPlayersRace;
-		ASSERT(pMajor);
-		if (!pMajor)
-			return;
-
-		// Cheat zum Forschung erhöhen
-	if (nChar == VK_F8)
-	{
-		CString s;
-		s.Format("Forschungsstufen + 1");
-		pMajor->GetEmpire()->GetResearch()->SetBioTech(pMajor->GetEmpire()->GetResearch()->GetBioTech()+1);
-		pMajor->GetEmpire()->GetResearch()->SetEnergyTech(pMajor->GetEmpire()->GetResearch()->GetEnergyTech()+1);
-		pMajor->GetEmpire()->GetResearch()->SetCompTech(pMajor->GetEmpire()->GetResearch()->GetCompTech()+1);
-		pMajor->GetEmpire()->GetResearch()->SetPropulsionTech(pMajor->GetEmpire()->GetResearch()->GetPropulsionTech()+1);
-		pMajor->GetEmpire()->GetResearch()->SetConstructionTech(pMajor->GetEmpire()->GetResearch()->GetConstructionTech()+1);
-		pMajor->GetEmpire()->GetResearch()->SetWeaponTech(pMajor->GetEmpire()->GetResearch()->GetWeaponTech()+1);
-		AfxMessageBox(s);
-	}
-
-		// Chatdialog anzeigen
-	if (nChar == 'C')
-	{
-		AfxGetApp()->PostThreadMessage(WM_SHOWCHATDLG, 0, 0);
-		return;
-	}
-}
-
 
 void CGalaxyMenuView::HandleShipHotkeys(const UINT nChar, CBotEDoc* pDoc)
 {
@@ -1495,6 +1403,83 @@ void CGalaxyMenuView::HandleShipHotkeys(const UINT nChar, CBotEDoc* pDoc)
 		m_bShipMove = FALSE;
 		m_nRange = 0;
 		SearchNextIdleShipAndJumpToIt(pDoc, SHIP_ORDER::SENTRY_SHIP_ORDER);
+	}
+}
+void CGalaxyMenuView::HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc)
+{
+	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen und/oder Standard aufrufen
+//	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	if (!pDoc->m_bDataReceived)
+		return;
+
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+	if (!pMajor)
+		return;
+
+	if (nChar == VK_F1)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(1, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+	if (nChar == VK_F2)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+		if (nChar == VK_F3)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(3, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+			if (nChar == VK_F4)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(4, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+				if (nChar == VK_F5)
+	{
+//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
+						resources::pMainFrame->SelectMainView(5, pMajor->GetRaceID());	// draw SystemView
+
+			Invalidate(FALSE);
+	}
+
+	if (nChar == VK_F6)
+	{
+			resources::pMainFrame->SelectMainView(6, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+		if (nChar == VK_F7)
+	{
+			resources::pMainFrame->SelectMainView(7, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+			if (nChar == VK_F9)
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
+
+						if (nChar == 'T')
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
 	}
 }
 
@@ -1789,10 +1774,9 @@ CString CGalaxyMenuView::CreateTooltip(void)
 					if (pDoc->GetSystem(ko.x, ko.y).GetAllBuildings()->GetAt(l).GetIsBuildingOnline() || pBuildingInfo->GetNeededEnergy() == 0 || pBuildingInfo->GetAllwaysOnline())
 						mOnlineDefenceBuildings[pBuildingInfo->GetBuildingName()] += 1;
 				}
-					mAllShieldPower[0]+= pBuildingInfo->GetShieldPower();
-					mAllShipDefence[0] += pBuildingInfo->GetShipDefend();
-					mAllGroundDefence[0] += pBuildingInfo->GetGroundDefend();
-					//mAllGroundDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetGroundDefend();
+					mAllShieldPower[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetShieldPower();
+					mAllShipDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetShipDefend();
+					mAllGroundDefence[pBuildingInfo->GetBuildingName()] += pBuildingInfo->GetGroundDefend();
 					// Boni missing yet
 			}
 
@@ -1806,8 +1790,7 @@ CString CGalaxyMenuView::CreateTooltip(void)
 				for (map<CString, int>::const_iterator it = mAllDefenceBuildings.begin(); it != mAllDefenceBuildings.end(); ++it)
 				{
 					CString sDefence;
-					sDefence.Format("%s: %d/%d\nShieldPower: %d\nShipDefence: %d\nGroundDefence: %d\n", 
-						it->first, mOnlineDefenceBuildings[it->first], it->second, mAllShieldPower[0], mAllShipDefence[0], mAllGroundDefence[0]);
+					sDefence.Format("%s: %d/%d\nShieldPower: %i\nShipDefence: %i\nGroundDefence: %i\n", it->first, mOnlineDefenceBuildings[it->first], it->second, mAllShieldPower, mAllShipDefence, mAllGroundDefence);
 					sDefence = CHTMLStringBuilder::GetHTMLColor(sDefence);
 					sDefence = CHTMLStringBuilder::GetHTMLHeader(sDefence, _T("h5"));
 					sTip += sDefence;
