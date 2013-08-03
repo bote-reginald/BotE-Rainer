@@ -359,7 +359,6 @@ void CBotEDoc::Serialize(CArchive& ar)
 
 void CBotEDoc::SerializeSectorsAndSystems(CArchive& ar)
 {
-	//int systemcounter = 0;
 	for (int y = 0; y < STARMAP_SECTORS_VCOUNT; y++)
 	{
 		for (int x = 0; x < STARMAP_SECTORS_HCOUNT; x++)
@@ -378,8 +377,6 @@ void CBotEDoc::SerializeSectorsAndSystems(CArchive& ar)
 			}
 		}
 	}
-	//int SYSTEMAMOUNT = systemcounter;
-	//MYTRACE("logsave")(MT::LEVEL_DEBUG, "BotEDoc.cpp: systemcounter:%d, SYSTEMAMOUNT:%d\n", systemcounter, SYSTEMAMOUNT);
 }
 
 /// Serialisiert die Daten, welche am Anfang des Spiels einmal gesendet werden müssen.
@@ -979,8 +976,7 @@ void CBotEDoc::PrepareData()
 		// Forschungsgeschwindigkeitsmodifikator setzen
 		CResearchInfo::m_dResearchSpeedFactor = 1.25;
 		CIniLoader::GetInstance()->ReadValue("Special", "RESEARCHSPEED", CResearchInfo::m_dResearchSpeedFactor);
-		MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: RESEARCHSPEED: %g\n", 
-			CResearchInfo::m_dResearchSpeedFactor);
+		MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: RESEARCHSPEED: %d\n", CResearchInfo::m_dResearchSpeedFactor);
 
 		MYTRACE("general")(MT::LEVEL_INFO, "Preparing game data ready...\n");
 		//   /*
@@ -1405,7 +1401,7 @@ void CBotEDoc::NextRound()
 
 CEmpireNews message;
 CPoint p;
-message.CreateNews("new turn began...", EMPIRE_NEWS_TYPE::TUTORIAL, "no system here",p); //EMPIRE_NEWS_TYPE::TUTORIAL
+message.CreateNews("new turn began AD-NO-TYPE", EMPIRE_NEWS_TYPE::TUTORIAL, "no system here",p);
 /*it->second->GetEmpire()->AddMsg(message);
 if (it->second->IsHumanPlayer())
 {
@@ -1462,7 +1458,6 @@ m_iSelectedView[client] = EMPIRE_VIEW;
 
 		// Starmap für alle Rassen berechnen und anlegen
 		GenerateStarmap();
-		//SYSTEMAMOUNT = pMajor->GetEmpire()->CountSystems();
 
 		// KI-Berechnung
 		m_pSectorAI->Clear();
@@ -2587,10 +2582,9 @@ void CBotEDoc::GenerateStarmap(const CString& sOnlyForRaceID)
 			//if (it->first != itt->first && it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::NAP)
 			//	NAPRaces.insert(itt->first);
 			//(test for vuto) 
-			//if (it->first != itt->first && it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::NAP
-			//	|| it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::TRADE  => was only a test
-			//	|| it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::FRIENDSHIP) => was only a test
-			if (it->first != itt->first && it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::NAP)
+			if (it->first != itt->first && it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::NAP
+				|| it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::TRADE
+				|| it->second->GetAgreement(itt->first) == DIPLOMATIC_AGREEMENT::FRIENDSHIP)
 				NAPRaces.insert(itt->first);
 		// interne Starmap für KI syncronisieren
 		it->second->GetStarmap()->SynchronizeWithMap(m_Sectors, &NAPRaces);
@@ -2668,7 +2662,6 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 			m_ShipInfoArray.GetAt(i).SetRace(MINORNUMBER);
 
 
-	MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
 	for(std::vector<CSector>::const_iterator sector = m_Sectors.begin(); sector != m_Sectors.end(); ++sector)
 	{
 		if (sector->GetSunSystem())
@@ -3693,10 +3686,6 @@ void CBotEDoc::CalcOldRoundData()
 			if (system.CheckEnergyBuildings(&this->BuildingInfo))
 				calc.SystemMessage(*sector, pMajor, "BUILDING_TURN_OFF", EMPIRE_NEWS_TYPE::SOMETHING, 2);
 
-						
-calc.SystemMessage(*sector, pMajor, "BUILDING_TURN_OFF", EMPIRE_NEWS_TYPE::TUTORIAL, 2); //just for test
-calc.SystemMessage(*sector, pMajor, "BUILDING_TURN_OFF", EMPIRE_NEWS_TYPE::TUTORIAL, 2); //just for test
-
 			// Die Bauaufträge in dem System berechnen. Außerdem wird hier auch die System-KI ausgeführt.
 			if (!pMajor->AHumanPlays() || system.GetAutoBuild())
 			{
@@ -3831,11 +3820,7 @@ void CBotEDoc::CalcTrade()
 			CMajor* pMajor = dynamic_cast<CMajor*>(m_pRaceCtrl->GetRace(CTrade::GetMonopolOwner(i)));
 			ASSERT(pMajor);
 			if (pMajor)
-			{
 				pMajor->GetEmpire()->SetCredits(taxMoney[i]);
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "BotEDoc.cpp: pMajor: # %s #, Monopolist gets: %i Credits for %s\n"), 
-			pMajor->GetRaceID(), pMajor->GetEmpire()->SetCredits(taxMoney[i]), resName;
-			}
 		}
 
 		// Hier die gekauften Monopole den Rassen zuschreiben. Wer am meisten bezahlt hat (falls mehrere Rassen

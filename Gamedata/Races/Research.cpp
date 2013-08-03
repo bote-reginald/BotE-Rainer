@@ -193,7 +193,6 @@ void CResearch::Serialize(CArchive &ar)
 		ar << m_iNumberOfUnique;
 		for (int i = 0; i < 8; i++)
 		{
-			if (!m_strMessage[i])
 			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Research.cpp: \t# m_iNumberOfUnique:%i, m_strMessage:%s\n", 
 				i, m_strMessage[i]);
 			ar << m_strMessage[i];
@@ -639,12 +638,11 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	if (ResearchInfo.m_bChoiceTaken)
 		m_lUniqueFP += (float)(FP*m_iUniquePercentage)/100;
 
-	MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: ToAchieve: (each multiply per RESEARCHSPEED): Energy=125, Bio+Comp+Prop=150, Constr.+Weapon=175; if 150 and RESEARCHSPEED=1.25 than 187,50 FP needed\n");
 	// Checken, ob wir eine neue Stufe erreicht haben
 	CString s;
 			s.Format("%lf", (float)(pow((m_lBioFP / ResearchInfo.GetBio(m_iBioTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lBioTechFP:%.2lf, \tm_iBioTech:%i, \tBiologyTech-DONE-Percentage: \t%i\n",
-										m_lBioFP, ResearchInfo.GetBio(m_iBioTech), int(ResearchInfo.GetBio(m_iBioTech)/m_lBioFP));
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lBioFP:%.2lf, \tm_iBioTech:%i, \tBiologyTech-DONE-Percentage: \t.2lf \n",
+										m_lBioFP, ResearchInfo.GetBio(m_iBioTech), s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lBioFP / ResearchInfo.GetBio(m_iBioTech)), 10) * 100))
 //	if (m_lBioFP >= ResearchInfo.GetBio(m_iBioTech))
@@ -656,8 +654,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	}
 
 			s.Format("%lf", (float)(pow((m_lEnergyFP / ResearchInfo.GetEnergy(m_iEnergyTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lEnergyFP:%.2lf, \tm_iEnergyTech:%i, \tEnergyTech-DONE-Percentage: \t%s\n", 
-				m_lEnergyFP, ResearchInfo.GetEnergy(m_iEnergyTech), s);
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lEnergyFP:%.2lf, \tm_iEnergyTech:%i, \tEnergyTech-DONE-Percentage: \t.2lf \n", m_lEnergyFP, ResearchInfo.GetEnergy(m_iEnergyTech), s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lEnergyFP / ResearchInfo.GetEnergy(m_iEnergyTech)), 10) * 100))
 //	if (m_lEnergyFP >= ResearchInfo.GetEnergy(m_iEnergyTech))
@@ -669,7 +666,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	}
 
 			s.Format("%lf", (float)(pow((m_lComputerFP / ResearchInfo.GetComp(m_iCompTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lComputerFP:%.2lf, \tm_iCompTech:%i, \tComputerTech-DONE-Percentage: \t%s\n", 
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lComputerFP:%.2lf, \tm_iCompTech:%i, \tComputerTech-DONE-Percentage: \t.2lf \n", 
 				m_lComputerFP, ResearchInfo.GetComp(m_iCompTech), s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lComputerFP / ResearchInfo.GetComp(m_iCompTech)), 10) * 100))
@@ -682,7 +679,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	}
 
 			s.Format("%lf", (float)(pow((m_lPropulsionFP / ResearchInfo.GetPropulsion(m_iPropulsionTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lPropulsionFP:%.2lf, \tm_iPropulsionTech:%i,\tPropulsionTech-DONE-Percentage: \t%s\n",
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lPropulsionFP:%.2lf, \tm_iPropulsionTech:%i,\tPropulsionTech-DONE-Percentage: \t.2lf \n",
 				m_lPropulsionFP, ResearchInfo.GetPropulsion(m_iPropulsionTech) ,s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lPropulsionFP / ResearchInfo.GetPropulsion(m_iPropulsionTech)), 10) * 100))
@@ -695,7 +692,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	}
 
 			s.Format("%lf", (float)(pow((m_lConstructionFP / ResearchInfo.GetConstruction(m_iConstructionTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lConstrFP:%.2lf, \tm_iConstructionTech:%i, \tConstructTech-DONE-Percentage: \t%s\n",
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lConstrFP:%.2lf, \tm_iConstructionTech:%i, \tConstructTech-DONE-Percentage: \t.2lf \n",
 				m_lConstructionFP, ResearchInfo.GetConstruction(m_iConstructionTech) ,s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lConstructionFP / ResearchInfo.GetConstruction(m_iConstructionTech)), 10) * 100))
@@ -708,7 +705,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 	}
 
 			s.Format("%lf", (float)(pow((m_lWeaponFP / ResearchInfo.GetWeapon(m_iWeaponTech)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lWeaponFP:%.2lf, \tm_iWeaponTech:%i, \tWeaponTech-DONE-Percentage: \t%s\n",
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: m_lWeaponFP:%.2lf, \tm_iWeaponTech:%i, \tWeaponTech-DONE-Percentage: \t.2lf \n",
 				m_lWeaponFP, ResearchInfo.GetWeapon(m_iWeaponTech) ,s);
 			s= "";
 	if (rand()%100+1 <= (float)(pow((m_lWeaponFP / ResearchInfo.GetWeapon(m_iWeaponTech)), 10) * 100))
@@ -724,7 +721,7 @@ CString* CResearch::CalculateResearch(ULONG FP)
 		((ResearchInfo.GetBio(m_iNumberOfUnique) + ResearchInfo.GetEnergy(m_iNumberOfUnique)
 		 + ResearchInfo.GetComp(m_iNumberOfUnique) + ResearchInfo.GetPropulsion(m_iNumberOfUnique)
 		 + ResearchInfo.GetConstruction(m_iNumberOfUnique) + ResearchInfo.GetWeapon(m_iNumberOfUnique)) / SPECIAL_RESEARCH_DIV)), 10) * 100));
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: SpecialTech-DONE-Percentage: \t%s\n", s);
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: SpecialTech-DONE-Percentage: \t.2lf \n", s);
 			s= "";
 			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Research.cpp: -----------------------------------\n");
 	//	Wenn wir die Unique FP zusammenhaben, dann den Complex auf erforscht setzen und auch eine der 3 Wahlmgln.

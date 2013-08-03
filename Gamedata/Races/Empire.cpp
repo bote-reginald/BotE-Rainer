@@ -57,15 +57,16 @@ void CEmpire::Serialize(CArchive &ar)
 			ar << m_lResourceStorages[i];
 			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID: = %s, m_lResourceStorages[i] = %i\n", m_sEmpireID, m_lResourceStorages[i]);
 		}
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------");
 		ar << m_sEmpireID;
 		// see above MYTRACE("logdata")(MT::LEVEL_INFO, "m_sEmpireID (Empire): = %s\n", m_sEmpireID);
 		ar << m_vMessages.GetSize();
 		for (int i = 0; i < m_vMessages.GetSize(); i++)
 		{
 			m_vMessages.GetAt(i).Serialize(ar);
-			// (doesn't work) MYTRACE("logdata")(MT::LEVEL_DEBUG, "News: %s\n",m_vMessages.GetAt(i).Serialize(ar));
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "EmpireEvent:%s",m_vMessages);
 		}
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: - End Empire ---------------------------------");
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------");
 	}
 	// wenn geladen wird
 	if (ar.IsLoading())

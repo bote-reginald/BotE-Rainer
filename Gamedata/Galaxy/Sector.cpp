@@ -104,20 +104,25 @@ void CSector::Serialize(CArchive &ar)
 	if (ar.IsStoring())
 	// Alle Variablen in der richtigen Reihenfolge schreiben
 	{
-		CString secondStringMytrace = "";
-		// (doesn't work) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: ##### Begin of sector list #############################");
+		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: ##### Begin of sector list #############################");
 		//if m_Attributes != 0 {
 		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: -------------------------\n");
 		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_sOwnerOfSector: %s\n", m_sOwnerOfSector);
-		MYTRACE("savedetails")(MT::LEVEL_DEBUG, "Sector.cpp:(%d,%d) %s,Anomaly:%s,Outpost:%s,Starbase:%s,Owner:%s,ColonyOwner:%s,OwnerPoints:%d,Attributes:%d \n", 
-			m_KO.y, m_KO.x, m_strSectorName, m_pAnomaly ? "yes" : "no", m_Outpost, m_Starbase, m_sOwnerOfSector, m_sColonyOwner, m_byOwnerPoints.size(), m_Attributes);
+		MYTRACE("savedetails")(MT::LEVEL_DEBUG, "Sector.cpp: %s, m_pAnomaly: %s, Outpost:%s, Starbase:%s, OwnerOfSector:%s, ColonyOwner:%s, OwnerPoints:%d \n", 
+			m_strSectorName, m_pAnomaly ? "yes" : "no", m_Outpost, m_Starbase, m_sOwnerOfSector, m_sColonyOwner, m_byOwnerPoints.size());
 		
 		// MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: -------------------------\n");
 		//};
 		ar << m_Attributes;
 		// (see below) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Attributes: %d\n", m_Attributes);
-		ar << m_KO; 		// see above
-		
+		ar << m_KO;
+		//
+		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %s\n", m_KO);
+		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %i\n", m_KO);
+		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %d\n", m_KO);
+
+
+
 		// alle Maps speichern
 		ar << m_Status.size();
 		// (size) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Status.size: %s\n", m_Status.size);
@@ -127,8 +132,10 @@ void CSector::Serialize(CArchive &ar)
 		// (size) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %s\n", m_KO);
 		for (set<CString>::const_iterator it = m_bShipPort.begin(); it != m_bShipPort.end(); ++it)
 			ar << *it;
-		ar << m_Outpost; 		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Outpost: %s\n", m_Outpost);
-		ar << m_Starbase; 		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Starbase: %s\n", m_Starbase);
+		ar << m_Outpost;
+		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Outpost: %s\n", m_Outpost);
+		ar << m_Starbase;
+		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_Starbase: %s\n", m_Starbase);
 		ar << m_bIsStationBuild.size();
 		// (size) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %s\n", m_KO);
 		for (set<CString>::const_iterator it = m_bIsStationBuild.begin(); it != m_bIsStationBuild.end(); ++it)
@@ -136,54 +143,45 @@ void CSector::Serialize(CArchive &ar)
 		ar << m_bWhoIsOwnerOfShip.size();
 		// (size) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_KO: %s\n", m_KO);
 		for (set<CString>::const_iterator it = m_bWhoIsOwnerOfShip.begin(); it != m_bWhoIsOwnerOfShip.end(); ++it)
-					{
-			//secondStringMytrace += "Sector.cpp: OwnerOfShip: it:%i, it-second:%i\n", *it;
 			ar << *it;
-		}
-		
 		ar << m_mNumbersOfShips.size();
 		// (size) 
-		// (unneccassary) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: NumbersOfShips: %i\n", m_mNumbersOfShips.size());
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: NumbersOfShips: %i\n", m_mNumbersOfShips.end());
 		for(std::map<CString, unsigned>::const_iterator it = m_mNumbersOfShips.begin(); it != m_mNumbersOfShips.end(); ++it)
-		{
-			if (it->second > 0)
-			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: NumbersOfShips:%i\n", it->second);
 			ar << it->first << it->second;
-		}
 		ar << m_iNeededStationPoints.size();
+		// (size) 
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: NeededStationPoints: %i\n", m_iNeededStationPoints.end());
 		for (map<CString, short>::const_iterator it = m_iNeededStationPoints.begin(); it != m_iNeededStationPoints.end(); ++it)
 			ar << it->first << it->second;
-		if (m_iNeededStationPoints.size() > 0)
-		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: NeededStationPoints: %i\n", m_iNeededStationPoints.size());	
-
 		ar << m_iStartStationPoints.size();
+		// (size) 
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_iStartStationPoints.size: %i\n", m_iStartStationPoints.size());
 		for (map<CString, short>::const_iterator it = m_iStartStationPoints.begin(); it != m_iStartStationPoints.end(); ++it)
 			ar << it->first << it->second;
-		if (m_iStartStationPoints.size() > 0)
-		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_iStartStationPoints.size: %i\n", m_iStartStationPoints.size());
-		
 		ar << m_iScanPower.size();
+		// (size) 
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: 1m_iScanPower.size: %g\n", m_iScanPower.size());
 		for (map<CString, short>::const_iterator it = m_iScanPower.begin(); it != m_iScanPower.end(); ++it)
 		{
-			// (unneccassary) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: 2m_iScanPower: it-first:%i, it-second:%i\n", it->second);
+			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: 2: it:%d, m_iScanPower.size: %g\n", it, m_iScanPower.size());
 			ar << it->first << it->second;
 		}
-		if (m_iScanPower.size() > 0)
-		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: 2m_iScanPower: %i\n", it->second);
-
-
 		ar << m_iNeededScanPower.size();
+		// (size) 
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_iNeededScanPower.size: %i\n", m_iNeededScanPower.size());
 		for (map<CString, short>::const_iterator it = m_iNeededScanPower.begin(); it != m_iNeededScanPower.end(); ++it)
 			ar << it->first << it->second;
-
 		ar << m_byOwnerPoints.size();
 		
 		//see below: MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_byOwnerPoints.size: %d\n", m_byOwnerPoints.size());
 		for (map<CString, BYTE>::const_iterator it = m_byOwnerPoints.begin(); it != m_byOwnerPoints.end(); ++it)
 			ar << it->first << it->second;
 
-		ar << m_sColonyOwner; 		// (see below) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_sColonyOwner: %s\n", m_sColonyOwner);
-		ar << m_sOwnerOfSector; 		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_sOwnerOfSector: %s\n", m_sOwnerOfSector);
+		ar << m_sColonyOwner;
+		// (see below) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_sColonyOwner: %s\n", m_sColonyOwner);
+		ar << m_sOwnerOfSector;
+		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_sOwnerOfSector: %s\n", m_sOwnerOfSector);
 
 		// Nur wenn ein Sonnensystem in dem Sektor ist müssen die folgenden Variablen gespeichert werden
 		if (GetSunSystem())
@@ -199,7 +197,7 @@ void CSector::Serialize(CArchive &ar)
 
 		ar << m_pAnomaly;
 		// (see above) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: m_pAnomaly: %s\n", m_pAnomaly);
-		// (doesn't work) MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: ##### END of sector list #############################");
+		//MYTRACE("logsave")(MT::LEVEL_DEBUG, "Sector.cpp: -------------------------\n");
 	}
 	else
 	// Alle Variablen in der richtigen Reihenfolge lesen
@@ -460,7 +458,7 @@ void CSector::GenerateSector(int sunProb, int minorProb)
 						break;
 				}
 			} while (currentHabitants <= (15.000f / random));
-			MYTRACE("init")(MT::LEVEL_DEBUG, "Sector.cpp: m_strSectorName: %s (%d/%d), currentHabitants: %g\n", m_strSectorName, m_KO.y, m_KO.x, currentHabitants);
+			MYTRACE("init")(MT::LEVEL_DEBUG, "Sector.cpp: m_strSectorName: %s (%d/%d), currentHabitants(wrong!): %g\n", m_strSectorName, m_KO.y, m_KO.x, currentHabitants);
 		}
 		else
 		{
