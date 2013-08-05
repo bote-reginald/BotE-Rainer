@@ -1421,30 +1421,23 @@ void CGalaxyMenuView::HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc)
 
 	if (nChar == VK_F1)
 	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(1, pMajor->GetRaceID());	// draw SystemView
-
+			resources::pMainFrame->SelectMainView(1, pMajor->GetRaceID());	// draw SystemView
 			Invalidate(FALSE);
 	}
 
 	if (nChar == VK_F2)
 	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-						resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
-
+			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
 			Invalidate(FALSE);
 	}
 
 		if (nChar == VK_F3)
 	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
 						resources::pMainFrame->SelectMainView(3, pMajor->GetRaceID());	// draw SystemView
-
 			Invalidate(FALSE);
 	}
 			if (nChar == VK_F4)
 	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
 						resources::pMainFrame->SelectMainView(4, pMajor->GetRaceID());	// draw SystemView
 
 			Invalidate(FALSE);
@@ -1452,10 +1445,8 @@ void CGalaxyMenuView::HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc)
 
 				if (nChar == VK_F5)
 	{
-//			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// draw SystemView
 						resources::pMainFrame->SelectMainView(5, pMajor->GetRaceID());	// draw SystemView
-
-			Invalidate(FALSE);
+						Invalidate(FALSE);
 	}
 
 	if (nChar == VK_F6)
@@ -1475,8 +1466,28 @@ void CGalaxyMenuView::HandleGlobalHotkeys(const UINT nChar, CBotEDoc* pDoc)
 			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
 			Invalidate(FALSE);
 	}
+			if (nChar == VK_F10)  //Programm-Menue ??
+	{
+			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
+			Invalidate(FALSE);
+	}
 
-						if (nChar == 'T')
+			if (nChar == VK_F12)
+	{
+			resources::pMainFrame->SelectMainView(DATABASE_VIEW, pMajor->GetRaceID());	// draw DatabaseView
+			Invalidate(FALSE);
+	}
+			if (nChar == 'L')  // open Bote.log
+	{
+				CString sFile = CIOData::GetInstance()->GetLogPath() + "Bote.log";
+				/*HINSTANCE hInst =*/ ShellExecute(0,
+					"open",		// Operation to perform
+					sFile,		// Application name
+					"",			// Additional parameters
+					0,			// Default directory
+					SW_SHOW);
+	}
+			if (nChar == 'T')  // End Turn
 	{
 			resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// draw View
 			Invalidate(FALSE);

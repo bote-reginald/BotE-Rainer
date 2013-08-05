@@ -275,6 +275,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/, CCreateContext* pContex
 	m_wndSplitter.AddSwitchableView(COMBAT_VIEW, RUNTIME_CLASS(CCombatMenuView),
 		pContext, CRect(r.right, 0, r.Width(), r.bottom) , false , COMBAT_VIEW);
 
+
 	// kleine View unten/links
 	m_wndSplitter.AddSwitchableView(m_wndSplitter.IdFromRowCol(1, 0), RUNTIME_CLASS(CSmallInfoView),
 		pContext, CRect(0, 0, r.Width(), r.Height()) , true);
@@ -328,6 +329,7 @@ void CMainFrame::SelectMainView(USHORT whichView, const CString& sRace)
 			case DIPLOMACY_VIEW:	SelectBottomView(DIPLOMACY_BOTTOM_VIEW);	break;
 			case TRADE_VIEW:		SelectBottomView(TRADE_BOTTOM_VIEW);		break;
 			case SHIPDESIGN_VIEW:	SelectBottomView(SHIPDESIGN_BOTTOM_VIEW);	break;
+				case DATABASE_VIEW:	SelectBottomView(PLANET_BOTTOM_VIEW);	break;
 			case FLEET_VIEW:		SelectBottomView(SHIP_BOTTOM_VIEW);			break;
 			case TRANSPORT_VIEW:	SelectBottomView(SHIP_BOTTOM_VIEW);			break;
 			default:				SelectBottomView(PLANET_BOTTOM_VIEW);		break;

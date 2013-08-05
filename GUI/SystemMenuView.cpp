@@ -1905,9 +1905,8 @@ void CSystemMenuView::DrawSystemTradeMenue(Graphics* g)
 
 void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 {
-/////////////////////////////////////////////////////////////////////////////////////////
+
 // draw SystemDefenceMenue
-/////////////////////////////////////////////////////////////////////////////////////////
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -2081,7 +2080,7 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
 
 	// Name des Systems oben in der Mitte zeichnen
-	s = CLoc::GetString("ENERGY_MENUE")+" "+pDoc->GetSector(p.x,p.y).GetName();
+	s = CLoc::GetString("BTN_DEFENCE")+" "+pDoc->GetSector(p.x,p.y).GetName();
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormat, &fontBrush);
 }
 void CSystemMenuView::DrawShipdesign(Graphics* g)
@@ -3893,41 +3892,41 @@ void CSystemMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 				}
 			}
 			// go to Defence Menu
-	else if (m_bySubMenu == 3)
-	{
-		CPoint p = pDoc->GetKO();
-		if (ChangeToTroopsButton.PtInRect(point))
-		{
-			m_bySubMenu = 52;
-			Invalidate();
-			return;
-		}
-		// Wenn ich Gebäude abreißen will, mit links auf die Schaltfläche drücken
-		//CPoint p = pDoc->GetKO();
-		for (int i = m_iBOPage * NOBIOL; i < m_BuildingOverview.GetSize(); i++)
-			// Wenn wir auf der richtigen Seite sind
-			if (i < m_iBOPage * NOBIOL + NOBIOL)
-				if (m_BuildingOverview.GetAt(i).rect.PtInRect(point))
-				{
-					USHORT ru = m_BuildingOverview.GetAt(i).runningNumber;
-					pDoc->GetSystem(p.x, p.y).SetBuildingDestroy(ru,TRUE);
-					CRect r = m_BuildingOverview.GetAt(i).rect;
-					CalcDeviceRect(r);
-					InvalidateRect(r, FALSE);
-					break;;
-				}
-		// Wenn ich in dem Menü vor oder zurück blättern kann/will
-		if (CRect(1011,190,1074,242).PtInRect(point) && m_iBOPage * NOBIOL + NOBIOL < m_BuildingOverview.GetSize())
-		{
-			m_iBOPage++;
-			Invalidate(FALSE);
-		}
-		else if (CRect(1011,490,1074,542).PtInRect(point) && m_iBOPage > 0)
-		{
-			m_iBOPage--;
-			Invalidate(FALSE);
-		}
-	}
+	//else if (m_bySubMenu == 3)
+	//{
+	//	CPoint p = pDoc->GetKO();
+	//	if (ChangeToTroopsButton.PtInRect(point))
+	//	{
+	//		m_bySubMenu = 52;
+	//		Invalidate();
+	//		return;
+	//	}
+	//	// Wenn ich Gebäude abreißen will, mit links auf die Schaltfläche drücken
+	//	//CPoint p = pDoc->GetKO();
+	//	for (int i = m_iBOPage * NOBIOL; i < m_BuildingOverview.GetSize(); i++)
+	//		// Wenn wir auf der richtigen Seite sind
+	//		if (i < m_iBOPage * NOBIOL + NOBIOL)
+	//			if (m_BuildingOverview.GetAt(i).rect.PtInRect(point))
+	//			{
+	//				USHORT ru = m_BuildingOverview.GetAt(i).runningNumber;
+	//				pDoc->GetSystem(p.x, p.y).SetBuildingDestroy(ru,TRUE);
+	//				CRect r = m_BuildingOverview.GetAt(i).rect;
+	//				CalcDeviceRect(r);
+	//				InvalidateRect(r, FALSE);
+	//				break;;
+	//			}
+	//	// Wenn ich in dem Menü vor oder zurück blättern kann/will
+	//	if (CRect(1011,190,1074,242).PtInRect(point) && m_iBOPage * NOBIOL + NOBIOL < m_BuildingOverview.GetSize())
+	//	{
+	//		m_iBOPage++;
+	//		Invalidate(FALSE);
+	//	}
+	//	else if (CRect(1011,490,1074,542).PtInRect(point) && m_iBOPage > 0)
+	//	{
+	//		m_iBOPage--;
+	//		Invalidate(FALSE);
+	//	}
+	//}
 		}
 	}
 
@@ -4222,7 +4221,7 @@ void CSystemMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	//handle all global Hotkeys
 	//CGalaxyMenuView::HandleGlobalHotkeys(nChar, pDoc);
 
-	if (nChar == VK_F2)
+	if (nChar == VK_F12)
 	{
 			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
 			Invalidate(FALSE);
@@ -4350,7 +4349,7 @@ void CSystemMenuView::CreateButtons()
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(350,690), CSize(160,40), CLoc::GetString("BTN_ENERGYMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(520,690), CSize(160,40), CLoc::GetString("BTN_BUILDING_OVERVIEWMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(690,690), CSize(160,40), CLoc::GetString("BTN_TRADEMENUE"), fileN, fileI, fileA));
-	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(860,690), CSize(160,40), "BTN_Defence", fileN, fileI, fileA));
+	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(860,690), CSize(160,40), CLoc::GetString("BTN_DEFENCE"), fileN, fileI, fileA));
 
 	// switch to previous system
 	fileN = "Other\\" + sPrefix + "buttonminus.bop";

@@ -162,8 +162,8 @@ void CDiplomacyMenuView::OnNewRound()
 		std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
 
 		// if all races should be shown, sort list
-	if (m_bDisplayAllRaces)
-		std::sort(m_vRaceList.begin(), m_vRaceList.end());
+//	if (m_bDisplayAllRaces)
+//		std::sort(m_vRaceList.begin(), m_vRaceList.end());
 
 }
 
@@ -297,32 +297,32 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 
 	if (m_bySubMenu == 0) // DiploInfo
 	{
-		if (bg_diploinfomenu)
+		//if (bg_diploinfomenu)
 			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
 	else if (m_bySubMenu == 1) // DiploOffers(out)
 	{
-		if (bg_diplooutmenu)
+		//if (bg_diplooutmenu)
 			g->DrawImage(bg_diplooutmenu, 0, 0, 1075, 750);
 	}
 	else if (m_bySubMenu == 2) // DiploIn
 	{
-		if (bg_diplooutmenu)
+		//if (bg_diplooutmenu)
 			g->DrawImage(bg_diploinmenu, 0, 0, 1075, 750);
 	}
 	else if (m_bySubMenu == 3) //DiploIngame
 	{
-		if (bg_diplooutmenu)
+		//if (bg_diplooutmenu)
 			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
 	else if (m_bySubMenu == 4) //DiploDatabase
 	{
-		if (bg_diplooutmenu)
+		//if (bg_diplooutmenu)
 			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
 	else
 	{
-		if (bg_diploinmenu)
+		//if (bg_diploinmenu)
 			g->DrawImage(bg_diploinmenu, 0, 0, 1075, 750);
 	}
 
@@ -751,7 +751,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 
 	// Position im Vector suchen
 	int nVecPos = 0;
-	if (m_bySubMenu != 2)
+	if (m_bySubMenu != 2)  // at DiploIn do not draw RaceList 
 	{
 		if (m_sClickedOnRace != "")
 		{
@@ -818,6 +818,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 					this->DrawDiplomacyIngameMenue(g, pRace->GetRaceID());
 				else if (m_bySubMenu == 4)
 					this->DrawDiplomacyDatabaseMenue(g, pRace->GetRaceID());
+			}
 
 
 				// Name der Rasse zeichnen
@@ -826,14 +827,14 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 				//if (pRace->GetAgreementDuration(s) != 0)
 				//s += status.Format("%s (%d)",CLoc::GetString("FRIENDSHIP_SHORT"), pRace->GetAgreementDuration(s));
 
-				CString sAdd;
-				//sAdd.Format("(%d)",pRace->GetRelation(pRace->GetRaceID()->pRace->GetRaceName())); // Acceptance missing yet
-				sAdd = " (R;";
-				s += sAdd;
-				CString str_Acceptance;
-				// str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
-				str_Acceptance.Format(" A:%d%%)",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
-				s += sAdd;
+				//CString sAdd;
+				////sAdd.Format("(%d)",pRace->GetRelation(pRace->GetRaceID()->pRace->GetRaceName())); // Acceptance missing yet
+				//sAdd = " (R;";
+				//s += sAdd;
+				//CString str_Acceptance;
+				//// str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50),((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()));
+				//str_Acceptance.Format(" A:%d%%)",(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				//s += sAdd;
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 
 				// Farbe der Schrift und Markierung wählen, wenn wir auf eine Rasse geklickt haben
@@ -900,7 +901,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 					fontFormat.SetAlignment(StringAlignmentCenter);
 					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(735,403,300,25), &fontFormat, &fontBrush);
 					fontFormat.SetAlignment(StringAlignmentNear);
-				}
+				
 			}
 			else
 			{
@@ -2301,17 +2302,17 @@ void CDiplomacyMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// clicked to DisplayAllRaces
-	rect.SetRect(40,750,80,30);
-	if (rect.PtInRect(point))
-	{
-		m_bDisplayAllRaces=!m_bDisplayAllRaces;
-		if (m_bDisplayAllRaces)
-			std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
-		else
-			std::sort(m_vRaceList.begin(), m_vRaceList.end(),CompareRaceName);
-		Invalidate();
-		return;
-	}
+	//rect.SetRect(40,750,80,30);
+	//if (rect.PtInRect(point))
+	//{
+	//	m_bDisplayAllRaces=!m_bDisplayAllRaces;
+	//	if (m_bDisplayAllRaces)
+	//		std::sort(m_vRaceList.begin(), m_vRaceList.end(),ComareRaceAgreement);
+	//	else
+	//		std::sort(m_vRaceList.begin(), m_vRaceList.end(),CompareRaceName);
+	//	Invalidate();
+	//	return;
+	//}
 
 	// Wenn wir in der Informationsansicht sind und eine Rasse angklickt haben
 	if (m_bySubMenu == 0 && m_sClickedOnRace != "")
