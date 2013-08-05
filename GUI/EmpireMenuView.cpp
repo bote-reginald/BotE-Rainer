@@ -960,6 +960,9 @@ void CEmpireMenuView::DrawEmpireShipMenue(Graphics* g)
 				s = pMajor->GetShipHistory()->GetShipHistory(i)->m_strShipType;
 				//MYTRACE("shipsdetails")(MT::LEVEL_DEBUG, "Empire Ships Overview - ShipType: %s \n", s);
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(225,140+j*25,150,25), &fontFormat, &fontBrush);
+//s = pMajor->GetShipHistory()->GetShipHistory(i)->;
+				//MYTRACE("shipsdetails")(MT::LEVEL_DEBUG, "Empire Ships Overview - ShipType: %s \n", s);
+//  display of troops onboard		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(225,140+j*25,150,25), &fontFormat, &fontBrush);
 				s = pMajor->GetShipHistory()->GetShipHistory(i)->m_strShipClass;
 				//MYTRACE("shipsdetails")(MT::LEVEL_DEBUG, "Empire Ships Overview - ShipClass: %s \n", s);
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(375,140+j*25,120,25), &fontFormat, &fontBrush);

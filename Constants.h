@@ -30,6 +30,8 @@ extern const int STARMAP_SECTOR_HEIGHT;//		80		///< Höhe eines Sektors
 extern int STARMAP_TOTALWIDTH	;//		2400	///< Gesamtbreite der View in Pixel bei 100% (= 40 * 30)
 extern int STARMAP_TOTALHEIGHT	;//		1600	///< Gesamthöhe bei 100% (= 20 * 40)
 
+extern int AmountOfSystems; // will be used to adapt game to big or thin galaxy e.g. maintenancecosts
+
 
 #define STARMAP_ZOOM_MIN			.3		///< minimaler Zoom-Faktor
 extern double STARMAP_ZOOM_MAX;				///< maximaler Zoom-Faktor

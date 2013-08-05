@@ -45,7 +45,7 @@ public:
 
 	BYTE GetSubMenu() const {return m_bySubMenu;}
 
-	CRaceController* m_pRaceCtrl;		///< Rassencontroller für alle Rassen des Spiels
+	//CRaceController* m_pRaceCtrl;		///< Rassencontroller für alle Rassen des Spiels
 
 private:
 	// Funktionen
