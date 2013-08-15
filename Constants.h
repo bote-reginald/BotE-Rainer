@@ -51,9 +51,13 @@ extern double STARMAP_ZOOM_MAX;				///< maximaler Zoom-Faktor
 #define TRANSPORT_VIEW			10
 #define EVENT_VIEW				11
 #define COMBAT_VIEW				12
+#define DATABASE_VIEW			13
+#define DATABASE2_VIEW			14
+#define DATABASE3_VIEW			15
+#define LAST_VIEW				16
 
 #define IS_MAIN_VIEW(id) \
-	((id) >= GALAXY_VIEW && (id) <= COMBAT_VIEW)
+	((id) >= GALAXY_VIEW && (id) <= LAST_VIEW)
 
 // Startmenü
 #define START_VIEW				50
@@ -98,10 +102,12 @@ namespace EMPIRE_NEWS_TYPE
 {
 	enum Typ
 	{
-		TUTORIAL	= -1,
+		//TUTORIAL	= -1,
+		RESEARCH	= -1,
+
 		NO_TYPE		= 0,
 		ECONOMY		= 1,
-		RESEARCH	= 2,
+		TUTORIAL	= 2,
 		SECURITY	= 3,
 		DIPLOMACY	= 4,
 		MILITARY	= 5,

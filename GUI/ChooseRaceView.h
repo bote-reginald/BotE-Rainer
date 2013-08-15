@@ -47,6 +47,7 @@ protected:
 	virtual void OnDraw(CDC* /*pDC*/);
 	virtual void OnInitialUpdate();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnKeyDown(UINT nChar);
 	afx_msg void OnRaceButtonClicked(UINT nID);
 	afx_msg void OnBnStartGameClicked();
 	afx_msg void OnBnCancelClicked();

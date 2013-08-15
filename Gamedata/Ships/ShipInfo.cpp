@@ -7,6 +7,7 @@
 #include "Ship.h"
 #include "Races\Empire.h"
 #include "General/Loc.h"
+#include "Galaxy\Sector.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -210,6 +211,43 @@ void CShipInfo::DeleteWeapons()
 	m_BeamWeapons.RemoveAll();
 }
 
+void CShipInfo::CalculateMaintenanceCosts()
+{
+		//ingame-calculation maintenance costs  (value will be divided by 100 at the end)
+		//int mcosts;
+		int mcosts = ((10*((this->GetShipSize()+0)*200) + ((this->GetManeuverability()+0)*5) + ((this->GetPropulsionTech()+0)*10) + 
+			((this->GetSpeed()+0)*50) + ((this->GetRange()+0)*50) + ((this->GetCloak()+0)*10) + ((this->GetShipType()+0)*10)) +
+			(this->GetCompleteOffensivePower()/3) + (this->GetCompleteDefensivePower()/3));
+		//mcosts = (((this->GetShipSize()+1)*100) + ((this->GetManeuverability()+1)*5) + ((this->GetPropulsionTech()+1)*10) + 
+		//	((this->GetSpeed()+1)*30) + ((this->GetRange()+1)*50) + ((this->GetCloak()+1)*10) + ((this->GetShipType()+1)*10));
+		//+ (int)(m_Hull.GetMaxHull()*hullBoni);
+		// race value 		/*mcosts = U-Modifikatoren pro Rasse	0,64Terra, 	0,34Han, 0,88Kha, 0,65Roth, 0,60Car, 0,78Ome, 0,65Minor (=Major-Schnitt)*/
+		int racemodevalue = 0;
+		switch (this->GetRace())
+							{
+				case 1: racemodevalue = 64; break; // con
+				case 2: racemodevalue = 34; break; // han
+				case 3: racemodevalue = 88; break; // kha
+				case 4: racemodevalue = 65; break; // rot
+				case 5: racemodevalue = 60; break; // car
+				case 6: racemodevalue = 78; break; // ome
+				case 255: racemodevalue = 65; break; // Minor
+				default: racemodevalue = 100;
+				}
+
+		int AmountOfSystems = 100 / 100; // at 20x15 and STARDENSITY=26 => 58
+			//GetAmountOfSystems
+		mcosts = mcosts * racemodevalue * AmountOfSystems / 5000;
+		if (this->IsStation())
+			mcosts = mcosts / 11;
+
+		// double kommata for excel-import
+		MYTRACE("shipdetails")(MT::LEVEL_INFO, "SHIPINFO.CPP: %d,%s ,, Type:%d,, ship.data:%d,, mcosts:%i,,, race:%d,, Size:%d,, Man:%d,, PropTec:%d,, Speed:%d,, Range:%d,, Cloak:%d,, Off:%d,, Def:%d,\n",
+			this->GetRace(), this->GetShipClass(), this->GetShipType(), this->GetMaintenanceCosts(), mcosts, racemodevalue, this->GetShipSize(), 
+			this->GetManeuverability(), this->GetPropulsionTech(), this->GetSpeed(), this->GetRange(), this->GetCloak(), this->GetCompleteOffensivePower(), 
+			this->GetCompleteDefensivePower());
+}
+
 // Funktion berechnet die finalen Kosten zum Bau des Schiffes. Diese muß immer aufgerufen werden, wenn wir was an
 // dem Schiffsobjekt geändert haben.
 void CShipInfo::CalculateFinalCosts()
@@ -287,6 +325,7 @@ void CShipInfo::CalculateFinalCosts()
 			m_iNeededDeuterium += m_TorpedoWeapons.GetAt(i).GetTorpedoPower() * m_TorpedoWeapons.GetAt(i).GetNumber()
 			* m_TorpedoWeapons.GetAt(i).GetNumberOfTupes();
 	}
+	CalculateMaintenanceCosts();
 }
 
 // Funktion bestimmt die 1. Order des Schiffs nach dem Bau anhand dessen Typs
@@ -464,6 +503,36 @@ void CShipInfo::DrawShipInformation(Graphics* g, CRect rect, Gdiplus::Font* font
 		}
 		fontBrush.SetColor(clrNormal);
 		r.SetRect(rect.left,rect.top+288,rect.right,rect.top+308);
+
+		// draw MANEUVERABILITY + ingame-calculation maintenance costs
+		CString sadd = "X:";
+		//ingame-calculation maintenance costs  (value will be divided by 100 at the end)
+		int mcosts;
+				mcosts = (((this->GetShipSize()+0)*100) + ((this->GetManeuverability()+0)*5) + ((this->GetPropulsionTech()+0)*10) + 
+			((this->GetSpeed()+0)*30) + ((this->GetRange()+0)*50) + ((this->GetCloak()+0)*10) + ((this->GetShipType()+0)*10) +
+			this->GetCompleteOffensivePower() + this->GetCompleteDefensivePower());
+		//mcosts = (((this->GetShipSize()+1)*100) + ((this->GetManeuverability()+1)*5) + ((this->GetPropulsionTech()+1)*10) + 
+		//	((this->GetSpeed()+1)*30) + ((this->GetRange()+1)*50) + ((this->GetCloak()+1)*10) + ((this->GetShipType()+1)*10));
+		//+ (int)(m_Hull.GetMaxHull()*hullBoni);
+		// race value
+		/*mcosts = U-Modifikatoren pro Rasse	
+			0,64	Terra
+			0,34	Han
+			0,88	Kha
+			0,65	Roth
+			0,60	Car
+			0,78	Ome
+			0,65	Minor (=Major-Schnitt)
+		*/
+		int racemodevalue = 64;
+		mcosts = mcosts * racemodevalue / 10000;
+
+		sadd.Format(" - IngCosts:%i, RaceModValue:%d, Off:%d, Def:%d)",mcosts,racemodevalue,this->GetCompleteOffensivePower(),this->GetCompleteDefensivePower());
+			//(Size:%d,Man:%d,PropTech:%d,Range:%d,Cloak:%d,Typ:%d))",
+			//mcosts,racemodevalue);
+			//this->GetShipSize(),this->GetManeuverability(),this->GetPropulsionTech(),this->GetSpeed(),this->GetRange(),this->GetCloak(),this->GetShipType());
+		s += sadd;
+
 		g->DrawString(CComBSTR(s), -1, font, RectF((REAL)r.left, (REAL)r.top, (REAL)r.Width(), (REAL)r.Height()), &fontFormat, &fontBrush);
 
 		// Scan anzeigen

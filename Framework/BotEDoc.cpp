@@ -979,14 +979,16 @@ void CBotEDoc::PrepareData()
 		MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: RESEARCHSPEED: %d\n", CResearchInfo::m_dResearchSpeedFactor);
 
 		MYTRACE("general")(MT::LEVEL_INFO, "Preparing game data ready...\n");
-		/*
+		//   /*
 		double habis = 0;
 		CString s;
 		double hab = 0;
 		double temp;
 		CPoint poi;
-		for (int y = 0; y < 20; y++)
-			for (int x = 0; x < 30; x++)
+		int yMax = STARMAP_SECTORS_VCOUNT;
+		int xMax = STARMAP_SECTORS_HCOUNT;
+		for (int y = 0; y < yMax; y++)
+			for (int x = 0; x < xMax; x++)
 			{
 				temp = 0;
 				hab = 0;
@@ -1003,9 +1005,10 @@ void CBotEDoc::PrepareData()
 					poi.x = x; poi.y = y;
 				}
 			}
-		s.Format("Größtes System ist %s mit %lf Bevölkerung\nin Sektor %d:%d",m_Sectors.at(poi.x+(poi.y)*STARMAP_SECTORS_HCOUNT).GetName(),habis,poi.x,poi.y);
-		AfxMessageBox(s);
-		*/
+		s.Format("Biggest system is %s (%lf population) in Sector %d:%d",m_Sectors.at(poi.x+(poi.y)*STARMAP_SECTORS_HCOUNT).GetName(),habis,poi.x,poi.y);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, s+"\n");
+		//AfxMessageBox(s);
+		//  */
 
 		if(clp->GetTest()) {
 			const CTest* const test = CTest::GetInstance(*this);
@@ -1027,6 +1030,17 @@ void CBotEDoc::PrepareData()
 				it->second->SetHumanPlayer(false);
 		}
 	}
+		
+	int temp = 0;
+	for (int y = 0; y < STARMAP_SECTORS_VCOUNT; y++)
+			for (int x = 0; x < STARMAP_SECTORS_HCOUNT; x++)
+			{
+				if (GetSector(x, y).GetSunSystem())
+					temp += 1;
+			}
+			
+		int AmountOfSystems = temp;
+		MYTRACE("general")(MT::LEVEL_INFO, "Amount of Systems:%i\n",AmountOfSystems);
 }
 
 
@@ -1067,7 +1081,7 @@ void CBotEDoc::GenerateGalaxy()
 	// Galaxieform anpassen
 	int nGenerationMode = 0; // 0 == Standard  sonst Pattern verwenden
 	pIni->ReadValue("Special", "GENERATIONMODE", nGenerationMode);
-	MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: GENERATIONMODE (pattern): %i\n", nGenerationMode);
+	//MYTRACE("init")(MT::LEVEL_INFO, "relevant only at new game: Bote.ini: GENERATIONMODE (pattern): %i\n", nGenerationMode);
 
 	std::vector<std::vector<bool>> nGenField(STARMAP_SECTORS_HCOUNT, std::vector<bool>(STARMAP_SECTORS_VCOUNT, true));
 	if (nGenerationMode != 0)
@@ -1396,6 +1410,43 @@ void CBotEDoc::NextRound()
 	{
 		MYTRACE("logdata")(MT::LEVEL_INFO, "##################### START NEXT ROUND (round: %d) ####################", GetCurrentRound());
 
+CEmpireNews message;
+CPoint p;
+message.CreateNews("new turn began AD-NO-TYPE", EMPIRE_NEWS_TYPE::TUTORIAL, "no system here",p);
+/*it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+/*
+CEmpireNews message;
+message.CreateNews("new turn began AD_ECONOMY", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_ECONOMY, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+
+CEmpireNews message;
+message.CreateNews("new turn began AD_RESEARCH", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_RESEARCH, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+
+CEmpireNews message;
+message.CreateNews("new turn began AD_SECURITY", FALSE, pMinor->GetRaceName()), ADVISOR_NEWS_TYPE::AD_SECURITY, param, p);
+it->second->GetEmpire()->AddMsg(message);
+if (it->second->IsHumanPlayer())
+{
+network::RACE client = m_pRaceCtrl->GetMappedClientID(it->first);
+m_iSelectedView[client] = EMPIRE_VIEW;
+}
+*/
 		// Seed initialisieren
 		RandomSeed();
 
@@ -1418,29 +1469,42 @@ void CBotEDoc::NextRound()
 
 		// Starmap für alle Rassen berechnen und anlegen
 		GenerateStarmap();
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 
 		// KI-Berechnung
 		m_pSectorAI->Clear();
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		m_pSectorAI->CalculateDangers();
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		m_pSectorAI->CalcualteSectorPriorities();
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 
 		CShipAI ShipAI(this);
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		ShipAI.CalculateShipOrders(m_pSectorAI);
 
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		m_pAIPrios->Clear();
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		m_pAIPrios->CalcShipPrios(m_pSectorAI);
+				MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		m_pAIPrios->GetIntelAI()->CalcIntelligence(this);
 
 		// Alle Statistiken des Spiels berechnen (erst nachdem die Sector-AI berechnet wurde!
 		// Nimmt von dort gleich die Schiffsstärken)
 		m_Statistics.CalcStats(this);
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 
 
 		this->CalcPreDataForNextRound();
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		// Diplomatie nach dem Hochzählen der Runde aber noch vor der Schiffsbewegung durchführen
 		this->CalcDiplomacy();
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		this->CalcShipOrders();
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		this->CalcShipMovement();
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 		// prüfen ob ein Kampf stattfindet
 		if (IsShipCombat())
 		{
@@ -1472,7 +1536,7 @@ void CBotEDoc::NextRound()
 			return;
 		}
 	}
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	map<CString, CMajor*>* pmMajors = m_pRaceCtrl->GetMajors();
 	// Minors erst nach einem Kampf berechnen, so dass nicht in der gleichen Runde deren Schiff gegen ein anderes Kämpfen kann
 	// Minors ausbreiten, Akzeptanzpunkte berechnen und Ressourcen verbrauchen
@@ -1514,15 +1578,19 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 			pMinor->PerhapsBuildShip(this);
 		}
 	}
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Zufallsereignisse berechnen
 	CRandomEventCtrl* pRandomEventCtrl = CRandomEventCtrl::GetInstance();
 	for (map<CString, CMajor*>::const_iterator it = pmMajors->begin(); it != pmMajors->end(); ++it)
 		pRandomEventCtrl->CalcEvents(it->second);
 
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcSystemAttack();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcIntelligence();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcResearch();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 
 	// alten Creditbestand festhalten
 	map<CString, long> mOldCredits;
@@ -1531,23 +1599,28 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 		CMajor* pMajor = it->second;
 		mOldCredits[it->first] = pMajor->GetEmpire()->GetCredits();
 	}
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
-	// Auswirkungen von Alienschiffen beachten
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());	// Auswirkungen von Alienschiffen beachten
 	this->CalcAlienShipEffects();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// alle Systeme berechnen (Bauliste, Moral, Energie usw.)
 	this->CalcOldRoundData();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Aliens zufällig ins Spiel bringen (vor der Berechnung der Schiffsauswirkungen)
 	this->CalcRandomAlienEntities();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Schiffsauswirkungen berechnen (Scanstärken, Erfahrung usw.)
 	this->CalcShipEffects();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcNewRoundData();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcTrade();
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 
 	// Zufallsereignis Hüllenvirus berechnen
 	pRandomEventCtrl->CalcShipEvents();
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcEndDataForNextRound();
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Creditänderung berechnen
 	for (map<CString, CMajor*>::const_iterator it = pmMajors->begin(); it != pmMajors->end(); ++it)
 	{
@@ -1803,7 +1876,7 @@ void CBotEDoc::ApplyBuildingsAtStartup()
 		AfxMessageBox("ERROR! Could not open file \"StartBuildings.data\"...");
 	// Datei schließen
 	file.Close();
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// testweise mal in allen Systemen alles berechnen
 	map<CString, CMajor*>* pmMajors = m_pRaceCtrl->GetMajors();
 	// Starmaps berechnen, sofern diese noch nicht existieren
@@ -1812,7 +1885,7 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 		CMajor* pMajor = it->second;
 		pMajor->CreateStarmap();
 	}
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Anomalien beachten (ist für jede Starmap gleich, daher statisch)
 	CStarmap::SynchronizeWithAnomalies(m_Sectors);
 
@@ -1853,9 +1926,9 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 			}
 		}
 	}//for(std::vector<CSector>::const_iterator sector = m_Sectors.begin(); sector != m_Sectors.end(); ++sector)
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcNewRoundData();
-	MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	this->CalcShipEffects();
 
 	// hier das Schiffinformationsfeld durchgehen und in die WeaponObserver-Klasse des jeweiligen Imperiums
@@ -2591,7 +2664,7 @@ void CBotEDoc::CalcPreDataForNextRound()
 	m_iRound++;
 
 	ASSERT(GetPlayersRace());
-MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Berechnungen der neuen Runde
 	map<CString, CMajor*>* pmMajors = m_pRaceCtrl->GetMajors();
 	for (map<CString, CMajor*>::const_iterator it = pmMajors->begin(); it != pmMajors->end(); ++it)
@@ -2613,7 +2686,7 @@ MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) #######
 			pMajor->SetHumanPlayer(false);
 	}
 
-	MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	// Schiffe, welche nur auf einem bestimmten System baubar sind, z.B. Schiffe von Minorraces, den Besitzer wieder
 	// auf MINORNUMBER setzen. In der Funktion, welche in einem System die baubaren Schiffe berechnet, wird dieser
 	// Wert dann auf die richtige Rasse gesetzt. Jeder der das System dann besitzt, kann dieses Schiff bauen
@@ -2642,7 +2715,7 @@ void CBotEDoc::CalcSystemAttack()
 	// Systemangriff durchführen
 	// Set mit allen Minors, welche während eines Systemangriffs vernichtet wurden. Diese werden am Ende der
 	// Berechnung aus der Liste entfernt
-	MYTRACE("logdata")(MT::LEVEL_INFO, "##################### (round is: %d) ####################", GetCurrentRound());
+					MYTRACE("logdata")(MT::LEVEL_DEBUG, "##################### (round is: %d) ####################", GetCurrentRound());
 	set<CString> sKilledMinors;
 	CArray<CPoint> fightInSystem;
 	for (CShipMap::iterator y = m_ShipMap.begin(); y != m_ShipMap.end(); ++y)
@@ -6245,13 +6318,13 @@ void CBotEDoc::CalcAlienShipEffects()
 void CBotEDoc::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Fügen Sie hier Ihren Befehlsaktualisierungs-UI-Behandlungscode ein.
-	pCmdUI->Enable(FALSE);
+	pCmdUI->Enable(TRUE);
 }
 
 void CBotEDoc::OnUpdateFileOpen(CCmdUI *pCmdUI)
 {
 	// TODO: Fügen Sie hier Ihren Befehlsaktualisierungs-UI-Behandlungscode ein.
-	pCmdUI->Enable(FALSE);
+	pCmdUI->Enable(TRUE);
 }
 
 BOOL CBotEDoc::OnOpenDocument(LPCTSTR lpszPathName)

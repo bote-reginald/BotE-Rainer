@@ -181,6 +181,8 @@ public:
 		return GetSystem(s.GetKO().x, s.GetKO().y);
 	}
 
+	//void GetAmountOfSystems (int AmountOfSystems);
+
 	CBuildingInfo& GetBuildingInfo(int id) {ASSERT(id > 0); return BuildingInfo[id-1];}
 	const CString& GetBuildingName(int id) const {ASSERT(id > 0); return BuildingInfo[id-1].GetBuildingName();}
 	const CString& GetBuildingDescription(int id) const {ASSERT(id > 0); return BuildingInfo[id-1].GetBuildingDescription();}

@@ -78,6 +78,7 @@ public:
 
 	void DeleteWeapons();							// Funktion löscht die Bewaffnung
 	void CalculateFinalCosts();						// Funktion berechnet die finalen Kosten zum Bau des Schiffes
+	void CalculateMaintenanceCosts();				// calculates MaintenanceCosts of Ships
 	void SetStartOrder();							// Funktion bestimmt die 1. Order des Schiffs nach dem Bau anhand dessen Typs
 	void SetStartTactic();							// Funktion bestimmt die 1. Taktik des Schiffs nach dem Bau anhand dessen Typs
 	void DrawShipInformation(Graphics* g, CRect rect, Gdiplus::Font* font, Gdiplus::Color clrNormal, Gdiplus::Color clrMark, CResearch* research);	// Funktion zeichnet wichtige Informationen zu dem Schiff
