@@ -623,9 +623,9 @@ CString CMinor::GetTooltip(void) const
 	sCor = CHTMLStringBuilder::GetHTMLColor(sCor, _T("silver"));
 	sCor = CHTMLStringBuilder::GetHTMLHeader(sCor, _T("h4"));
 	sCor += ": ";
-	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
-	sCor += CHTMLStringBuilder::GetHTMLStringHorzLine();
-	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+	//sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+	//sCor += CHTMLStringBuilder::GetHTMLStringHorzLine();
+	//sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
 
 	s = "";
 	switch (GetCorruptibility())
@@ -690,36 +690,28 @@ sAcceptance.Format("xx",GetAcceptancePoints(it->first));
 */
 
 
-	CString sRelation;
-	sRelation = CHTMLStringBuilder::GetHTMLColor(sRelation, _T("silver"));
-	sRelation = CHTMLStringBuilder::GetHTMLHeader(sRelation, _T("h4"));
+CString sRelation;
 	sRelation = "Relation not ready";
-	sRelation += CHTMLStringBuilder::GetHTMLStringNewLine();
-
 
 	CString sAcceptance;
-	sAcceptance = CHTMLStringBuilder::GetHTMLColor(sAcceptance, _T("silver"));
-	sAcceptance = CHTMLStringBuilder::GetHTMLHeader(sAcceptance, _T("h4"));
 	sAcceptance = "Acceptance not ready ";
-	sAcceptance += CHTMLStringBuilder::GetHTMLStringNewLine();
-
 //
 	CString sDesc;
 	sDesc = " ";
 	sDesc = CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
-	sDesc = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h4"));
-	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
-	sDesc += CHTMLStringBuilder::GetHTMLStringHorzLine();
+	sDesc += CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h4"));
+	//sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
+	//sDesc += CHTMLStringBuilder::GetHTMLStringHorzLine();
 	sDesc += CHTMLStringBuilder::GetHTMLStringNewLine();
 	sDesc += m_sDesc;
-	//sDesc += CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
+	sDesc += CHTMLStringBuilder::GetHTMLColor(sDesc, _T("silver"));
 
 	//sDesc += m_sDesc;
-//s = "";
-//	s = CHTMLStringBuilder::GetHTMLColor(sDesc);
-//	s = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h5"));
-//	sCor += s;
-//	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
+
+	s = CHTMLStringBuilder::GetHTMLColor(sDesc);
+	s = CHTMLStringBuilder::GetHTMLHeader(sDesc, _T("h5"));
+	sCor += s;
+	sCor += CHTMLStringBuilder::GetHTMLStringNewLine();
 //*/
 
 	return CHTMLStringBuilder::GetHTMLCenter(sTip + sProgress + sCor + sRelation + sAcceptance + sDesc);

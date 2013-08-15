@@ -111,8 +111,8 @@ private:
 	CArray<CMyButton*> m_WorkerButtons;				///< die Buttons in der Arbeitermenüansicht zum Ändern der zugewiesenen Arbeiter
 	CArray<CMyButton*> m_SystemTradeButtons;		///< die Buttons in der Systemmenühandelsansicht zum Ändern der Mengen im stellaren Lager
 
-	CArray<CMyButton*>  m_SwitchSystemPrevious;
-	CArray<CMyButton*>  m_SwitchSystemNext;
+	BOOLEAN m_SwitchSystemPrevious;
+	BOOLEAN m_SwitchSystemNext;
 
 	// sonstige Variablen
 	// Hier die Rechtecke zum Klicken ín der Baumenüansicht
@@ -151,7 +151,6 @@ private:
 	CRect BuildingInfoButton;				// Rechteck für den Gebäudeinfobutton
 	CRect BuildingDescriptionButton;		// Rechteck für den Gebäudebeschreibungsbutton
 	CRect ChangeWorkersButton;				// Rechteck für den Button für Umschaltung zwischen "normalen" und RES-Arbeitern
-	CRect ChangeToTroopsButton;				// Rechteck für den Button für Umschaltung zwischen Defence
 	CRect SwitchSystemPrevious;
 	CRect SwitchSystemNext;
 	CRect Timber[5][200];					// Die Balken die die Arbeiterzuweisung anzeigen 5 Stück a max. 200 Arbeiter

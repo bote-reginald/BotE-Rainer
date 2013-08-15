@@ -493,20 +493,6 @@ CString CRace::GetTooltip(void) const
 	s = CHTMLStringBuilder::GetHTMLHeader(s, _T("h5"));
 	sProb += s;
 
-	// Relation
-//	USHORT relation = pRace->GetRelation(pPlayer->GetRaceID());
-//CString strRelation;
-//strRelation.Format (CLoc::GetString("RELATIONSHIP")+": %i\n", relation);
-//MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
-//sTip_add = "\n\n\n"+CLoc::GetString("RELATIONSHIP")+"-"+CLoc::GetString("MORALVALUE")+": " + strRelation;
-
-//	// Aceptance
-//	USHORT relation = pRace->(pPlayer->GetRaceID());
-//CString strRelation;
-//strRelation.Format (CLoc::GetString("RELATIONSHIP")+": %i\n", relation);
-//MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
-//sTip_add = "\n\n\n"+CLoc::GetString("RELATIONSHIP")+"-"+CLoc::GetString("MORALVALUE")+": " + strRelation;
-
 	return CHTMLStringBuilder::GetHTMLCenter(sName + sProb);
 }
 

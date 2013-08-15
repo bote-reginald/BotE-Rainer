@@ -74,12 +74,6 @@ void CResearchMenuView::OnDraw(CDC* dc)
 		DrawResearchMenue(&g);
 	else if (m_bySubMenu == 1)
 		DrawUniqueResearchMenue(&g);
-	else if (m_bySubMenu == 3)
-		DrawResearchMenue3(&g);
-	else if (m_bySubMenu == 4)
-		DrawResearchMenue4(&g);
-	else if (m_bySubMenu == 5)
-		DrawResearchMenue5(&g);
 	// ************** DIE FORSCHUNGSANSICHT ZEICHNEN ist hier zu Ende **************
 	g.ReleaseHDC(pDC->GetSafeHdc());
 }
@@ -114,7 +108,7 @@ void CResearchMenuView::OnInitialUpdate()
 	CRect r;
 	GetClientRect(&r);
 	// i == 0->Bio, 1->Energy, 2->Computer, 3->Bautechnik, 4->Antrieb, 5->Waffen, 6->Unique
-	for (int i = 0; i < 3; i++)	// Unique Forschung muß separat initialisiert werden, daher nur bis 5
+	for (int i = 0; i < 3; i++)	// Unique Forschung muß seperat initialisiert werden, daher nur bis 5
 		for (int j = 0; j < 101; j++)
 			// Wir haben ne Breite von 200 für die 100 Striche zur Auswahl -> jeder Strich 2 breit
 			ResearchTimber[i][j].SetRect(r.left+33+j*2+i*260,r.top+350,r.left+33+j*2+2+i*260,r.top+350+20);
@@ -814,16 +808,16 @@ void CResearchMenuView::DrawResearchMenue3(Graphics* g)
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
 	// Wenn wir eine Unique Forschung zur Auswahl haben
-	// if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
-	// {
-	// 	if (bg_urmenu)
-	// 		g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
-	// }
-	// else
-	// {
-	// 	if (bg_emptyur)
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	{
+		if (bg_urmenu)
+			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	}
+	else
+	{
+		if (bg_emptyur)
 			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
-	// }
+	}
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -1062,13 +1056,11 @@ void CResearchMenuView::DrawResearchMenue3(Graphics* g)
 	// Wenn wir keine Uniqueforschung zur Auswahl haben
 	else
 		s = CLoc::GetString("SPECIAL_RESEARCH");
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
-	g->DrawString(CComBSTR("Menue3"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
 
 	// Wenn wir keine Unique Forschung zur Auswahl haben
-	//if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() != FALSE)
-	//{
-		/*
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() != FALSE)
+	{
 		fontFormatCenter.SetLineAlignment(StringAlignmentNear);
 		fontFormatCenter.SetFormatFlags(!StringFormatFlagsNoWrap);
 		s = CLoc::GetString("NO_SPECIAL_RESEARCH_AVAILABLE");
@@ -1082,37 +1074,35 @@ void CResearchMenuView::DrawResearchMenue3(Graphics* g)
 		s = CLoc::GetString("RESEARCHED_SPECIALTECHS");
 		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,300,680,30), &fontFormatCenter, &fontBrush);
 		fontBrush.SetColor(normalColor);
-		*/
 
 		int nCount = 0;
 		for (int i = 0; i < NoUC; i++)
 		{
 			RESEARCH_COMPLEX::Typ nComplex = (RESEARCH_COMPLEX::Typ)i;
 			// Bereich ermitteln
-			//if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexStatus() == RESEARCH_STATUS::RESEARCHED)
-			//{
+			if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexStatus() == RESEARCH_STATUS::RESEARCHED)
+			{
 				// Unterbereich bestimmen
-				//for (int j = 1; j <= 3; j++)
-				//{
-					//if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldStatus(j) == RESEARCH_STATUS::RESEARCHED)
-					//{
-				s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexName(); // + ": " +
-						//s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexName() + ": " +
-							//pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldName(j);
-						//MYTRACE("logdata")(MT::LEVEL_DEBUG, "SPECIAL_RESEARCH research yet: %s \n", s);
+				for (int j = 1; j <= 3; j++)
+				{
+					if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldStatus(j) == RESEARCH_STATUS::RESEARCHED)
+					{
+						s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexName() + ": " +
+							pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldName(j);
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "SPECIAL_RESEARCH research yet: %s \n", s);
 						g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,350 + nCount * 30 , 680, 30), &fontFormatCenter, &fontBrush);
 						nCount++;
 						break;
-					//}
-				//}
-			//}
+					}
+				}
+			}
 		}
 		if (nCount == 0)
 		{
 			s = CLoc::GetString("NONE");
 			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,350,680,30), &fontFormatCenter, &fontBrush);
 		}
-	//}
+	}
 }
 void CResearchMenuView::DrawResearchMenue4(Graphics* g)
 {
@@ -1151,16 +1141,16 @@ void CResearchMenuView::DrawResearchMenue4(Graphics* g)
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
 	// Wenn wir eine Unique Forschung zur Auswahl haben
-	// if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
-	// {
-	// 	if (bg_urmenu)
-	// 		g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
-	// }
-	// else
-	// {
-	// 	if (bg_emptyur)
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	{
+		if (bg_urmenu)
+			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	}
+	else
+	{
+		if (bg_emptyur)
 			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
-	// }
+	}
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -1399,9 +1389,7 @@ void CResearchMenuView::DrawResearchMenue4(Graphics* g)
 	// Wenn wir keine Uniqueforschung zur Auswahl haben
 	else
 		s = CLoc::GetString("SPECIAL_RESEARCH");
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
-	g->DrawString(CComBSTR("Menue4"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
-
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
 
 	// Wenn wir keine Unique Forschung zur Auswahl haben
 	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() != FALSE)
@@ -1459,6 +1447,8 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	if (!pMajor)
 		return;
 
+	CString s;
+
 	CString fontName = "";
 	Gdiplus::REAL fontSize = 0.0;
 
@@ -1483,131 +1473,17 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	fontFormatCenter.SetFormatFlags(StringFormatFlagsNoWrap);
 	fontFormatCenter.SetTrimming(StringTrimmingEllipsisCharacter);
 
-	if (bg_researchmenu)
-		g->DrawImage(bg_researchmenu, 0, 0, 1075, 750);
-
-	CString s;
-	USHORT leveldatabase;
-	USHORT techPercentage[7];
-
-	// großen Rechtecke für die einzelnen Forschungsgebiete zeichnen
-	// Biogenetik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetBioTech();
-		// only sample...fix programmed
-		leveldatabase = 1;
-		s.Format("%s - %s %d: %s",CLoc::GetString("BIOTECH"),CLoc::GetString("LEVEL"),leveldatabase,pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(0));
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,80,250,25), &fontFormatTop, &fontBrush);
-	s = "Typ1 Farm\n\nTyp1 Labor";
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,110,250,250), &fontFormatCenter, &fontBrush);
-
-	//	// switch to previous system
-	//	CString sPrefix = pMajor->GetPrefix();
-	//CString fileN = "Other\\" + sPrefix + "button.bop";
-	//CString fileI = "Other\\" + sPrefix + "buttoni.bop";
-	//CString fileA = "Other\\" + sPrefix + "buttona.bop";
-	//fileN = "Other\\" + sPrefix + "buttonminus.bop";
-	//fileA = "Other\\" + sPrefix + "buttonminusa.bop";
-	//m_SwitchSystemPrevious.Add(new CMyButton(CPoint(200,80) , CSize(40,40), "", fileN, fileN, fileA));
-
-	//// switch to next system
-	//fileN = "Other\\" + sPrefix + "buttonplus.bop";
-	//fileA = "Other\\" + sPrefix + "buttonplusa.bop";
-	//m_SwitchSystemNext.Add(new CMyButton(CPoint(230,80) , CSize(40,40), "", fileN, fileN, fileA));
-	Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\con_buttonminus.bop");
-	if (graphic)
-		g->DrawImage(graphic, 10,80,40,40);
-
-		graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\con_buttonplus.bop");
-	if (graphic)
-		g->DrawImage(graphic, 220,80,40,40);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetBioFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetBio(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,290,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[0] = pMajor->GetEmpire()->GetResearch()->GetBioPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[0]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,315,250,25), &fontFormatCenter, &fontBrush);
-
-
-
-	// Bautechnik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetConstructionTech();
-	leveldatabase = 1;
-	// only sample...fix programmed
-	s.Format("%s - %s %d: %s",CLoc::GetString("CONSTRUCTIONTECH"),CLoc::GetString("LEVEL"),leveldatabase, 
-		pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(1));
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,425,250,25), &fontFormatTop, &fontBrush);
-	s = "Typ1 PlasmaReaktor\nTyp1 Labor";
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,110,250,25), &fontFormatCenter, &fontBrush);
-
-
-	//graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\constructiontech.bop");
-	//if (graphic)
-	//	g->DrawImage(graphic, 60,480,150,125);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetConstructionFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetConstruction(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,630,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[3] = pMajor->GetEmpire()->GetResearch()->GetConstructionPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[3]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,655,250,25), &fontFormatCenter, &fontBrush);
-
-	// Energietechnik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetEnergyTech();
-	s.Format("%s - %s %d",CLoc::GetString("ENERGYTECH"),CLoc::GetString("LEVEL"),leveldatabase);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,80,250,25), &fontFormatTop, &fontBrush);
-	s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(1);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,110,250,25), &fontFormatCenter, &fontBrush);
-	//graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\energytech.bop");
-	//if (graphic)
-	//	g->DrawImage(graphic, 320,140,150,125);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetEnergyFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetEnergy(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,290,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[1] = pMajor->GetEmpire()->GetResearch()->GetEnergyPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[1]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,315,250,25), &fontFormatCenter, &fontBrush);
-
-	// Antriebstechnik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetPropulsionTech();
-	s.Format("%s - %s %d",CLoc::GetString("PROPULSIONTECH"),CLoc::GetString("LEVEL"),leveldatabase);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,425,250,25), &fontFormatTop, &fontBrush);
-	s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(3);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,455,250,25), &fontFormatCenter, &fontBrush);
-	//graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\propulsiontech.bop");
-	//if (graphic)
-	//	g->DrawImage(graphic, 320,480,150,125);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetPropulsionFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetPropulsion(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,630,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[4] = pMajor->GetEmpire()->GetResearch()->GetPropulsionPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[4]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,655,250,25), &fontFormatCenter, &fontBrush);
-
-	// Computertechnik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetCompTech();
-	s.Format("%s - %s %d",CLoc::GetString("COMPUTERTECH"),CLoc::GetString("LEVEL"),leveldatabase);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,80,250,25), &fontFormatTop, &fontBrush);
-	s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(2);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,110,250,25), &fontFormatCenter, &fontBrush);
-	//graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\computertech.bop");
-	//if (graphic)
-	//	g->DrawImage(graphic, 580,140,150,125);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetComputerFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetComp(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,290,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[2] = pMajor->GetEmpire()->GetResearch()->GetCompPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[2]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,315,250,25), &fontFormatCenter, &fontBrush);
-
-	// Waffentechnik
-	leveldatabase = pMajor->GetEmpire()->GetResearch()->GetWeaponTech();
-	s.Format("%s - %s %d",CLoc::GetString("WEAPONTECH"),CLoc::GetString("LEVEL"),leveldatabase);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,425,250,25), &fontFormatTop, &fontBrush);
-	s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetTechName(5);
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,455,250,25), &fontFormatCenter, &fontBrush);
-	//graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\weapontech.bop");
-	//if (graphic)
-	//	g->DrawImage(graphic, 580,480,150,125);
-	//s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetWeaponFP()*100)/(pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetWeapon(leveldatabase))));
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,630,250,25), &fontFormatCenter, &fontBrush);
-	//techPercentage[5] = pMajor->GetEmpire()->GetResearch()->GetWeaponPercentage();
-	//s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage[5]);
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,655,250,25), &fontFormatCenter, &fontBrush);
-
+	// Wenn wir eine Unique Forschung zur Auswahl haben
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	{
+		if (bg_urmenu)
+			g->DrawImage(bg_urmenu, 0, 0, 1075, 750);
+	}
+	else
+	{
+		if (bg_emptyur)
+			g->DrawImage(bg_emptyur, 0, 0, 1075, 750);
+	}
 
 	// Die gesamten Forschungspunkte rechts anzeigen
 	g->DrawString(CComBSTR(CLoc::GetString("RESEARCHPOINTS")), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(835,80,240,25), &fontFormatCenter, &fontBrush);
@@ -1619,7 +1495,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 
 	s.Format("%d %s",pMajor->GetEmpire()->GetFP(),CLoc::GetString("FP"));
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCHPOINTS (TOTAL): %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(855,115,190,25), &fontFormatCenter, &fontBrush);
 	fontFormatCenter.SetAlignment(StringAlignmentCenter);
 
@@ -1634,7 +1509,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetBioTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI BIOTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	rect.Y += 30;
 
@@ -1643,7 +1517,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetEnergyTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI ENERGYTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	rect.Y += 30;
 
@@ -1652,7 +1525,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetCompTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI COMPUTERTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	rect.Y += 30;
 
@@ -1661,7 +1533,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetConstructionTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI CONSTRUCTIONTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	rect.Y += 30;
 
@@ -1670,7 +1541,6 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetPropulsionTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI PROPULSIONTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	rect.Y += 30;
 
@@ -1679,56 +1549,163 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
 	s.Format("%d%%",pMajor->GetEmpire()->GetResearch()->GetWeaponTechBoni());
 	fontFormatCenter.SetAlignment(StringAlignmentFar);
-	// (ok) MYTRACE("logdata")(MT::LEVEL_DEBUG, "RESEARCH_BONI WEAPONTECH: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormatCenter, &fontBrush);
+	fontFormatCenter.SetAlignment(StringAlignmentCenter);
 
 	fontBrush.SetColor(normalColor);
 
-	//Color penMark;
-	//penMark.SetFromCOLORREF(pMajor->GetDesign()->m_clrListMarkPenColor);
-	//for (int i = 0; i < 6; i++)
-	//{
-	//	for (int j = 1; j < 101; j += 5)	// bis 100, weil das 0te Element nicht mit gezeichnet wird, man soll nur drauf drücken können
-	//	{
-	//		RectF timber(ResearchTimber[i][j].left, ResearchTimber[i][j].top, ResearchTimber[i][j].Width() + 6, ResearchTimber[i][j].Height());
-	//		if (j <= techPercentage[i])
-	//			g->FillRectangle(&SolidBrush(Color(250-j*2.5,50+j*2,0)), timber);
-	//		else
-	//			g->FillRectangle(&SolidBrush(Color(75,75,75,75)), timber);
-	//	}
-	//	// farbige Kante um Zuweisungsbalken zeichnen
-	//	RectF markRect(ResearchTimber[i][1].left, ResearchTimber[i][1].top, ResearchTimber[i][100].left - ResearchTimber[i][1].left, ResearchTimber[i][1].Height());
-	//	g->DrawRectangle(&Gdiplus::Pen(penMark), markRect);
-	//}
+	// großen Rechtecke für die einzelnen Forschungsgebiete zeichnen
+	// Uniqueforschung
+	// Wenn wir eine Unique Forschung zur Auswahl haben, dann auch anzeigen
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+	{
+		USHORT techPercentage;
+		RectF TechRect(10,80,250,25);
+		USHORT level = pMajor->GetEmpire()->GetResearch()->GetNumberOfUniqueResearch();
+		// UniqueForschung braucht ja soviele FP wie alle anderen des Level zusammen, deswegen die lange Anweisung
+		ULONG allOthers = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetBio(level)+
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetEnergy(level)+
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetComp(level)+
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetPropulsion(level)+
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetConstruction(level)+
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetWeapon(level);
+		// man benötigt etwas weniger Punkte als alle Techs zusammen
+		allOthers /= SPECIAL_RESEARCH_DIV;
+		s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetComplexName();
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), TechRect, &fontFormatTop, &fontBrush);
 
-	//fontFormatCenter.SetAlignment(StringAlignmentCenter);
-	//fontFormatCenter.SetLineAlignment(StringAlignmentFar);
-	//for (int i = 0; i < 6; i++)
-	//{
-	//	const BOOL lockstatus = pMajor->GetEmpire()->GetResearch()->GetLockStatus(i); 
-	//	if (lockstatus == FALSE)
-	//	{
-	//		s = CLoc::GetString("UNLOCKED");
-	//		fontBrush.SetColor(normalColor);
-	//	}
-	//	else
-	//	{
-	//		s = CLoc::GetString("LOCKED");
-	//		fontBrush.SetColor(Color(255,0,0));
-	//	}
-	//	RectF lock(LockStatusRect[i].left, LockStatusRect[i].top, LockStatusRect[i].Width(), LockStatusRect[i].Height());
-	//	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), lock, &fontFormatCenter, &fontBrush);
-	//}
+		Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Research\\specialtech.bop");
+		if (graphic)
+			g->DrawImage(graphic, 45, 100, 180, 150);
 
-	// Die einzelnen Menübuttons für Spezialforschung, Datenbank und Schiffskonstruktion darstellen
+		s.Format("%s: %i%%",CLoc::GetString("PROGRESS"),(int)((pMajor->GetEmpire()->GetResearch()->GetUniqueFP()*100)/(allOthers)));
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Unique=Special RESEARCH PROGRESS %s \n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,290,250,25), &fontFormatCenter, &fontBrush);
+
+		techPercentage = pMajor->GetEmpire()->GetResearch()->GetUniquePercentage();
+		s.Format("%s: %i%%",CLoc::GetString("ASSIGNMENT"),techPercentage);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Unique=Special RESEARCH ASSIGNMENT %s \n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,315,250,25), &fontFormatCenter, &fontBrush);
+
+		Color penMark;
+		penMark.SetFromCOLORREF(pMajor->GetDesign()->m_clrListMarkPenColor);
+		for (int j = 1; j < 101; j += 5)	// bis 100, weil das 0te Element nicht mit gezeichnet wird, man soll nur drauf drücken können
+		{
+			RectF timber(ResearchTimber[6][j].left, ResearchTimber[6][j].top, ResearchTimber[6][j].Width() + 6, ResearchTimber[6][j].Height());
+			if (j <= techPercentage)
+				g->FillRectangle(&SolidBrush(Color(250-j*2.5,50+j*2,0)), timber);
+			else
+				g->FillRectangle(&SolidBrush(Color(75,75,75,75)), timber);
+		}
+		// farbige Kante um Zuweisungsbalken zeichnen
+		RectF markRect(ResearchTimber[6][1].left, ResearchTimber[6][1].top, ResearchTimber[6][100].left - ResearchTimber[6][1].left, ResearchTimber[6][1].Height());
+		g->DrawRectangle(&Gdiplus::Pen(penMark), markRect);
+
+		BOOL lockstatus;
+		fontFormatCenter.SetAlignment(StringAlignmentCenter);
+		fontFormatCenter.SetLineAlignment(StringAlignmentFar);
+
+		lockstatus = pMajor->GetEmpire()->GetResearch()->GetLockStatus(6);
+		if (lockstatus == FALSE)
+		{
+			s = CLoc::GetString("UNLOCKED");
+			fontBrush.SetColor(normalColor);
+		}
+		else
+		{
+			s = CLoc::GetString("LOCKED");
+			fontBrush.SetColor(Color(255,0,0));
+		}
+		RectF lock(LockStatusRect[6].left, LockStatusRect[6].top, LockStatusRect[6].Width(), LockStatusRect[6].Height());
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), lock, &fontFormatCenter, &fontBrush);
+		fontFormatCenter.SetLineAlignment(StringAlignmentCenter);
+
+		// Den Namen des Unique Komplexes hinschreiben
+		fontBrush.SetColor(markColor);
+		s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetComplexName();
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Unique=Special RESEARCH Name %s \n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(325,75,500,25), &fontFormatTop, &fontBrush);
+		fontBrush.SetColor(normalColor);
+
+		// Die Beschreibung des Unique Complexes hinschreiben
+		s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetComplexDescription();
+		fontFormatTop.SetFormatFlags(!StringFormatFlagsNoWrap);
+		fontFormatTop.SetTrimming(StringTrimmingEllipsisCharacter);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(385,120,380,260), &fontFormatTop, &fontBrush);
+		fontFormatTop.SetTrimming(StringTrimmingNone);
+
+		// hier die 3 Wahlmöglichkeiten
+		fontBrush.SetColor(markColor);
+		// 1. Möglichkeit
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(1) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldName(1);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,445,250,300), &fontFormatTop, &fontBrush);
+		}
+		// 2. Möglichkeit
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(2) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldName(2);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,445,250,300), &fontFormatTop, &fontBrush);
+		}
+		// 3. Möglichkeit
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(3) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldName(3);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,445,250,300), &fontFormatTop, &fontBrush);
+		}
+
+		// ab hier die Beschreibungen zu den einzelnen Wahlmöglichkeiten
+		fontBrush.SetColor(normalColor);
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(1) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldDescription(1);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(10,490,250,205), &fontFormatTop, &fontBrush);
+		}
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(2) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldDescription(2);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(270,490,250,205), &fontFormatTop, &fontBrush);
+		}
+		if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE ||
+			pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldStatus(3) == RESEARCH_STATUS::RESEARCHING)
+		{
+			s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetFieldDescription(3);
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(530,490,250,205), &fontFormatTop, &fontBrush);
+		}
+		fontFormatTop.SetFormatFlags(StringFormatFlagsNoWrap);
+	}
+
+	// Die einzelnen Menübuttons für Spezialforschng, Datenbank und Schiffskonstruktion darstellen
 	// Schriftfarbe wählen
 	CFontLoader::CreateGDIFont(pMajor, 3, fontName, fontSize);
 	Gdiplus::Color btnColor;
 	CFontLoader::GetGDIFontColor(pMajor, 2, btnColor);
 	fontBrush.SetColor(btnColor);
 	DrawGDIButtons(g, &m_ResearchMainButtons, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
+	// Nun die Buttons zur Auswahl einer Uniqueforschung
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE && pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE)
+	{
+		CString sFile = pMajor->GetPrefix() + "button.bop";
+		Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + sFile);
+		if (graphic)
+		{
+			g->DrawImage(graphic, 55, 698, 160, 40);
+			g->DrawImage(graphic, 315, 698, 160, 40);
+			g->DrawImage(graphic, 575, 698, 160, 40);
+		}
+		s = CLoc::GetString("BTN_SELECT");
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(55,698,160,40), &fontFormatCenter, &fontBrush);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(315,698,160,40), &fontFormatCenter, &fontBrush);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(575,698,160,40), &fontFormatCenter, &fontBrush);
+	}
 
-	// "Forschungsübersicht" in der Mitte zeichnen
+	// "Spezialforschung" in der Mitte zeichnen + wenn mgl. den Namen des Forschungskomplexes
 	// Rassenspezifische Schriftart auswählen
 	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
 	// Schriftfarbe wählen
@@ -1739,8 +1716,59 @@ void CResearchMenuView::DrawResearchMenue5(Graphics* g)
 	fontFormatCenter.SetLineAlignment(StringAlignmentCenter);
 	fontFormatCenter.SetFormatFlags(StringFormatFlagsNoWrap);
 
-	//g->DrawString("MENUE5", -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormatCenter, &fontBrush);
-	g->DrawString(CComBSTR("MENUE 5"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormatCenter, &fontBrush);
+	// Wenn wir eine Uniqueforschung zur Auswahl haben
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+		s.Format("%s - %s",CLoc::GetString("SPECIAL_RESEARCH"),	pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetCurrentResearchComplex()->GetComplexName());
+	// Wenn wir keine Uniqueforschung zur Auswahl haben
+	else
+		s = CLoc::GetString("SPECIAL_RESEARCH");
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
+
+	// Wenn wir keine Unique Forschung zur Auswahl haben
+	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() != FALSE)
+	{
+		fontFormatCenter.SetLineAlignment(StringAlignmentNear);
+		fontFormatCenter.SetFormatFlags(!StringFormatFlagsNoWrap);
+		s = CLoc::GetString("NO_SPECIAL_RESEARCH_AVAILABLE");
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "NO_SPECIAL_RESEARCH_AVAILABLE: %s \n", s);
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(190,200,500,100), &fontFormatCenter, &fontBrush);
+
+		// darunter die schon erforschten Spezialforschungen anzeigen
+		CFontLoader::CreateGDIFont(pMajor, 3, fontName, fontSize);
+
+		fontBrush.SetColor(markColor);
+		s = CLoc::GetString("RESEARCHED_SPECIALTECHS");
+		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,300,680,30), &fontFormatCenter, &fontBrush);
+		fontBrush.SetColor(normalColor);
+
+		int nCount = 0;
+		for (int i = 0; i < NoUC; i++)
+		{
+			RESEARCH_COMPLEX::Typ nComplex = (RESEARCH_COMPLEX::Typ)i;
+			// Bereich ermitteln
+			if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexStatus() == RESEARCH_STATUS::RESEARCHED)
+			{
+				// Unterbereich bestimmen
+				for (int j = 1; j <= 3; j++)
+				{
+					if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldStatus(j) == RESEARCH_STATUS::RESEARCHED)
+					{
+						s = pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetComplexName() + ": " +
+							pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetResearchComplex(nComplex)->GetFieldName(j);
+						MYTRACE("logdata")(MT::LEVEL_DEBUG, "SPECIAL_RESEARCH research yet: %s \n", s);
+						g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,350 + nCount * 30 , 680, 30), &fontFormatCenter, &fontBrush);
+						nCount++;
+						break;
+					}
+				}
+			}
+		}
+		if (nCount == 0)
+		{
+			s = CLoc::GetString("NONE");
+			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,350,680,30), &fontFormatCenter, &fontBrush);
+		}
+	}
 }
 void CResearchMenuView::DrawResearchMenue6(Graphics* g)
 {
@@ -2027,8 +2055,7 @@ void CResearchMenuView::DrawResearchMenue6(Graphics* g)
 	// Wenn wir keine Uniqueforschung zur Auswahl haben
 	else
 		s = CLoc::GetString("SPECIAL_RESEARCH");
-	//g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
-	g->DrawString(CComBSTR("Menue6"), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
+	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx,55), &fontFormatCenter, &fontBrush);
 
 	// Wenn wir keine Unique Forschung zur Auswahl haben
 	if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() != FALSE)
@@ -2095,7 +2122,6 @@ void CResearchMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 	// Hier überprüfen auf welchen Menübutton wir in den Forschungsansichten (normal und unique) geklickt haben
 	// wechsel zwischen normaler <--> unique Forschung
 	int temp = m_bySubMenu;
-	//AfxMessageBox(temp); 
 	if (ButtonReactOnLeftClick(point, &m_ResearchMainButtons, temp, FALSE))
 	{
 		m_bySubMenu = temp;
@@ -2188,7 +2214,6 @@ void CResearchMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 			// Wenn wir uns im Menue 3 befinden
 	else if (m_bySubMenu == 3)
 	{
-	//AfxMessageBox("SubMenu3"); 
 		// Ist die Uniqueforschung möglich?
 		if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
 		{
@@ -2231,7 +2256,6 @@ void CResearchMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 			// Wenn wir uns im menue 4 befinden
 	else if (m_bySubMenu == 4)
 	{
-		//AfxMessageBox("SubMenu4"); 
 		// Ist die Uniqueforschung möglich?
 		if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
 		{
@@ -2274,34 +2298,51 @@ void CResearchMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 			// Wenn wir uns im menue 5 befinden
 	else if (m_bySubMenu == 5)
 	{
-		//AfxMessageBox("SubMenu5"); 
-	//	if (m_bySubMenu == 0)
-	//{
-		// haben wir in die Balken geklickt, um den Forschungsanteil zu ändern
-		for (int i = 0; i < 6; i++)
+		// Ist die Uniqueforschung möglich?
+		if (pMajor->GetEmpire()->GetResearch()->GetUniqueReady() == FALSE)
+		{
+			// 6 steht hier überall für Unique Forschung!!
 			for (int j = 0; j < 101; j++)
 			{
 				// Rechteck leicht in der Größe modifizieren, damit man es besser anklicken kann
-				ResearchTimber[i][j].SetRect(ResearchTimber[i][j].left,ResearchTimber[i][j].top,ResearchTimber[i][j].right+1,ResearchTimber[i][j].bottom);
-				if (ResearchTimber[i][j].PtInRect(point))
+				ResearchTimber[6][j].SetRect(ResearchTimber[6][j].left,ResearchTimber[6][j].top,ResearchTimber[6][j].right+1,ResearchTimber[6][j].bottom);
+				if (ResearchTimber[6][j].PtInRect(point))
 				{
-					//pMajor->GetEmpire()->GetResearch()->SetPercentage(i,j);
+					pMajor->GetEmpire()->GetResearch()->SetPercentage(6,j);
 					Invalidate();
 				}
 				// modifizerte Rechteckgröße wieder rückgängig machen
-				ResearchTimber[i][j].SetRect(ResearchTimber[i][j].left,ResearchTimber[i][j].top,ResearchTimber[i][j].right-1,ResearchTimber[i][j].bottom);
-			} 
-
-			
-	}
-		
-			
+				ResearchTimber[6][j].SetRect(ResearchTimber[6][j].left,ResearchTimber[6][j].top,ResearchTimber[6][j].right-1,ResearchTimber[6][j].bottom);
+			}
+			// Prüfen ob wir auf ein Rechteck gedrückt haben, um eine der 3 Möglichkeiten auszuwählen
+			if (pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->GetChoiceTaken() == FALSE)
+			{
+				CRect r[3];
+				for (int i = 0; i < 3; i++)
+				{
+					r[i].SetRect(55+i*260,680,215+i*260,720);
+					if (r[i].PtInRect(point))
+					{
+						pMajor->GetEmpire()->GetResearch()->GetResearchInfo()->SetUniqueResearchChoosePossibility(i+1);
+						Invalidate();
+					}
+				}
+			}
+			// Wollen wir den Lockstatus ändern?
+			if (LockStatusRect[6].PtInRect(point))
+			{
+				pMajor->GetEmpire()->GetResearch()->SetLock(6,!pMajor->GetEmpire()->GetResearch()->GetLockStatus(6));
+				CRect r = LockStatusRect[6];
+				CalcDeviceRect(r);
+				InvalidateRect(r, FALSE);
+			}
 		}
-		
+		}	
+		}
 
 	CMainBaseView::OnLButtonDown(nFlags, point);
 }
-} 
+}
 }
 
 void CResearchMenuView::OnMouseMove(UINT nFlags, CPoint point)
@@ -2418,9 +2459,9 @@ void CResearchMenuView::CreateButtons()
 	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,450) , CSize(160,40), CLoc::GetString("BTN_NORMAL"), fileN, fileI, fileA));
 	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,500) , CSize(160,40), CLoc::GetString("BTN_SPECIAL"), fileN, fileI, fileA));
 	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,550) , CSize(160,40), CLoc::GetString("BTN_SHIPDESIGN"), fileN, fileI, fileA));
-	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,600) , CSize(160,40), "Menue3", fileN, fileI, fileA)); //later put into Stringtable
-	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,650) , CSize(160,40), "Menue4", fileN, fileI, fileA)); //later put into Stringtable
-	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,700) , CSize(160,40), "Menue5", fileN, fileI, fileA)); //later put into Stringtable
+	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,600) , CSize(160,40), "BTN_TECHS", fileN, fileI, fileA)); //later put into Stringtable
+	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,650) , CSize(160,40), "BTN_TECHTREE", fileN, fileI, fileA)); //later put into Stringtable
+	m_ResearchMainButtons.Add(new CMyButton(CPoint(867,700) , CSize(160,40), "BTN_TECHTREE2", fileN, fileI, fileA)); //later put into Stringtable
 }
 
 ///	Funktion erstellt zur aktuellen Mouse-Position einen HTML Tooltip

@@ -64,9 +64,7 @@ void CEmpire::Serialize(CArchive &ar)
 		for (int i = 0; i < m_vMessages.GetSize(); i++)
 		{
 			m_vMessages.GetAt(i).Serialize(ar);
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "EmpireEvent:%s",m_vMessages);
 		}
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------");
 	}
 	// wenn geladen wird
 	if (ar.IsLoading())
@@ -103,10 +101,7 @@ void CEmpire::GenerateSystemList(const std::vector<CSystem>& systems, const std:
 		for (int x = 0; x < STARMAP_SECTORS_HCOUNT; x++) {
 			const unsigned index = vertical_pos + x;
 			if (systems.at(index).GetOwnerOfSystem() == m_sEmpireID)
-			{
 				m_SystemList.Add(EMPIRE_SYSTEMS(sectors.at(index).GetName(), CPoint(x,y)));
-				MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: System:%s (%d,%d)",EMPIRE_SYSTEMS(sectors.at(index).GetName(), CPoint(x,y)));
-			}
 		}
 	}
 }

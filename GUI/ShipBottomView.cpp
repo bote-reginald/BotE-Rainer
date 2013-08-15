@@ -780,45 +780,6 @@ void CShipBottomView::OnInitialUpdate()
 	m_iWhichMainShipOrderButton = MAIN_BUTTON_NONE;
 }
 
-void CShipBottomView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen und/oder Standard aufrufen
-	CBotEDoc* pDoc = resources::pDoc;
-	ASSERT(pDoc);
-
-	if (!pDoc->m_bDataReceived)
-		return;
-
-	CMajor* pMajor = m_pPlayersRace;
-	ASSERT(pMajor);
-	if (!pMajor)
-		return;
-
-
-
-
-	if (nChar == 'D') //Demontage
-	{
-		AfxMessageBox("Key 'D' was pressed"); 
-	}
-	else if (nChar == VK_DOWN)// && position.y <= GetScrollLimit(SB_VERT))
-	{
-	}
-
-
-
-
-	//HandleShipHotkeys(nChar, pDoc);
-
-	//HandleGlobalHotkeys(nChar, pDoc);
-
-//	CMainBaseView::OnKeyDown(nChar, nRepCnt, nFlags);
-
-}
-
-
-
-
 /// Funktion lädt die rassenspezifischen Grafiken.
 void CShipBottomView::LoadRaceGraphics()
 {

@@ -189,8 +189,6 @@ void CSystemMenuView::OnInitialUpdate()
 	BuildingDescriptionButton.SetRect(r.left+165,r.top+625,r.left+285,r.top+655);
 	// Kleiner Umschaltbutton in der Arbeitermenüansicht
 	ChangeWorkersButton.SetRect(r.left+542,r.top+645,r.left+662,r.top+675);
-	// small button to Troops (in Defence)
-	ChangeToTroopsButton.SetRect(r.left+862,r.top+645,r.left+982,r.top+675);
 	// Handelsrouten und Globales Lager Ansicht
 	m_iGlobalStoreageQuantity = 1;
 
@@ -864,9 +862,6 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(550, 70 , 120, 30), &fontFormat, &btnBrush);
 	}
 
-
-
-
 	// Systemnamen mit größerer Schrift in der Mitte zeichnen
 	// Rassenspezifische Schriftart auswählen
 	CFontLoader::CreateGDIFont(pMajor, 5, fontName, fontSize);
@@ -876,49 +871,6 @@ void CSystemMenuView::DrawBuildMenue(Graphics* g)
 	// Name des Systems oben in der Mitte zeichnen
 	s.Format("%s", pDoc->GetSector(p.x,p.y).GetName());
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 50), &fontFormat, &fontBrush);
-
-	// draw Relation and Acceptance top middle
-	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
-	// Schriftfarbe wählen
-	CFontLoader::GetGDIFontColor(pMajor, 4, color);
-	fontBrush.SetColor(color);
-
-CMajor* pPlayer2 = m_pPlayersRace;
-ASSERT(pPlayer2);
-
-CString sRace2 = pDoc->GetSystem(p.x, p.y).GetOwnerOfSystem();
-//if (sRace.IsEmpty())
-//  return 0;
-
-CRace* pRace2 = pDoc->GetRaceCtrl()->GetRace(sRace2);
-ASSERT(pRace2);
-//if (!pRace->IsMajor())
-//  return 0;
-
-						USHORT relation = pRace2->GetRelation(pPlayer2->GetRaceID());
-											
-					if (relation < 5) s = CLoc::GetString("HATEFUL");
-					else if (relation < 15) s = CLoc::GetString("FURIOUS");
-					else if (relation < 25) s = CLoc::GetString("HOSTILE");
-					else if (relation < 35) s = CLoc::GetString("ANGRY");
-					else if (relation < 45) s = CLoc::GetString("NOT_COOPERATIVE");
-					else if (relation < 55) s = CLoc::GetString("NEUTRAL");
-					else if (relation < 65) s = CLoc::GetString("COOPERATIVE");
-					else if (relation < 75) s = CLoc::GetString("FRIENDLY");
-					else if (relation < 85) s = CLoc::GetString("OPTIMISTIC");
-					else if (relation < 95) s = CLoc::GetString("ENTHUSED");
-					else s = CLoc::GetString("DEVOTED");
-
-					CString str_relation;
-					str_relation.Format(" (%d)",relation);
-						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_relation);
-					s = s + str_relation;
-
-					CString str_Acceptance;
-					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()) / 50),((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()));
-						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_Acceptance);
-					s = s + str_Acceptance;
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 80), &fontFormat, &fontBrush);
 }
 
 
@@ -1282,51 +1234,6 @@ void CSystemMenuView::DrawWorkersMenue(Graphics* g)
 	// Arbeiterzuweisung auf xxx oben links zeichnen
 	s = CLoc::GetString("WORKERS_MENUE")+" "+pDoc->GetSector(p.x,p.y).GetName();
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,720,60), &fontFormat, &fontBrush);
-
-
-	// draw Relation and Acceptance top middle
-	CFontLoader::CreateGDIFont(pMajor, 2, fontName, fontSize);
-	// Schriftfarbe wählen
-	CFontLoader::GetGDIFontColor(pMajor, 4, normalColor);
-	fontBrush.SetColor(normalColor);
-
-CMajor* pPlayer2 = m_pPlayersRace;
-ASSERT(pPlayer2);
-
-CString sRace2 = pDoc->GetSystem(p.x, p.y).GetOwnerOfSystem();
-//if (sRace.IsEmpty())
-//  return 0;
-
-CRace* pRace2 = pDoc->GetRaceCtrl()->GetRace(sRace2);
-ASSERT(pRace2);
-//if (!pRace->IsMajor())
-//  return 0;
-
-						USHORT relation = pRace2->GetRelation(pPlayer2->GetRaceID());
-											
-					if (relation < 5) s = CLoc::GetString("HATEFUL");
-					else if (relation < 15) s = CLoc::GetString("FURIOUS");
-					else if (relation < 25) s = CLoc::GetString("HOSTILE");
-					else if (relation < 35) s = CLoc::GetString("ANGRY");
-					else if (relation < 45) s = CLoc::GetString("NOT_COOPERATIVE");
-					else if (relation < 55) s = CLoc::GetString("NEUTRAL");
-					else if (relation < 65) s = CLoc::GetString("COOPERATIVE");
-					else if (relation < 75) s = CLoc::GetString("FRIENDLY");
-					else if (relation < 85) s = CLoc::GetString("OPTIMISTIC");
-					else if (relation < 95) s = CLoc::GetString("ENTHUSED");
-					else s = CLoc::GetString("DEVOTED");
-
-					CString str_relation;
-					str_relation.Format(" (%d)",relation);
-						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_relation);
-					s = s + str_relation;
-
-					CString str_Acceptance;
-					str_Acceptance.Format(" Acc:%d%%, %d Points",(int)(((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()) / 50),((CMinor*)pRace2)->GetAcceptancePoints(pPlayer2->GetRaceID()));
-						//MYTRACE("logevent")(MT::LEVEL_INFO, "str_relation: %s \n", str_Acceptance);
-					s = s + str_Acceptance;
-	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,0,m_TotalSize.cx - 15, 80), &fontFormat, &fontBrush);
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1905,8 +1812,9 @@ void CSystemMenuView::DrawSystemTradeMenue(Graphics* g)
 
 void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 {
-
+/////////////////////////////////////////////////////////////////////////////////////////
 // draw SystemDefenceMenue
+/////////////////////////////////////////////////////////////////////////////////////////
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -1936,18 +1844,6 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 	if (bg_energymenu)
 		g->DrawImage(bg_energymenu, 0, 0, 1075, 750);
 
-			// draw ChangeToTroopsButton
-		Bitmap* graphic = pDoc->GetGraphicPool()->GetGDIGraphic("Other\\" + pMajor->GetPrefix() + "button_small.bop");
-		Color btnColor;
-		CFontLoader::GetGDIFontColor(pMajor, 1, btnColor);
-		SolidBrush btnBrush(btnColor);
-		if (graphic)
-			g->DrawImage(graphic, ChangeToTroopsButton.left, ChangeToTroopsButton.top, 120, 30);
-		fontFormat.SetAlignment(StringAlignmentCenter);
-		s = CLoc::GetString("TROOPS");
-		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(ChangeToTroopsButton.left, ChangeToTroopsButton.top, 120, 30), &fontFormat, &btnBrush);
-
-
 	m_EnergyList.RemoveAll();
 	// die Inhalte der einzelnen Buttons berechnen, max. 3 vertikal und 3 horizontal
 	USHORT NumberOfBuildings = pDoc->GetSystem(p.x,p.y).GetAllBuildings()->GetSize();
@@ -1959,9 +1855,7 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 		const CBuildingInfo *buildingInfo = &pDoc->BuildingInfo.GetAt(pDoc->GetSystem(p.x, p.y).GetAllBuildings()->GetAt(i).GetRunningNumber() - 1);
 
 		// wenn das Gebäude Energie benötigt
-		//		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetShieldPower() > 0 || buildingInfo->GetShipDefend() > 0 || buildingInfo->GetGroundDefend() > 0)
-
-		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetShieldPower() > 0)
+		if (buildingInfo->GetNeededEnergy() > 0 && buildingInfo->GetHitPoints() > 0 || buildingInfo->GetShieldPower() > 0 || buildingInfo->GetShipDefend() > 0 || buildingInfo->GetGroundDefend() > 0)
 		{
 			ENERGYSTRUCT es;
 			es.index = i;
@@ -2080,7 +1974,7 @@ void CSystemMenuView::DrawSystemDefenceMenue(Gdiplus::Graphics *g)
 	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
 
 	// Name des Systems oben in der Mitte zeichnen
-	s = CLoc::GetString("BTN_DEFENCE")+" "+pDoc->GetSector(p.x,p.y).GetName();
+	s = CLoc::GetString("ENERGY_MENUE")+" "+pDoc->GetSector(p.x,p.y).GetName();
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(0,10,m_TotalSize.cx,60), &fontFormat, &fontBrush);
 }
 void CSystemMenuView::DrawShipdesign(Graphics* g)
@@ -2088,7 +1982,7 @@ void CSystemMenuView::DrawShipdesign(Graphics* g)
 	CMajor* pMajor = m_pPlayersRace;
 	ASSERT(pMajor);
 
-	//resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
+	resources::pMainFrame->SelectMainView(9, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
 }
 
 void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
@@ -2112,9 +2006,6 @@ void CSystemMenuView::DrawButtonsUnderSystemView(Graphics* g)
 	SolidBrush fontBrush(btnColor);
 
 	DrawGDIButtons(g, &m_BuildMenueMainButtons, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
-
-	DrawGDIButtons(g, &m_SwitchSystemPrevious, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
-	DrawGDIButtons(g, &m_SwitchSystemNext, m_bySubMenu, Gdiplus::Font(CComBSTR(fontName), fontSize), fontBrush);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -3891,48 +3782,11 @@ void CSystemMenuView::OnLButtonDown(UINT nFlags, CPoint point)
 					Invalidate(FALSE);
 				}
 			}
-			// go to Defence Menu
-	//else if (m_bySubMenu == 3)
-	//{
-	//	CPoint p = pDoc->GetKO();
-	//	if (ChangeToTroopsButton.PtInRect(point))
-	//	{
-	//		m_bySubMenu = 52;
-	//		Invalidate();
-	//		return;
-	//	}
-	//	// Wenn ich Gebäude abreißen will, mit links auf die Schaltfläche drücken
-	//	//CPoint p = pDoc->GetKO();
-	//	for (int i = m_iBOPage * NOBIOL; i < m_BuildingOverview.GetSize(); i++)
-	//		// Wenn wir auf der richtigen Seite sind
-	//		if (i < m_iBOPage * NOBIOL + NOBIOL)
-	//			if (m_BuildingOverview.GetAt(i).rect.PtInRect(point))
-	//			{
-	//				USHORT ru = m_BuildingOverview.GetAt(i).runningNumber;
-	//				pDoc->GetSystem(p.x, p.y).SetBuildingDestroy(ru,TRUE);
-	//				CRect r = m_BuildingOverview.GetAt(i).rect;
-	//				CalcDeviceRect(r);
-	//				InvalidateRect(r, FALSE);
-	//				break;;
-	//			}
-	//	// Wenn ich in dem Menü vor oder zurück blättern kann/will
-	//	if (CRect(1011,190,1074,242).PtInRect(point) && m_iBOPage * NOBIOL + NOBIOL < m_BuildingOverview.GetSize())
-	//	{
-	//		m_iBOPage++;
-	//		Invalidate(FALSE);
-	//	}
-	//	else if (CRect(1011,490,1074,542).PtInRect(point) && m_iBOPage > 0)
-	//	{
-	//		m_iBOPage--;
-	//		Invalidate(FALSE);
-	//	}
-	//}
 		}
 	}
 
 	CMainBaseView::OnLButtonDown(nFlags, point);
 }
-
 
 BOOL CSystemMenuView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
@@ -4218,15 +4072,6 @@ void CSystemMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (!pMajor)
 		return;
 
-	//handle all global Hotkeys
-	//CGalaxyMenuView::HandleGlobalHotkeys(nChar, pDoc);
-
-	if (nChar == VK_F12)
-	{
-			resources::pMainFrame->SelectMainView(2, pMajor->GetRaceID());	// Schiffsdesignansicht zeichnen
-			Invalidate(FALSE);
-	}
-
 	// Wenn wir in irgendeinem System sind, können wir mit dem links rechts Pfeil zu einem anderen System wechseln
 	CPoint p = pDoc->GetKO();
 	if (nChar == VK_RIGHT || nChar == VK_LEFT)
@@ -4349,17 +4194,17 @@ void CSystemMenuView::CreateButtons()
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(350,690), CSize(160,40), CLoc::GetString("BTN_ENERGYMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(520,690), CSize(160,40), CLoc::GetString("BTN_BUILDING_OVERVIEWMENUE"), fileN, fileI, fileA));
 	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(690,690), CSize(160,40), CLoc::GetString("BTN_TRADEMENUE"), fileN, fileI, fileA));
-	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(860,690), CSize(160,40), CLoc::GetString("BTN_DEFENCE"), fileN, fileI, fileA));
+	m_BuildMenueMainButtons.Add(new CMyButton(CPoint(860,690), CSize(160,40), "BTN_Defence", fileN, fileI, fileA));
 
 	// switch to previous system
 	fileN = "Other\\" + sPrefix + "buttonminus.bop";
 	fileA = "Other\\" + sPrefix + "buttonminusa.bop";
-	m_SwitchSystemPrevious.Add(new CMyButton(CPoint(50,30) , CSize(40,40), "", fileN, fileN, fileA));
+	//m_SwitchSystemPrevious.Add(new CMyButton(CPoint(50,30) , CSize(40,40), "", fileN, fileN, fileA));
 
 	// switch to next system
 	fileN = "Other\\" + sPrefix + "buttonplus.bop";
 	fileA = "Other\\" + sPrefix + "buttonplusa.bop";
-	m_SwitchSystemNext.Add(new CMyButton(CPoint(1025,30) , CSize(40,40), "", fileN, fileN, fileA));
+	//m_SwitchSystemNext.Add(new CMyButton(CPoint(1025,30) , CSize(40,40), "", fileN, fileN, fileA));
 
 	// Zuweisungsbuttons im Arbeitermenü
 	fileN = "Other\\" + sPrefix + "buttonminus.bop";

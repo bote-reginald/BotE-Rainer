@@ -30,8 +30,6 @@ extern const int STARMAP_SECTOR_HEIGHT;//		80		///< Höhe eines Sektors
 extern int STARMAP_TOTALWIDTH	;//		2400	///< Gesamtbreite der View in Pixel bei 100% (= 40 * 30)
 extern int STARMAP_TOTALHEIGHT	;//		1600	///< Gesamthöhe bei 100% (= 20 * 40)
 
-extern int AmountOfSystems; // will be used to adapt game to big or thin galaxy e.g. maintenancecosts
-
 
 #define STARMAP_ZOOM_MIN			.3		///< minimaler Zoom-Faktor
 extern double STARMAP_ZOOM_MAX;				///< maximaler Zoom-Faktor
@@ -53,13 +51,9 @@ extern double STARMAP_ZOOM_MAX;				///< maximaler Zoom-Faktor
 #define TRANSPORT_VIEW			10
 #define EVENT_VIEW				11
 #define COMBAT_VIEW				12
-#define DATABASE_VIEW			13
-#define DATABASE2_VIEW			14
-#define DATABASE3_VIEW			15
-#define LAST_VIEW				16
 
 #define IS_MAIN_VIEW(id) \
-	((id) >= GALAXY_VIEW && (id) <= LAST_VIEW)
+	((id) >= GALAXY_VIEW && (id) <= COMBAT_VIEW)
 
 // Startmenü
 #define START_VIEW				50
@@ -104,12 +98,10 @@ namespace EMPIRE_NEWS_TYPE
 {
 	enum Typ
 	{
-		//TUTORIAL	= -1,
-		RESEARCH	= -1,
-
+		TUTORIAL	= -1,
 		NO_TYPE		= 0,
 		ECONOMY		= 1,
-		TUTORIAL	= 2,
+		RESEARCH	= 2,
 		SECURITY	= 3,
 		DIPLOMACY	= 4,
 		MILITARY	= 5,
