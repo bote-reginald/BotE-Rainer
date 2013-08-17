@@ -47,7 +47,7 @@ protected:
 	virtual void OnDraw(CDC* /*pDC*/);
 	virtual void OnInitialUpdate();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnKeyDown(UINT nChar);
+	//(by rainer: doesn't work so far) afx_msg void OnKeyDown(UINT nChar);  // 's' should START the game (Start-Button) 
 	afx_msg void OnRaceButtonClicked(UINT nID);
 	afx_msg void OnBnStartGameClicked();
 	afx_msg void OnBnCancelClicked();

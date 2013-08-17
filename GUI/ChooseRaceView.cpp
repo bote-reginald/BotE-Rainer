@@ -436,15 +436,6 @@ BOOL CChooseRaceView::CheckValues()
 	return m_bIsServer && client.GetClientRace() != network::RACE_NONE;
 }
 
-void CChooseRaceView::OnKeyDown(UINT nChar)
-{
-		AfxMessageBox("key pressed");
-	if (nChar == 'S')
-	{
-		AfxMessageBox("pressed = S"); 
-OnBnStartGameClicked();
-	}
-}
 void CChooseRaceView::OnRaceButtonClicked(UINT nID)
 {
 	CButton* pButton = (CButton*)(GetDlgItem(nID));
