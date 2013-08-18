@@ -316,9 +316,9 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 	CString s;
 
 	CDiplomacyBottomView::SetText("");
-	this->DrawRaceDiplomacyMenue(g);
+	this->DrawRaceDiplomacyMenue(g);  // display of race info ?? (submenu 0)
 
-	// Wenn wir uns in der Angebotsanicht des Diplomatiemenüs befinden
+	// Wenn wir uns in der Angebotsansicht des Diplomatiemenüs befinden
 	if (m_bySubMenu == 1 && m_sClickedOnRace != "")
 	{
 		CRace* pRace = pDoc->GetRaceCtrl()->GetRace(m_sClickedOnRace);
@@ -451,9 +451,12 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 				}
 			}
 			DrawDiplomacyButtons(g, pPlayer, &m_DiplomacyMajorOfferButtons, -1);
+			
+			//End of display offers AND "Race is a Major"
 		}
 		else if (pRace->IsMinor())
 		{
+			// begin of display offers AND "Race is a Minor"
 			// Checken ob wir ein Angebot überhaupt machen können, z.B. wenn eine andere Hauptrasse
 			// z.B. Mitgliedschaft mit einer Minorrace hat, dann können wir ihr kein Angebot machen, außer
 			// Geschenke geben und Bestechen
@@ -563,8 +566,10 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 				}
 			}
 			DrawDiplomacyButtons(g, pPlayer, &m_DiplomacyMinorOfferButtons, -1);
+				// end of display offers AND "Race is a Minor"
 		}
 
+		// still "Offers"
 		// Abschicken- bzw. Abbrechenbutton anzeigen
 		m_bCanSend = m_bShowSendButton;
 		s = "";
@@ -619,7 +624,7 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(871,690,160,40), &fontFormat, &fontBrush);
 		}
 	}
-
+	// begin of display Incoming
 	// Buttons in der Eingangsansicht zeichnen
 	else if (m_bySubMenu == 2 && m_pIncomingInfo != NULL)
 	{
@@ -649,6 +654,7 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 			g->DrawImage(graphic, 852,599,160,40);
 		s = CLoc::GetString("BTN_DECLINE");
 		g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(852,599,160,40), &fontFormat, &fontBrush);
+		// end of display Incoming
 	}
 
 	// "Diplomatieuebersicht" in der Mitte zeichnen
@@ -670,6 +676,7 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 
 void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 {
+	// always drawn, if Submenu 1 or 2 than further Displays in  DrawDiplomacyMenue 
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -757,7 +764,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 		}
 	}
 
-	// Wenn wir im Eingangsbildschirm sind
+	// Wenn wir im Eingangsbildschirm sind oder im Info
 	if (m_bySubMenu != 2)
 	{
 		// alle bekannten Rassen anzeigen
@@ -791,7 +798,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 			{
 				// Wenn wir im Informationsbildschirm sind
 				if (m_bySubMenu == 0)
-					this->DrawDiplomacyInfoMenue(g, pRace->GetRaceID());
+					this->DrawDiplomacyInfoMenue(g, pRace->GetRaceID());   // Info menue draw !
 				// Wenn wir im Angebotsbildschirm sind
 				else if (m_bySubMenu == 1)
 					this->DrawDiplomacyOfferMenue(g, pRace->GetRaceID());
@@ -799,9 +806,19 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 
 				// Name der Rasse zeichnen
 				fontBrush.SetColor(markColor);
-				s = pRace->GetRaceName();// + pRace->GetAgreementDuration();
-				//if (pRace->GetAgreementDuration(s) != 0)
-				//s += status.Format("%s (%d)",CLoc::GetString("FRIENDSHIP_SHORT"), pRace->GetAgreementDuration(s));
+				s = pRace->GetRaceName(); 
+				// draw relation + acceptance after race name in list
+				CString status;
+				if (pRace->IsMinor())
+				{
+					CString acceptance;
+					//acceptance = (int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+					status.Format(" (%d/%d)",pRace->GetRelation(pPlayer->GetRaceID()),(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				}
+				else
+					status.Format(" (%d)",pRace->GetRelation(pPlayer->GetRaceID()));
+
+				s += status;
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 
 				// Farbe der Schrift und Markierung wählen, wenn wir auf eine Rasse geklickt haben
@@ -865,11 +882,23 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 			}
 			else
 			{
-
+				// draw race name in list when not marked
 				Gdiplus::Color color(normalColor);
 				s = this->PrintDiplomacyStatus(pPlayer->GetRaceID(), pRace->GetRaceID(), color);
 				fontBrush.SetColor(color);
-				g->DrawString(CComBSTR(pRace->GetRaceName()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+				// draw relation + acceptance after race name in list
+				CString status;
+				if (pRace->IsMinor())
+				{
+					CString acceptance;
+					status.Format(" (%d/%d)",pRace->GetRelation(pPlayer->GetRaceID()),(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				}
+				else
+					status.Format(" (%d)",pRace->GetRelation(pPlayer->GetRaceID()));
+
+				s = pRace->GetRaceName();
+				s += status;
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 			}
 			fontBrush.SetColor(normalColor);
 			count++;
@@ -901,7 +930,19 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 			{
 				// Name der Rasse zeichnen
 				fontBrush.SetColor(markColor);
-				g->DrawString(CComBSTR(pRace->GetRaceName()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+				// draw relation + acceptance after race name in list
+				CString status;
+				if (pRace->IsMinor())
+				{
+					CString acceptance;
+					//acceptance = (int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+					status.Format(" (%d/%d)",pRace->GetRelation(pPlayer->GetRaceID()),(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				}
+				else
+					status.Format(" (%d)",pRace->GetRelation(pPlayer->GetRaceID()));
+				s = pRace->GetRaceName();
+				s += status;
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 
 				// Farbe der Schrift und Markierung wählen, wenn wir auf eine Rasse geklickt haben
 				g->FillRectangle(&SolidBrush(Color(50,200,200,200)), RectF(8,100+count*25,142,25));
@@ -983,7 +1024,18 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 			// handelt es sich nicht um das angeklickte Angebot, so muss trotzdem deren Name angezeigt werden
 			else
 			{
-				g->DrawString(CComBSTR(pRace->GetRaceName()), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
+				CString status;
+				if (pRace->IsMinor())
+				{
+					CString acceptance;
+					//acceptance = (int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+					status.Format(" (%d/%d)",pRace->GetRelation(pPlayer->GetRaceID()),(int)(((CMinor*)pRace)->GetAcceptancePoints(pPlayer->GetRaceID()) / 50));
+				}
+				else
+					status.Format(" (%d)",pRace->GetRelation(pPlayer->GetRaceID()));
+				s = pRace->GetRaceName();
+				s += status;
+				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), rect, &fontFormat, &fontBrush);
 			}
 
 			// Handelt es sich um eine diplomatisches Angebot (keine Antwort, kein normaler Text)
@@ -1590,6 +1642,7 @@ CString CDiplomacyMenuView::PrintDiplomacyStatus(const CString& sOurRace, const 
 		{
 			if (pRace->IsMajor() && pOurRace->GetAgreementDuration(sRace) != 0)
 				status.Format("%s (%d)",CLoc::GetString("NON_AGGRESSION_SHORT"), pOurRace->GetAgreementDuration(sRace));
+			// here later send news to advisor at AgreementDuration minus 1 turn: next turn Agreement with $ will be ended. (or 1 and 2 turns before?)
 			else
 				status = CLoc::GetString("NON_AGGRESSION_SHORT");
 			color.SetFromCOLORREF(RGB(139,175,172));
@@ -1599,6 +1652,7 @@ CString CDiplomacyMenuView::PrintDiplomacyStatus(const CString& sOurRace, const 
 		{
 			if (pRace->IsMajor() && pOurRace->GetAgreementDuration(sRace) != 0)
 				status.Format("%s (%d)",CLoc::GetString("TRADE_AGREEMENT_SHORT"), pOurRace->GetAgreementDuration(sRace));
+			// here later send news to advisor at AgreementDuration minus 1 turn: next turn Agreement with $ will be ended. (or 1 and 2 turns before?)
 			else
 				status = CLoc::GetString("TRADE_AGREEMENT_SHORT");
 			color.SetFromCOLORREF(RGB(233,183,12));
@@ -1608,6 +1662,7 @@ CString CDiplomacyMenuView::PrintDiplomacyStatus(const CString& sOurRace, const 
 		{
 			if (pRace->IsMajor() && pOurRace->GetAgreementDuration(sRace) != 0)
 				status.Format("%s (%d)",CLoc::GetString("FRIENDSHIP_SHORT"), pOurRace->GetAgreementDuration(sRace));
+			// here later send news to advisor at AgreementDuration minus 1 turn: next turn Agreement with $ will be ended. (or 1 and 2 turns before?)
 			else
 				status = CLoc::GetString("FRIENDSHIP_SHORT");
 			color.SetFromCOLORREF(RGB(6,187,34));
@@ -1617,6 +1672,7 @@ CString CDiplomacyMenuView::PrintDiplomacyStatus(const CString& sOurRace, const 
 		{
 			if (pRace->IsMajor() && pOurRace->GetAgreementDuration(sRace) != 0)
 				status.Format("%s (%d)",CLoc::GetString("COOPERATION"), pOurRace->GetAgreementDuration(sRace));
+			// here later send news to advisor at AgreementDuration minus 1 turn: next turn Agreement with $ will be ended. (or 1 and 2 turns before?)
 			else
 				status = CLoc::GetString("COOPERATION");
 			color.SetFromCOLORREF(RGB(37,159,250));
