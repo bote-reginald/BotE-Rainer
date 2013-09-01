@@ -39,15 +39,15 @@ void CEmpire::Serialize(CArchive &ar)
 	if (ar.IsStoring())
 	{
 		//MYTRACE("logdata")(MT::LEVEL_DEBUG, "--------------------------------------------");
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID: = %s, m_nNumberOfSystems = %i, m_lFP = %i\n", m_sEmpireID, m_nNumberOfSystems, m_lFP);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID:%s, m_nNumberOfSystems:%i, m_lFP:%i\n", m_sEmpireID, m_nNumberOfSystems, m_lFP);
 		ar << m_nNumberOfSystems;
 		//MYTRACE("logdata")(MT::LEVEL_DEBUG, "m_nNumberOfSystems (Empire) = %i\n", m_nNumberOfSystems);
 		ar << m_iCredits;
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID: = %s, m_iCredits = %i, Change = %i\n", m_sEmpireID, m_iCredits, m_iCreditsChange);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID:%s, m_iCredits:%i, Change:%i\n", m_sEmpireID, m_iCredits, m_iCreditsChange);
 		ar << m_iCreditsChange;
 		//MYTRACE("logdata")(MT::LEVEL_DEBUG, "m_iCreditsChange (Empire) = %i\n", m_iCreditsChange);
 		ar << m_iShipCosts;
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID: = %s, m_iShipCosts = %i, Support = %i\n", m_sEmpireID, m_iShipCosts, m_iPopSupportCosts);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID:%s, m_iShipCosts:%i, Support:%i\n", m_sEmpireID, m_iShipCosts, m_iPopSupportCosts);
 		ar << m_iPopSupportCosts;
 		//MYTRACE("logdata")(MT::LEVEL_DEBUG, "m_iPopSupportCosts (Empire) = %i\n", m_iPopSupportCosts);
 		ar << m_lFP;
@@ -55,16 +55,18 @@ void CEmpire::Serialize(CArchive &ar)
 		for (int i = 0; i <= DERITIUM; i++)
 		{
 			ar << m_lResourceStorages[i];
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID: = %s, m_lResourceStorages[i] = %i\n", m_sEmpireID, m_lResourceStorages[i]);
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID:%s, m_lResourceStorages[i]:%i\n", m_sEmpireID, m_lResourceStorages[i]);
 		}
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------");
+		// (see below) MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------");
 		ar << m_sEmpireID;
 		// see above MYTRACE("logdata")(MT::LEVEL_INFO, "m_sEmpireID (Empire): = %s\n", m_sEmpireID);
 		ar << m_vMessages.GetSize();
 		for (int i = 0; i < m_vMessages.GetSize(); i++)
 		{
 			m_vMessages.GetAt(i).Serialize(ar);
+			MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: m_sEmpireID:%s, Message:%d: %s\n", m_sEmpireID, i, m_vMessages.GetAt(i).GetText());
 		}
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "Empire: --------------------------------------------\n");
 	}
 	// wenn geladen wird
 	if (ar.IsLoading())

@@ -263,9 +263,9 @@ void CMinor::CalcAcceptancePoints(CBotEDoc* pDoc)
 			continue;
 
 		short nAgreement = GetAgreement(it->first);
-		MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: Agreement:%d\n", nAgreement);
+		// (see below) MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: Agreement:%d\n", nAgreement);
 		short nAccPoints = 0;
-		MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: Agreement:%d, nAccPoints at start:%d\n", nAgreement, nAccPoints);
+		// (see below) MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: Agreement:%d, AccPoints at start:%d\n", nAgreement, GetAcceptancePoints(it->first));
 		// bei keinem aktuell laufendem Vertrag verringern sich die gesammelten Punkte langsam
 		if (nAgreement == DIPLOMATIC_AGREEMENT::NONE)
 			nAccPoints -= rand()%80 + 1;
@@ -284,7 +284,8 @@ void CMinor::CalcAcceptancePoints(CBotEDoc* pDoc)
 		// bei Krieg werden alle Punkte gelöscht
 		else if (nAgreement == DIPLOMATIC_AGREEMENT::WAR)
 			nAccPoints -= GetAcceptancePoints(it->first);
-		MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: nAccPoints final:%d\n", nAccPoints);
+		MYTRACE("logdetails")(MT::LEVEL_DEBUG, "Minor.cpp: CalcAcceptancePoints: Agreement:%d, nAccPointsChange final:%d (War=-all,None=-maybeSmallValueMinus,Friendship=+10,Coop=+20,Affi=+30,Memb=+40), new Acceptance:%d \n", 
+			nAgreement, nAccPoints, nAccPoints + GetAcceptancePoints(it->first));
 
 		// Akzeptanzpunkte nun hinzufügen bzw. abziehen
 		SetAcceptancePoints(it->first, nAccPoints);

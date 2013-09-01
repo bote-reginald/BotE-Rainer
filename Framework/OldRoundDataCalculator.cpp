@@ -31,7 +31,7 @@ void COldRoundDataCalculator::CreditsDestructionMoral(CMajor* pMajor, CSystem& s
 
 		CString s;
 		s.Format("%s", pMajor->GetEmpire());
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "ProductionBeforeDifficulty: %i, Owner: %s, fDifficultyLevel:%.2lf, ProductionAfterDifficulty: %i,\n", 
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "ProductionBeforeDifficulty: %i, Owner: %s, fDifficultyLevel:%.2lf, ProductionAfterDifficulty: %i\n", 
 			prod->GetCreditsProd(), system.GetOwnerOfSystem(), fDifficultyLevel, int(prod->GetCreditsProd() / fDifficultyLevel));
 
 	// Hier die Gebäude abreißen, die angeklickt wurden
@@ -57,7 +57,7 @@ int COldRoundDataCalculator::DeritiumForTheAI(bool human, const CSector& /*secto
 		// Deritium auf ihrem Systemen geschenkt bekommt
 		int temp = rand()%((int)(fDifficultyLevel * 7.5));
 		//rainer 
-		MYTRACE("logdata")(MT::LEVEL_DEBUG, "KI: System: %s - DiliAddProb: %f (NULL for adding Dili) - Difficulty: %i\n", system.GetOwnerOfSystem(), temp, fDifficultyLevel);
+		MYTRACE("logdata")(MT::LEVEL_DEBUG, "KI: System: %s - DeriAddProb: %.2lf (NULL for adding Dili) - Difficulty: ??\n", system.GetOwnerOfSystem(), temp, fDifficultyLevel);
 		//TRACE("KI: System: %s - DiliAddProb: %d (NULL for adding Dili) - Difficulty: %.2lf\n",sector.GetName(), temp, fDifficultyLevel);
 		if (temp == 0)
 			diliAdd = 1;
@@ -166,6 +166,10 @@ void COldRoundDataCalculator::HandlePopulationEffects(const CSector& sector, CSy
 		bool bMinOneRoute = pEmpire->GetResearch()->GetResearchInfo()->GetResearchComplex(RESEARCH_COMPLEX::TRADE)->GetFieldStatus(3) == RESEARCH_STATUS::RESEARCHED;
 		if (bMinOneRoute == false || (bMinOneRoute == true && (int)(system.GetHabitants() / TRADEROUTEHAB) > 1))
 			SystemMessage(sector, pMajor, "ENOUGH_HABITANTS_FOR_NEW_TRADEROUTE", EMPIRE_NEWS_TYPE::ECONOMY, 4);
+
+		//ADVISOR: Traderoute not realized
+		if ((int)(system.GetHabitants() / TRADEROUTEHAB) > -1)
+			SystemMessage(sector, pMajor, "ENOUGH_HABITANTS_FOR_NEW_TRADEROUTE", EMPIRE_NEWS_TYPE::RESEARCH, 4);
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "Races\RaceController.h"
 #include "Galaxy\Anomaly.h"
 #include "Ships/Ships.h"
+#include "MyTrace.h"
 
 vec3i GivePosition(BYTE pos, USHORT posNumber)
 {
@@ -138,6 +139,8 @@ void CCombat::PreCombatCalculation()
 
 			// Schiffsposition zuweisen
 			m_CS.GetAt(i)->m_KO = GivePosition(nRacePos, nShipPos++);
+			MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: %s (%s), CrewExp:%d\n", 
+				m_CS.GetAt(i)->m_pShip->GetShipName(), m_CS.GetAt(i)->m_pShip->GetShipClass(), m_CS.GetAt(i)->m_pShip->GetCrewExperience());
 
 			/*
 			// Wenn das Schiff den Rückzugsbefehl hat, aber keine Speed oder keine Manövrierfähigkeit,
@@ -170,6 +173,8 @@ void CCombat::PreCombatCalculation()
 		for (std::map<BYTE, int>::const_iterator types = mShipTypes.begin(); types != mShipTypes.end(); ++types)
 			nSmallest = min(nSmallest, types->second);
 
+		MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: nSmallest: %i\n", nSmallest);
+
 		// Schaffen wir den Wert nicht
 		if ((nDifferentTypes - 1) > nSmallest)
 			// dann ist der maximale Bonus smallest + 1
@@ -178,6 +183,7 @@ void CCombat::PreCombatCalculation()
 			mod = nDifferentTypes;
 		else if (nDifferentTypes > 1)
 			mod = 1;
+		MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: nSmallest2: %i, nDifferentTypes:%i\n", nSmallest, nDifferentTypes);
 
 		// Jetzt noch die ganzen Boni/Mali den Schiffen zuweisen und die Felder mit den Gegnern für die einzelnen Rassen füllen
 		for (int i = 0; i < m_CS.GetSize(); i++)
@@ -186,24 +192,45 @@ void CCombat::PreCombatCalculation()
 			{
 				// Schiffe mit dem Befehl "Meiden" bekommen einen 25% Bonus
 				if (m_CS.GetAt(i)->m_pShip->GetCombatTactic() == COMBAT_TACTIC::CT_AVOID)
+				{
 					m_CS.ElementAt(i)->m_iModifier += 25;
+					MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d, COMBAT-TACTIC is AVOID = +25\n",
+					m_CS.ElementAt(i)->m_iModifier);
+				}
+					
 				// 20% Bonus wenn Schiff mit Kommandoeigenschaft am Kampf teilnimmt
 				if (bCommandship)
+				{
 					m_CS.ElementAt(i)->m_iModifier += 20;
+					MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d (+20 because Commandship = yes)\n",
+					m_CS.ElementAt(i)->m_iModifier);
+				}
+
 				// 10% Bonus wenn Flagschiff am Kampf teilnehmen
 				if (bFlagship)
+				{
 					m_CS.ElementAt(i)->m_iModifier += 10;
+					MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d (+10 because Flagship = yes)\n",
+					m_CS.ElementAt(i)->m_iModifier);
+				}
+
 				// möglichen Bonus durch verschiedene Schiffstypen draufrechnen
 				m_CS.ElementAt(i)->m_iModifier += mod * 5;	// 5% pro Schiffstyp
+				MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d (+%d (5 percent each ship type, amount=mod:%i)\n",
+					m_CS.ElementAt(i)->m_iModifier, mod * 5, mod);
 				// möglichen Bonus durch Erfahrung der Crew draufrechnen
 				m_CS.ElementAt(i)->m_iModifier += m_CS.GetAt(i)->GetCrewExperienceModi();
+					MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d (+%d CrewExp)\n",
+						m_CS.ElementAt(i)->m_iModifier, m_CS.GetAt(i)->GetCrewExperienceModi());
 				// Darf nicht 0% sein (normal sind 100 eingestellt)
 				if (m_CS.GetAt(i)->m_iModifier <= 0)
 					m_CS.ElementAt(i)->m_iModifier = 1;
+				// (see below) MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d\n", m_CS.GetAt(i)->m_iModifier, m_CS.GetAt(i)->GetCrewExperienceModi());
 
-				//CString mod;
-				//mod.Format("Modifikator: %d%%", m_CS.ElementAt(i)->m_iModifier);
+				CString mod;
+				mod.Format("Modifikator: %d%%", m_CS.ElementAt(i)->m_iModifier);
 				//AfxMessageBox(mod);
+				MYTRACE("logships")(MT::LEVEL_INFO, "Combat.cpp: m_iModifier: %d, mod:%s,CrewExp:%d\n", m_CS.GetAt(i)->m_iModifier, mod, m_CS.GetAt(i)->GetCrewExperienceModi());
 			}
 			else
 			{

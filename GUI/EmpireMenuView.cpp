@@ -275,7 +275,7 @@ void CEmpireMenuView::DrawEmpireNewsMenue(Graphics* g)
 					}
 				}
 				s = pMajor->GetEmpire()->GetMsgs()->GetAt(i).GetText();
-				MYTRACE("logdata")(MT::LEVEL_INFO, "NEWS: %s \n", s);
+				// (ok, but not at each displaying) MYTRACE("logdata")(MT::LEVEL_INFO, "NEWS: %s \n", s);
 				g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(100,140+j*25,875,25), &fontFormat, &fontBrush);
 				j++;
 			}
@@ -1338,7 +1338,7 @@ void CEmpireMenuView::DrawEmpireTop5Menue(Gdiplus::Graphics *g)
 			DrawSunSystem(g, *it, 110 + 110 * nCount);
 
 			s.Format("%s %d: %s", CLoc::GetString("PLACE"), nCount + 1, pSector->GetName());
-			MYTRACE("logdata")(MT::LEVEL_DEBUG, "-------------------------------");
+			//MYTRACE("logdata")(MT::LEVEL_DEBUG, "-------------------------------");
 			MYTRACE("logdata")(MT::LEVEL_DEBUG, "TopSystem: %s \n", s);
 			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(150, 135 + 110 * nCount, m_TotalSize.cx - 250, 25), &fontFormat, &fontBrush);
 			// Besitzerimperium zeichnen
@@ -1352,7 +1352,7 @@ void CEmpireMenuView::DrawEmpireTop5Menue(Gdiplus::Graphics *g)
 					color.SetFromCOLORREF(pOwner->GetDesign()->m_clrSector);
 					SolidBrush ownerBrush(color);
 					MYTRACE("logdata")(MT::LEVEL_DEBUG, "TopSystem - Owner: %s \n", s);
-					MYTRACE("logdata")(MT::LEVEL_DEBUG, "-------------------------------");
+					//MYTRACE("logdata")(MT::LEVEL_DEBUG, "-------------------------------");
 					g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(150, 160 + 110 * nCount, m_TotalSize.cx - 250, 25), &fontFormat, &ownerBrush);
 				}
 			}
@@ -2182,6 +2182,7 @@ void CEmpireMenuView::OnMouseMove(UINT nFlags, CPoint point)
 		ButtonReactOnMouseOver(point, &m_EmpireShipsFilterButtons);
 
 	CMainBaseView::OnMouseMove(nFlags, point);
+
 }
 
 void CEmpireMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -2303,6 +2304,10 @@ void CEmpireMenuView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 	CMainBaseView::OnKeyDown(nChar, nRepCnt, nFlags);
+
+	//CBotEDoc* pDoc = resources::pDoc;
+	//CGalaxyMenuView::HandleGlobalHotkeys(nChar, pDoc);
+	//CGalaxyMenuView::	HandleGlobalHotkeys();
 }
 
 void CEmpireMenuView::CreateButtons()

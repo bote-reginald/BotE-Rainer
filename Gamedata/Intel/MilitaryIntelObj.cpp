@@ -161,6 +161,8 @@ void CMilitaryIntelObj::CreateText(CBotEDoc* pDoc, BYTE n, const CString& param)
 							csInput.Replace("$number$", s);
 						}
 						m_strOwnerDesc = csInput;
+						MYTRACE("intel")(MT::LEVEL_DEBUG, "MilitaryIntelObj.cpp: Attacker:%s, Type:%d: %s\n", 
+								m_sOwner, m_byType, m_strOwnerDesc);
 						break;
 					}
 				}
@@ -258,6 +260,8 @@ void CMilitaryIntelObj::CreateText(CBotEDoc* pDoc, BYTE n, const CString& param)
 							else
 								csInput = CLoc::GetString("DO_NOT_KNOW_RESPONSIBLE_RACE");
 							m_strEnemyDesc += " "+csInput;
+							MYTRACE("intel")(MT::LEVEL_DEBUG, "MilitaryIntelObj.cpp: VICTIM:%s, Type:%d: %s\n", 
+								m_sEnemy, m_byType, m_strEnemyDesc);
 							break;
 						}
 					}

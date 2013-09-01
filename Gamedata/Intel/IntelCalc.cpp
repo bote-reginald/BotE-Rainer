@@ -45,6 +45,9 @@ void CIntelCalc::StartCalc(CMajor* pRace)
 		// + eventuellen Bonus aus dem Teilbereich dazurechnen
 		ourSP += ourSP * pIntel->GetBonus(attemptObj->GetType(), 1) / 100;
 		this->ExecuteAttempt(pRace, ourSP);
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "Attempt (Anschlag): pRace:%s, ourSP:%d, incl. bonus:%i\n", 
+			pRace, ourSP, pIntel->GetBonus(attemptObj->GetType(), 1));
+
 	}
 
 	// zuerst werden die Geheimdienstgegner ermittelt. Nur wenn bei einem Gegner mehr als NULL resultierende
@@ -283,20 +286,20 @@ void CIntelCalc::ReduceDepotPoints(CMajor* pRace, int perc)
 /// Funktion berechnet ob eine Geheimdienstaktion gegen eine andere Rasse erfolgreich verläuft.
 USHORT CIntelCalc::IsSuccess(CMajor* pEnemyRace, int ourSP, BOOLEAN isSpy, CMajor* pResponsibleRace, BYTE type)
 {
-	MYTRACE("intel")(MT::LEVEL_INFO, "CIntelCalc::IsSuccess() begin...\n");
+	MYTRACE("intel")(MT::LEVEL_INFO, "CIntelCalc::IsSuccess() begin...--------------------------------------------------\n");
 	ASSERT(pEnemyRace);
 	ASSERT(pResponsibleRace);
 	USHORT actions = NULL;
 
 	int enemyInnerSec = GetCompleteInnerSecPoints(pEnemyRace);
 
-	MYTRACE("intel")(MT::LEVEL_INFO, "inner security of %s is %d\n", pEnemyRace, enemyInnerSec);
+	// (see below) MYTRACE("intel")(MT::LEVEL_DEBUG, "inner security of %s is %d\n", pEnemyRace->GetRaceName(), enemyInnerSec);
 
 	// Aggressivität der angreifenden Rasse holen
 
 	BYTE agg = pResponsibleRace->GetEmpire()->GetIntelligence()->GetAggressiveness(!isSpy, pEnemyRace->GetRaceID());
 
-	MYTRACE("intel")(MT::LEVEL_INFO, "intel aggressiveness is %d\n", agg);
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: inner security of %s is %d, our aggressiveness is %d\n", pEnemyRace->GetRaceName(), enemyInnerSec, agg);
 	agg = 3 - agg; // -> vorsichtig == 3, normal == 2, aggressiv == 1 -> drehen die Zahlen im Prinzip um
 
 	// Spionage hat größere Erfolgsaussichten als Sabotage
@@ -306,23 +309,26 @@ USHORT CIntelCalc::IsSuccess(CMajor* pEnemyRace, int ourSP, BOOLEAN isSpy, CMajo
 		for (int i = 0; i < 3; i++)
 			minDiff += rand()%(500 * agg) + 1;
 		minDiff /= 3;
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: minDiff(Spy):%i (random is included)\n", minDiff);
 	}
 	else
 	{
 		for (int i = 0; i < 3; i++)
 			minDiff += rand()%(1000 * agg) + 1;
 		minDiff /= 3;
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: minDiff(Sabotage):%i (random is included, at sab higher)\n", minDiff);
 	}
 
-	MYTRACE("intel")(MT::LEVEL_INFO, "SP of race %s %d > enemies inner security %d + random %d\n", pResponsibleRace->GetRaceID(), ourSP, enemyInnerSec, minDiff);
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "SP of race %s %d; enemies inner security %d + random %d\n", pResponsibleRace->GetRaceID(), ourSP, enemyInnerSec, minDiff);
 	if (ourSP > (enemyInnerSec + minDiff))
 	{	// wenn wir viel mehr Punkte als der Gegner haben, so können auch mehrere Geheimdienstaktionen gestarten werden.
 		actions = ourSP / (enemyInnerSec + minDiff);
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: Actions(more than one?):%i = ourSP:%d / (enemyInnerSec:%d + minDiff:%i)\n", actions, ourSP, enemyInnerSec, minDiff);
 		// wenn unsere Geheimdienstpunkte doppelt so hoch sind wie die inneren Sicherheitspunkte, dann verschleiern wir
 		// unsere Geheimdienstaktion
 		if (isSpy == FALSE && ourSP > (2 * enemyInnerSec))
 		{
-			// Wenn sogar unsere Punkte dreimal so hoch sind, dann machen wir womöglich eine andere Rasse dafür verantworlich
+			// Wenn sogar unsere Punkte dreimal so hoch sind, dann machen wir womöglich eine andere Rasse dafür verantwortlich
 			if (ourSP > (3 * enemyInnerSec))
 			{
 				CString sResponsibleRace = pResponsibleRace->GetEmpire()->GetIntelligence()->GetResponsibleRace();
@@ -339,12 +345,18 @@ USHORT CIntelCalc::IsSuccess(CMajor* pEnemyRace, int ourSP, BOOLEAN isSpy, CMajo
 			else
 				pResponsibleRace = NULL;
 		}
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "ResponsibleRace: %s (if ourSP:%d twice as enemyInnerSec=%d + minDiff=%d, than no, 3times=another race as defined)\n", 
+			pResponsibleRace->GetRaceID(), ourSP, enemyInnerSec, minDiff);
 	}
 	// Handelt es sich um eine fehlgeschlagene Aktion, so ist es möglich, dass das vermeindliche Geheimdienstopfer
 	// etwas davon erfährt.
 	else if ((ourSP * agg) < (enemyInnerSec + minDiff) && rand()%2 == NULL)
+	{
 		this->CreateMsg(pResponsibleRace, pEnemyRace, type);
-	MYTRACE("intel")(MT::LEVEL_INFO, "number of starting intel actions: %d\n", actions);
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: action failed, enemy gets message!\n");
+	}
+		
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: number of starting intel actions: %d\n", actions);
 	return actions;
 }
 
@@ -352,7 +364,7 @@ USHORT CIntelCalc::IsSuccess(CMajor* pEnemyRace, int ourSP, BOOLEAN isSpy, CMajo
 /// auf Seiten des Geheimdienstagressors.
 void CIntelCalc::DeleteConsumedPoints(CMajor* pOurRace, CMajor* pEnemyRace, BOOLEAN isSpy, BYTE type, BOOLEAN isAttempt)
 {
-	MYTRACE("intel")(MT::LEVEL_INFO, "CIntelCalc::DeleteConsumedPoints() begin...\n");
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "CIntelCalc::DeleteConsumedPoints() begin...\n");
 
 	CIntelligence* pOurIntel	= pOurRace->GetEmpire()->GetIntelligence();
 	CIntelligence* pIntelEnemy	= pEnemyRace->GetEmpire()->GetIntelligence();
@@ -364,7 +376,8 @@ void CIntelCalc::DeleteConsumedPoints(CMajor* pOurRace, CMajor* pEnemyRace, BOOL
 	enemyInnerSecPoints += enemyInnerSecPoints * pIntelEnemy->GetInnerSecurityBoni() / 100;
 	// beim Depot sind die Boni schon mit eingerechnet
 	int enemyInnerSecDepot = pIntelEnemy->GetInnerSecurityStorage();
-	MYTRACE("intel")(MT::LEVEL_INFO, "enemies inner security points: %d - enemies inner security depot: %d\n", enemyInnerSecPoints, enemyInnerSecDepot);
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: enemies inner security points: %d - enemies inner security depot: %d\n", 
+		enemyInnerSecPoints, enemyInnerSecDepot);
 
 	// nun die generierten Punkte des Agressors bestimmen
 	int racePoints = 0;
@@ -393,17 +406,25 @@ void CIntelCalc::DeleteConsumedPoints(CMajor* pOurRace, CMajor* pEnemyRace, BOOL
 		raceDepot += raceDepot * pOurIntel->GetBonus(type, 1) / 100;
 	}
 
-	MYTRACE("intel")(MT::LEVEL_INFO, "racePoints: %d - raceDepot: %d\n", racePoints, raceDepot);
+	// (see below) MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: racePoints: %d - raceDepot: %d\n", racePoints, raceDepot);
 	// jetzt gegenseitig die Punkte abziehen.
 	// zuerst werden immer die Punkte abgezogen, welche nicht aus den Depots kommen
 	int temp = racePoints + raceDepot - enemyInnerSecPoints;
+	MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: racePoints: %d + raceDepot:%d minus enemyInnerSecPoints (first SecPoints, than DepotPoints):%d = temp:%d\n", 
+			racePoints, raceDepot, enemyInnerSecPoints, temp);
 	// in temp stehen jetzt nur noch die
 	if (temp > 0)
+	{
 		pIntelEnemy->AddInnerSecurityPoints(-temp);
+		MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: Try to delete %d points from enemies SecurityPoints)\n", temp);
+	}
 
 	temp = enemyInnerSecPoints + enemyInnerSecDepot - racePoints;
 	if (temp > 0)
+	{
 		pOurIntel->AddSPStoragePoints(!isSpy, pEnemyRace->GetRaceID(), -temp);
+			MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: Try to delete %d points from enemies SecurityPoints)\n", temp);
+	}
 }
 
 /// Funktion ruft die jeweilige Unterfunktion auf, welche eine Geheimdienstaktion schlussendlich ausführt.
@@ -432,7 +453,7 @@ BOOLEAN CIntelCalc::ExecuteAction(CMajor* pRace, CMajor* pEnemyRace, CMajor* pRe
 	return FALSE;
 }
 
-/// Funktion führt eine Wirtschatfsspionageaktion aus.
+/// Funktion führt eine Wirtschaftsspionageaktion aus.
 BOOLEAN CIntelCalc::ExecuteEconomySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor* pResponsibleRace, BOOLEAN createText)
 {
 	/*
@@ -621,6 +642,7 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 			{
 				delete report;
 				report = NULL;
+												MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 4:no ScienceSpy\n");
 				return FALSE;
 			}
 		}
@@ -653,6 +675,7 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 		{
 			delete report;
 			report = NULL;
+											MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 3:no ScienceSpy\n");
 			return FALSE;
 		}
 	}
@@ -674,6 +697,7 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 		{
 			delete report;
 			report = NULL;
+											MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 2:no ScienceSpy\n");
 			return FALSE;
 		}
 	}
@@ -728,6 +752,7 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 							{
 								delete report;
 								report = NULL;
+																MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 1a:no ScienceSpy\n");
 								break;
 							}
 						}
@@ -759,6 +784,7 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 			{
 				delete report;
 				report = NULL;
+								MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 1b:no ScienceSpy\n");
 			}
 		}
 	}
@@ -769,9 +795,10 @@ BOOLEAN CIntelCalc::ExecuteScienceSpy(CMajor* pRace, CMajor* pEnemyRace, CMajor*
 BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor* pResponsibleRace, BOOLEAN createText)
 {
 	/*
-	Es gibt bis jetzt vier verschiedene Arten der Forschungsspionage. Zuerst können Militärgebäude und Intelzentren aus
-	irgendeinem System ausspioniert werden. Zweitens können stationierte Truppen in einem System ausspioniert werden.
-	Drittens können bestimmte Schiffe oder Außenposten ausspioniert werden.
+	Es gibt bis jetzt drei verschiedene Arten der Forschungsspionage. 
+	1: Zuerst können Militärgebäude und Intelzentren aus irgendeinem System ausspioniert werden. 
+	2: Zweitens können stationierte Truppen in einem System ausspioniert werden.
+	3: Drittens können bestimmte Schiffe oder Außenposten ausspioniert werden.
 	*/
 	// 3. Versuch: Schiffe und Stationen ausspionieren
 	if (rand()%3 == NULL)	// zu 33% tritt dies ein
@@ -822,6 +849,7 @@ BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor
 		{
 			delete report;
 			report = NULL;
+										MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 3:no MilitarySpy\n");
 		}
 	}
 
@@ -857,6 +885,7 @@ BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor
 			{
 				delete report;
 				report = NULL;
+											MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 2:no MilitarySpy\n");
 				return FALSE;
 			}
 		}
@@ -898,6 +927,7 @@ BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor
 				{
 					delete report;
 					report = NULL;
+												MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 1a:no MilitarySpy\n");
 					return FALSE;
 				}
 			}
@@ -938,6 +968,7 @@ BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor
 						{
 							delete report;
 							report = NULL;
+							MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 1b:no MilitarySpy\n");
 							break;
 						}
 					}
@@ -957,10 +988,11 @@ BOOLEAN CIntelCalc::ExecuteMilitarySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor
 BOOLEAN CIntelCalc::ExecuteDiplomacySpy(CMajor* pRace, CMajor* pEnemyRace, CMajor* pResponsibleRace, BOOLEAN createText)
 {
 	/*
-	Es gibt bis jetzt vier verschiedene Arten der Diplomatiespionage. Zuerst kann spioniert werden, ob eine Majorrace eine
-	Minorrace kennt. Zweitens kann spioniert werden, welchen Vertrag eine Majorrace mit einer bekannten Minorrace aufrecht-
-	erhält. Drittens kann spioniert werden, welchen Vertrag inkl. Rundendauer eine Majorrace mit einer anderen Majorrace
-	besitzt und viertens kann in Erfahrung gebracht werden, welche Beziehung die Rassen untereinander haben.
+	Es gibt bis jetzt vier verschiedene Arten der Diplomatiespionage. 
+	1: Zuerst kann spioniert werden, ob eine Majorrace eine Minorrace kennt. 
+	2: Zweitens kann spioniert werden, welchen Vertrag eine Majorrace mit einer bekannten Minorrace aufrechterhält. 
+	3: Drittens kann spioniert werden, welchen Vertrag inkl. Rundendauer eine Majorrace mit einer anderen Majorrace besitzt
+	4: Viertens kann in Erfahrung gebracht werden, welche Beziehung die Rassen untereinander haben.
 	*/
 
 	CArray<CString> minors;
@@ -1005,6 +1037,7 @@ BOOLEAN CIntelCalc::ExecuteDiplomacySpy(CMajor* pRace, CMajor* pEnemyRace, CMajo
 		{
 			delete report;
 			report = NULL;
+			MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 4:no DiplomacySpy\n");
 			return FALSE;
 		}
 	}
@@ -1042,6 +1075,7 @@ BOOLEAN CIntelCalc::ExecuteDiplomacySpy(CMajor* pRace, CMajor* pEnemyRace, CMajo
 			{
 				delete report;
 				report = NULL;
+				MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 3:no DiplomacySpy - \n");
 				return FALSE;
 			}
 		}
@@ -1069,6 +1103,7 @@ BOOLEAN CIntelCalc::ExecuteDiplomacySpy(CMajor* pRace, CMajor* pEnemyRace, CMajo
 			{
 				delete report;
 				report = NULL;
+				MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 2:no DiplomacySpy\n");
 				return FALSE;
 			}
 		}
@@ -1093,7 +1128,8 @@ BOOLEAN CIntelCalc::ExecuteDiplomacySpy(CMajor* pRace, CMajor* pEnemyRace, CMajo
 		else
 		{
 			delete report;
-			report = NULL;
+			report = NULL;			
+			MYTRACE("intel")(MT::LEVEL_DEBUG, "IntelCalc.cpp: 1:no DiplomacySpy\n");
 			return FALSE;
 		}
 	}

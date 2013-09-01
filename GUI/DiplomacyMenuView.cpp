@@ -13,6 +13,7 @@
 #include "HTMLStringBuilder.h"
 #include "General/Loc.h"
 #include "GraphicPool.h"
+#include "Events\EventFirstContact.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -143,13 +144,25 @@ void CDiplomacyMenuView::OnNewRound()
 
 	map<CString, CMinor*>* pmMinors = pDoc->GetRaceCtrl()->GetMinors();
 	for (map<CString, CMinor*>::const_iterator it = pmMinors->begin(); it != pmMinors->end(); ++it)
+	{
+		if (m_bySubMenu == 5)
+		{
+			vMinors.push_back(it->second);
+		}
+		else
 		if (pPlayer->IsRaceContacted(it->first))
 			vMinors.push_back(it->second);
+	}
 	std::sort(vMinors.begin(), vMinors.end(), CompareRaceName);
 
 	m_vRaceList.clear();
 	m_vRaceList.insert(m_vRaceList.end(), vMajors.begin(), vMajors.end());
 	m_vRaceList.insert(m_vRaceList.end(), vMinors.begin(), vMinors.end());
+
+	// all for database
+	//m_vALLRaceList.clear();
+//	m_vALLRaceList.insert(m_vALLRaceList.end(), pmMajors.begin(), pmMajors.end());
+	//m_vALLRaceList.insert(m_vALLRaceList.end(), pmMinors.begin(), pmMinors.end());
 
 	m_vIncomeList.clear();
 	for (vector<CRace*>::const_iterator it = m_vRaceList.begin(); it != m_vRaceList.end(); ++it)
@@ -304,6 +317,21 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 	{
 		if (bg_diplooutmenu)
 			g->DrawImage(bg_diplooutmenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 3)
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 4)
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
+	}
+	else if (m_bySubMenu == 5)
+	{
+		if (bg_diplooutmenu)
+			g->DrawImage(bg_diploinfomenu, 0, 0, 1075, 750);
 	}
 	else
 	{
@@ -624,7 +652,7 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 			g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(871,690,160,40), &fontFormat, &fontBrush);
 		}
 	}
-	// begin of display Incoming
+	// begin of display Incoming, only buttons drawing
 	// Buttons in der Eingangsansicht zeichnen
 	else if (m_bySubMenu == 2 && m_pIncomingInfo != NULL)
 	{
@@ -676,7 +704,8 @@ void CDiplomacyMenuView::DrawDiplomacyMenue(Graphics* g)
 
 void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 {
-	// always drawn, if Submenu 1 or 2 than further Displays in  DrawDiplomacyMenue 
+	// always drawn, if Submenu 1 or 2 than further Displays in DrawDiplomacyMenue 
+	/// Funktion zeichnet alles für die Majorraces in der Diplomatieansicht
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -750,6 +779,15 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 				nVecPos++;
 			}
 		}
+		if (m_bySubMenu == 5)
+		{
+			for (vector<CRace*>::const_iterator it = m_vALLRaceList.begin(); it != m_vALLRaceList.end(); ++it)
+			{
+				if ((*it)->GetRaceID() == m_sClickedOnRace)
+					break;
+				nVecPos++;
+			}
+		}
 	}
 	else
 	{
@@ -797,11 +835,12 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 			if (m_sClickedOnRace == pRace->GetRaceID())
 			{
 				// Wenn wir im Informationsbildschirm sind
-				if (m_bySubMenu == 0)
+				if (m_bySubMenu == 0 || m_bySubMenu == 3 || m_bySubMenu == 4 || m_bySubMenu == 5)
 					this->DrawDiplomacyInfoMenue(g, pRace->GetRaceID());   // Info menue draw !
 				// Wenn wir im Angebotsbildschirm sind
 				else if (m_bySubMenu == 1)
 					this->DrawDiplomacyOfferMenue(g, pRace->GetRaceID());
+
 
 
 				// Name der Rasse zeichnen
@@ -1131,6 +1170,7 @@ void CDiplomacyMenuView::DrawRaceDiplomacyMenue(Graphics* g)
 
 void CDiplomacyMenuView::DrawDiplomacyInfoMenue(Graphics* g, const CString& sWhichRace)
 {
+	/// Funktion zeichnet das Informationsmenü in der Diplomatieansicht
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -1325,6 +1365,7 @@ void CDiplomacyMenuView::DrawDiplomacyInfoMenue(Graphics* g, const CString& sWhi
 
 void CDiplomacyMenuView::DrawDiplomacyOfferMenue(Graphics* g, const CString& sWhichRace)
 {
+	/// Funktion zeichnet das Angebotsmenü der Diplomatieansicht
 	CBotEDoc* pDoc = resources::pDoc;
 	ASSERT(pDoc);
 
@@ -1762,9 +1803,80 @@ void CDiplomacyMenuView::TakeOrGetbackResLat(bool bTake)
 void CDiplomacyMenuView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
-	CDiplomacyMenuView::OnLButtonDown(nFlags, point);
+	// removed rainer - only if no DblClk defined ????     //CDiplomacyMenuView::OnLButtonDown(nFlags, point);
 
-	CMainBaseView::OnLButtonDblClk(nFlags, point);
+	// Wenn wir in der Informationsansicht sind und eine Rasse angklickt haben
+	if (m_bySubMenu == 0 && m_sClickedOnRace != "")
+	{
+		CString s;
+		s.Format("DblClick done %s", m_sClickedOnRace); 
+		AfxMessageBox(s);
+			//resources::pMainFrame->SelectMainView(14, pMajor->GetRaceID());	// draw SystemView
+			//Invalidate(FALSE);
+	}
+		CMainBaseView::OnLButtonDblClk(nFlags, point);
+
+		/*
+	CBotEDoc* pDoc = resources::pDoc;
+	ASSERT(pDoc);
+
+	if (!pDoc->m_bDataReceived)
+		return;
+
+	CMajor* pMajor = m_pPlayersRace;
+	ASSERT(pMajor);
+	if (!pMajor)
+		return;
+
+	// TODO: add draw code here
+	CMyMemDC pDC(dc);
+	CRect client;
+	GetClientRect(&client);
+
+	// Graphicsobjekt, in welches gezeichnet wird anlegen
+	Graphics g(pDC->GetSafeHdc());
+
+	g.Clear(Color::Black);
+	g.SetSmoothingMode(SmoothingModeHighSpeed);
+	g.SetInterpolationMode(InterpolationModeLowQuality);
+	g.SetPixelOffsetMode(PixelOffsetModeHighSpeed);
+	g.SetCompositingQuality(CompositingQualityHighSpeed);
+	g.ScaleTransform((REAL)client.Width() / (REAL)m_TotalSize.cx, (REAL)client.Height() / (REAL)m_TotalSize.cy);
+
+	if (pMajor->GetEmpire()->GetEvents()->GetSize())
+	{
+		//CEventScreen* eventScreen = dynamic_cast<CEventScreen*>(pMajor->GetEmpire()->GetEvents()->GetAt(0));
+		eventScreen->Create();
+		eventScreen->Draw(&g, pDoc->GetGraphicPool());
+		// Handelt es sich um ein Event zu einem Zufallsereignis?
+		if (CEventRandom* pRandomEventScreen = dynamic_cast<CEventRandom*>(eventScreen))
+		{
+			// Dieses sofort schließen, wenn es nicht angezeigt werden soll
+			if (CIniLoader* pIni = CIniLoader::GetInstance())
+				if (!pIni->ReadValueDefault("Video", "SHOWRANDOMEVENTPICTURES", true))
+					CloseScreen(eventScreen);
+		}
+	}
+
+	g.ReleaseHDC(pDC->GetSafeHdc());
+
+		resources::pMainFrame->FullScreenMainView(true);
+		resources::pMainFrame->SelectMainView(EVENT_VIEW, pPlayersRace->GetRaceID());
+
+
+		CRace* pClickedRace = pDoc->GetRaceCtrl()->GetRace(m_sClickedOnRace);
+		// schauen ob bei einer Minorrace auf den Kündigungsbutton geklickt wurde
+		if (pClickedRace && pClickedRace->IsMinor() && CRect(275,370,395,400).PtInRect(point) && pPlayer->GetAgreement(m_sClickedOnRace) > DIPLOMATIC_AGREEMENT::NONE)
+		{
+
+			// Kündigung wieder entfernen
+			//CRect r(275,370,395,400);
+			//CalcDeviceRect(r);
+			//InvalidateRect(r, FALSE);
+	}
+*/
+	
+	
 }
 
 
@@ -2583,8 +2695,11 @@ void CDiplomacyMenuView::CreateButtons()
 	CString fileA = "Other\\" + sPrefix + "buttona.bop";
 	// Buttons in den Diplomatieansichten
 	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(10,690) , CSize(160,40), CLoc::GetString("BTN_INFORMATION"), fileN, fileI, fileA));
-	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(200,690) , CSize(160,40), CLoc::GetString("OFFER"), fileN, fileI, fileA));
-	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(390,690) , CSize(160,40), CLoc::GetString("RECEIPT"), fileN, fileI, fileA));
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(180,690) , CSize(160,40), CLoc::GetString("OFFER"), fileN, fileI, fileA));
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(350,690) , CSize(160,40), CLoc::GetString("RECEIPT"), fileN, fileI, fileA));
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(520,690) , CSize(160,40), CLoc::GetString("BTN_EVENTS"), fileN, fileI, fileA)); // Buttontext have no sense yet
+	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(690,690) , CSize(160,40), CLoc::GetString("BTN_CURRENTS"), fileN, fileI, fileA)); // Buttontext have no sense yet
+	// (there is SEND-button)	m_DiplomacyMainButtons.Add(new CMyButton(CPoint(860,690) , CSize(160,40), CLoc::GetString("BTN_ALL"), fileN, fileI, fileA)); // Buttontext have no sense yet
 	// Angebotsbuttons in der Diplomatieangebotsansicht
 	m_DiplomacyMajorOfferButtons.Add(new CMyButton(CPoint(200,140) , CSize(160,40), CLoc::GetString("BTN_TRADECONTRACT"), fileN, fileI, fileA));
 	m_DiplomacyMajorOfferButtons.Add(new CMyButton(CPoint(400,140) , CSize(160,40), CLoc::GetString("BTN_FRIENDSHIP"), fileN, fileI, fileA));
@@ -2727,7 +2842,7 @@ CString CDiplomacyMenuView::CreateTooltip(void)
 			USHORT relation = pRace->GetRelation(pPlayer->GetRaceID());
 			CString strRelation;
 			strRelation.Format ("%i", relation);
-			MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
+			//MYTRACE("logdetails")(MT::LEVEL_INFO, "DiplomacyMenuView: relation: %i\n", relation);
 			sTip_add = "\n\n\n"+CLoc::GetString("RELATIONSHIP")+"-"+CLoc::GetString("MORALVALUE")+": " + strRelation;
 
 			CString sTip = pRace->GetRaceDesc();

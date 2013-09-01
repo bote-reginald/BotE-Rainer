@@ -190,6 +190,8 @@ void CScienceIntelObj::CreateText(CBotEDoc* pDoc, BYTE n, const CString& param)
 						s.Format("%d", m_iFP);
 						csInput.Replace("$FP$", s);
 						m_strOwnerDesc = csInput;
+						MYTRACE("intel")(MT::LEVEL_DEBUG, "ScienceIntelObj.cpp: Attacker:%s, Type:%d: %s\n", 
+								m_sOwner, m_byType, m_strOwnerDesc);
 						break;
 					}
 				}
@@ -286,6 +288,8 @@ void CScienceIntelObj::CreateText(CBotEDoc* pDoc, BYTE n, const CString& param)
 							else
 								csInput = CLoc::GetString("DO_NOT_KNOW_RESPONSIBLE_RACE");
 							m_strEnemyDesc += " "+csInput;
+							MYTRACE("intel")(MT::LEVEL_DEBUG, "ScienceIntelObj.cpp: VICTIM:%s, Type:%d: %s\n", 
+								m_sEnemy, m_byType, m_strEnemyDesc);
 							break;
 						}
 					}

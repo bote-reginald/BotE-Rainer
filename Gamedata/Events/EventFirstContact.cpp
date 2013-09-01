@@ -102,7 +102,7 @@ void CEventFirstContact::Draw(Graphics* g, CGraphicPool* graphicPool) const
 	fontFormat.SetLineAlignment(StringAlignmentCenter);
 	fontFormat.SetFormatFlags(StringFormatFlagsNoWrap);
 	s = pContactedRace->GetRaceName();
-	MYTRACE("logevent")(MT::LEVEL_INFO, "NewContact - Race: %s \n", s);
+	// (see below) MYTRACE("logevent")(MT::LEVEL_INFO, "NewContact - Race: %s \n", s);
 	g->DrawString(CComBSTR(s), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(5,717,304,50), &fontFormat, &fontBrush);
 
 	// Eigenschaften zeichnen
@@ -142,7 +142,7 @@ void CEventFirstContact::Draw(Graphics* g, CGraphicPool* graphicPool) const
 
 	for (UINT i = 0; i < sProperties.size(); i++)
 	{
-		MYTRACE("logevent")(MT::LEVEL_INFO, "NewContact - sProperties: %s, Relation:%d\n",sProperties[i],pContactedRace->GetRelation(pMajor->GetRaceID()));
+		MYTRACE("logevent")(MT::LEVEL_INFO, "NewContact: Race:%s, sProperties: %s, Relation:%d\n",pContactedRace->GetRaceName(), sProperties[i],pContactedRace->GetRelation(pMajor->GetRaceID()));
 		g->DrawString(CComBSTR(sProperties[i]), -1, &Gdiplus::Font(CComBSTR(fontName), fontSize), RectF(730,210 + i*30,540,30), &fontFormat, &fontBrush);
 	}
 

@@ -2745,7 +2745,7 @@ void CBotEDoc::CalcSystemAttack()
 			CPoint p = y->second->GetKO();
 			// Besitzer des Systems (hier Sector wegen Minors) vor dem Systemangriff
 			CString sDefender = GetSector(p.x, p.y).GetOwnerOfSector();
-			MYTRACE("shipai")(MT::LEVEL_DEBUG, "Attack of System %s, Defender %s, Round is:&d\n", GetSector(p.x, p.y).GetName(), sDefender, GetCurrentRound());
+			MYTRACE("shipai")(MT::LEVEL_DEBUG, "Attack of System:%s, Defender %s, Round is:%d\n", GetSector(p.x, p.y).GetName(), sDefender, GetCurrentRound());
 			// Angreifer bzw. neuer Besitzer des Systems nach dem Angriff
 			set<CString> attackers;
 			for (CShipMap::const_iterator i = m_ShipMap.begin(); i != m_ShipMap.end(); ++i)
@@ -6368,7 +6368,7 @@ BOOL CBotEDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	// Versionsnummer prüfen
 	UINT nVersion = 0;
 	memcpy(&nVersion, p, sizeof(UINT));
-	MYTRACE("general")(MT::LEVEL_INFO, "savegame: nVersion:%s\n",nVersion);
+	MYTRACE("general")(MT::LEVEL_INFO, "savegame: nVersion:??\n");//,nVersion);
 	p += sizeof(UINT);
 	if (nVersion != DOCUMENT_VERSION)
 	{

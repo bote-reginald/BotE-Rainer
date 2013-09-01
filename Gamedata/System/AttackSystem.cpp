@@ -112,7 +112,7 @@ BOOLEAN CAttackSystem::Calculate()
 	// Erfahrung der Schiffe berechnen
 	// (Bevölkerungsverlust in Mrd.) * 100 + aktive shipdefence EP.
 	int XP = (int)(m_fKilledPop * 100 + shipDefence);
-	MYTRACE("logsystemattack")(MT::LEVEL_INFO, "%i Experience complete gained\n", XP);
+	MYTRACE("logsystemattack")(MT::LEVEL_INFO, "%i Experience complete gained (killedPop*100+shipdefence:%i)\n", XP, shipDefence);
 	// den XP-Wert gleichverteilt auf alle noch lebenden Schiffe anrechnen
 	if (m_pShips.GetSize() > 0)
 	{
@@ -171,7 +171,7 @@ BOOLEAN CAttackSystem::Calculate()
 		{
 			CString n; n.Format("%d",killedTroopsInTransport);
 			m_strNews.Add(CLoc::GetString("KILLED_TROOPS_IN_TRANSPORTS",0,n,m_pSector->GetName()));
-			MYTRACE("logsystemattack")(MT::LEVEL_INFO, "%d attacking troops killed\n", n);
+			MYTRACE("logsystemattack")(MT::LEVEL_INFO, "%d attacking troops killed in transporters\n", n);
 		}
 		if (m_bTroopsInvolved == TRUE && m_pSystem->GetHabitants() > 0.0f)
 			{
@@ -223,18 +223,19 @@ void CAttackSystem::CalculateShipDefence()
 	{
 		if (m_pShips.GetAt(i)->GetTransportedTroops()->GetSize() > 0)
 			m_bTroopsInvolved = TRUE;
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "TransportedTroops: %d\n", m_pShips.GetAt(i)->GetTransportedTroops()->GetSize());
+		// (see below) MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "AttackSystem.cpp-Shipdefence: TransportedTroops: %d\n", m_pShips.GetAt(i)->GetTransportedTroops()->GetSize());
 		USHORT hit = rand()%m_pShips.GetSize();
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "hit: %d\n", hit);
 		int dam = (defence * (rand()%41+80))/100 / m_pShips.GetSize();
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "dam before Assault: %d\n", dam);
+		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "AttackSystem.cpp-Shipdefence: Shipdefence:%d, hited ships: %d, dam before Assault: %d\n", defence, hit, dam);
+		//MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "AttackSystem.cpp-Shipdefence: dam before Assault: %d\n", dam);
 		// Wenn es sich um ein Assaultship handelt, so werden 20% des Schadens vermieden
 		if (m_pShips[hit]->HasSpecial(SHIP_SPECIAL::ASSULTSHIP))
 			dam = (int)(dam * 0.8f);
 		m_pShips[hit]->GetHull()->SetCurrentHull(-dam);
 		// (doesn't work) 
-		if (dam > 0)
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "System Attack: Ship %s hit:%d, dam:%d, Hull:%d\n",m_pShips[hit]->GetShipName(), hit, dam, m_pShips[hit]->GetHull()->GetCurrentHull());
+		//if (dam > 0)
+		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "System Attack: Ship %s hit:%d, dam:%d, Hull:%d, TroopsOnBoard:%d\n",
+			m_pShips[hit]->GetShipName(), hit, dam, m_pShips[hit]->GetHull()->GetCurrentHull(), m_pShips.GetAt(i)->GetTransportedTroops()->GetSize());
 		//MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "System Attack: Ship %s hit:%d, dam:%d, Hull:%d\n",m_pShips[hit]->GetShipName(), hit, dam, m_pShips[hit]->GetHull()->GetCurrentHull());
 		
 	}
@@ -244,7 +245,6 @@ void CAttackSystem::CalculateShipDefence()
 		if (m_pShips.GetAt(i)->GetHull()->GetCurrentHull() == NULL)
 		{
 			m_pShips.RemoveAt(i--);
-MYTRACE("general")(MT::LEVEL_INFO, "System Attack: Ship destroyed s %s\n", m_pShips);
 //MYTRACE("general")(MT::LEVEL_INFO, "System Attack: Ship destroyed i %i\n", m_pShips);
 			MYTRACE("logsystemattack")(MT::LEVEL_INFO, "System Attack: Ship destroyed: %d\n", m_pShips);
 			killedShips++;
@@ -293,11 +293,12 @@ void CAttackSystem::CalculateBombAttack()
 			int dmg = m_pShips.GetAt(i)->GetTorpedoWeapons()->GetAt(j).GetTorpedoPower() *
 				m_pShips.GetAt(i)->GetTorpedoWeapons()->GetAt(j).GetNumber() *
 				m_pShips.GetAt(i)->GetTorpedoWeapons()->GetAt(j).GetNumberOfTupes();
-			// Wenn es sich um ein Assultship handelt, so wird der Torpedoschaden um 20% erhöht
+			// Wenn es sich um ein Assaultship handelt, so wird der Torpedoschaden um 20% erhöht
 			if (m_pShips.GetAt(i)->HasSpecial(SHIP_SPECIAL::ASSULTSHIP))
 			{
 				dmg = (int)(dmg * 1.2f);
 				m_bAssultShipInvolved = TRUE;
+				MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "AssaultShipInvolved = TRUE: Damage of torpedos is 20% higher\n");
 			}
 			torpedoDamage += dmg;
 		}
@@ -328,7 +329,7 @@ MYTRACE("logsystemattack")(MT::LEVEL_INFO, "SHIELDS_SAVED_LIFE\n", torpedoDamage
 	if (torpedoDamage > 0)
 	{
 		float killedPop = (float)((rand()%torpedoDamage)*0.00075f);
-		MYTRACE("logsystemattack")(MT::LEVEL_INFO, "killedPop = %g\n", killedPop);
+		MYTRACE("logsystemattack")(MT::LEVEL_INFO, "killedPop = %g (random, but max 0,00075 of torpdmg=%g)\n", killedPop, torpedoDamage*0.00075f);
 		m_pSector->LetPlanetsShrink(-killedPop);
 		m_pSystem->SetHabitants(m_pSector->GetCurrentHabitants());
 
@@ -438,7 +439,7 @@ MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "groundDefence = %d\n", groundDefenc
 
 	BOOLEAN fighted = FALSE;
 	USHORT maxFightsFromPop = (USHORT)ceil(m_pSystem->GetHabitants() / 5) * m_pSystem->GetMoral() / 100;
-	MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: maxFightsFromPop (Habitants/5)*morale: = %d \n", maxFightsFromPop);
+	MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: maxFightsFromPop (Habitants/5)*morale: = %d, morale is:%d \n", maxFightsFromPop, m_pSystem->GetMoral());
 	// zu allerletzt der Angriff gegen die verteidigende Bevölkerung
 	while (m_pTroops.GetSize() > 0 && maxFightsFromPop > 0)
 	{
@@ -462,17 +463,17 @@ MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "groundDefence = %d\n", groundDefenc
 			if (m_pDefender->IsRaceProperty(RACE_PROPERTY::HOSTILE))
 				nPower += 7;
 
-			MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower)3: %i\n", nPower);
+			//MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower)3: %i\n", nPower);
 
 			if (nPower > MAXBYTE)
 				nPower = MAXBYTE;
 			else if (nPower < 0)
 				nPower = 0;
 
-			MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower): %i\n", nPower);
+			MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower): %i (Standard is 10)\n", nPower);
 		}
 
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower): %i\n", nPower);
+		//MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: DefencePower (nPower): %i\n", nPower);
 
 
 		ti->SetDefense((BYTE)nPower);
@@ -487,6 +488,7 @@ MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "groundDefence = %d\n", groundDefenc
 			// Wenn die Angriffstärke dieser Einheit NULL beträgt, ist sie vernichtet. Am Ende des Kampfes können so die
 			// einzelnen Truppen aus den Transportern gelöscht werden
 			m_pTroops.GetAt(number)->SetOffense(0);
+			MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: Troop:%d eliminated\n", m_pTroops.GetAt(number));
 			m_pTroops.RemoveAt(number);
 		}
 		if (result != 1)
@@ -494,10 +496,11 @@ MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "groundDefence = %d\n", groundDefenc
 			// Durch den Angriff der Truppen kann sich die Bevölkerung in dem System verringern.
 			m_pSector->LetPlanetsShrink(-(float)(rand()%5));
 			fighted = TRUE;
+			MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp: maxFightsFromPop:%d deleted after shrink of pop\n", maxFightsFromPop);
 			maxFightsFromPop--;
 		}
 
-		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp:ti: %i\n", ti);
+		MYTRACE("logsystemattack")(MT::LEVEL_DEBUG, "ATTACKSystem.cpp:ti: %i\n", (CTroop*)ti);
 		delete ti;
 	}
 	if (fighted)

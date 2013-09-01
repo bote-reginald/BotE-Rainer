@@ -63,7 +63,7 @@ BYTE CCombatShip::GetToHitBoni(BYTE Att, BYTE Def)
 		40, 35, 30, 25, 20, 15,	10,	5,	0,	0,
 		45, 40, 35, 30, 25, 20,	15,	10,	5,	0
 	};
-MYTRACE("shipdetails")(MT::LEVEL_DEBUG, "boni[Att][Def]: %d, %d\n",boni[Att], boni[Def]);
+MYTRACE("shipdetails")(MT::LEVEL_DEBUG, "boni[Att][Def]: %i, %i\n",boni[Att], boni[Def]);
 	return boni[Att][Def];
 }
 

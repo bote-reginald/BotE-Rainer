@@ -56,6 +56,7 @@ CAnomaly::CAnomaly(void) :
 		m_sImageFile = "Quasar.bop";
 	else
 		m_sImageFile = "Wormhole.bop";
+	//MYTRACE("init")(MT::LEVEL_DEBUG, "Anomaly.cpp(CreateAnomaly) = %d, %s\n", m_byType, m_sImageFile);
 
 	rand()%2 == 1 ? m_bFlipHorz = true : m_bFlipHorz = false;
 }
@@ -77,6 +78,8 @@ void CAnomaly::Serialize(CArchive &ar)
 		ar << nType;
 		ar << m_sImageFile;
 		ar << m_bFlipHorz;
+		MYTRACE("starmap")(MT::LEVEL_DEBUG, "Anomaly.CPP: %s \n", m_sImageFile);
+			//, m_KO.y, m_KO.x);
 	}
 	// wenn geladen wird
 	if (ar.IsLoading())

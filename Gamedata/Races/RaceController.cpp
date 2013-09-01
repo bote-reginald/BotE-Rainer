@@ -32,6 +32,9 @@ void CRaceController::Serialize(CArchive &ar)
 	{
 		// Rassen speichern
 		ar << m_mRaces.size();
+		CString s;
+		s.Format("%d", m_mRaces.size());
+		MYTRACE("logdata")(MT::LEVEL_INFO, "%s Races ingame (up to 6 majors, 10 aliens, some minors of 142 minors)\n", s);
 		for (map<CString, CRace*>::const_iterator it = m_mRaces.begin(); it != m_mRaces.end(); ++it)
 			ar << it->first << it->second;
 	}

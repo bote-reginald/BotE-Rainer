@@ -54,7 +54,9 @@ void CRace::Serialize(CArchive &ar)
 		ar << m_byBuildingNumber;	// zugewiesene Nummer welche Gebäude verwendet werden sollen
 		ar << m_byMoralNumber;	// zugewiesene Nummer welche Moralwerte verwendet werden sollen
 		ar << m_nSpecialAbility;// Spezialfähigkeiten der Rasse
-		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: RaceID=m_sID: # %s #, m_sHomeSystem: %s, m_sName: %s, m_byShipNumber: %d, m_byBuildingNumber: %d, m_byMoralNumber: %d\n", 
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: # %s # -----------------------------------\n", 
+			m_sID);
+		MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: # %s #, m_sHomeSystem: %s, m_sName: %s, m_byShipNumber: %d, m_byBuildingNumber: %d, m_byMoralNumber: %d\n", 
 			m_sID, m_sHomeSystem, m_sName, m_byShipNumber, m_byBuildingNumber, m_byMoralNumber);
 
 		// Ingame-Attribute (Rassenwechselwirkung)
@@ -63,7 +65,7 @@ void CRace::Serialize(CArchive &ar)
 		for (map<CString, BYTE>::const_iterator it = m_mRelations.begin(); it != m_mRelations.end(); ++it)
 		{
 			ar << it->first << it->second;
-			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: RaceID=m_sID: # %s #, Relations: # %s: %d\n", 
+			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: # %s #, Relation to %s: %d\n", 
 													m_sID, it->first, it->second);
 		}
 
@@ -72,7 +74,7 @@ void CRace::Serialize(CArchive &ar)
 		for (map<CString, DIPLOMATIC_AGREEMENT::Typ>::const_iterator it = m_mAgreement.begin(); it != m_mAgreement.end(); ++it)
 		{
 			ar << it->first << it->second;
-			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: RaceID=m_sID: # %s #, Agreements: # %s: %d\n", 
+			MYTRACE("logsave")(MT::LEVEL_DEBUG, "Race.cpp: # %s #, Agreement with %s: %d (some:-1=War,0=None,1=NAP,2=Trade)\n", 
 													m_sID, it->first, it->second);
 		}
 
